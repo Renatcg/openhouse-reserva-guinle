@@ -1,0 +1,90 @@
+[
+  {
+    "id": "poltrona-alba",
+    "title": "Poltrona Alba",
+    "description": "Poltrona estofada com estrutura de madeira e design contemporâneo.",
+    "category": "Móveis",
+    "room": "Sala",
+    "status": "Ativo",
+    "images": [],
+    "createdAt": "2026-09-01T14:32:00.000Z",
+    "updatedAt": "2026-09-10T14:32:00.000Z"
+  },
+  {
+    "id": "mesa-lume",
+    "title": "Mesa Lume",
+    "description": "Mesa de apoio em madeira com base metálica e acabamento fosco.",
+    "category": "Móveis",
+    "room": "Sala",
+    "status": "Ativo",
+    "images": [],
+    "createdAt": "2026-09-01T11:20:00.000Z",
+    "updatedAt": "2026-09-09T11:20:00.000Z"
+  },
+  {
+    "id": "pendente-orbe",
+    "title": "Pendente Orbe",
+    "description": "Luminária pendente em vidro opalino com design minimalista.",
+    "category": "Iluminação",
+    "room": "Jantar",
+    "status": "Ativo",
+    "images": [],
+    "createdAt": "2026-09-01T16:15:00.000Z",
+    "updatedAt": "2026-09-08T16:15:00.000Z"
+  },
+  {
+    "id": "banco-nilo",
+    "title": "Banco Nilo",
+    "description": "Banco em madeira maciça com assento em palha natural.",
+    "category": "Móveis",
+    "room": "Living",
+    "status": "Ativo",
+    "images": [],
+    "createdAt": "2026-09-01T10:48:00.000Z",
+    "updatedAt": "2026-09-08T10:48:00.000Z"
+  },
+  {
+    "id": "vaso-terral",
+    "title": "Vaso Terral",
+    "description": "Vaso decorativo em cerâmica artesanal com textura natural.",
+    "category": "Objetos",
+    "room": "Sala",
+    "status": "Ativo",
+    "images": [],
+    "createdAt": "2026-09-01T18:05:00.000Z",
+    "updatedAt": "2026-09-07T18:05:00.000Z"
+  },
+  {
+    "id": "almofada-linen",
+    "title": "Almofada Linen",
+    "description": "Almofada em linho com acabamento artesanal e toque macio.",
+    "category": "Objetos",
+    "room": "Quarto",
+    "status": "Inativo",
+    "images": [],
+    "createdAt": "2026-09-01T09:12:00.000Z",
+    "updatedAt": "2026-09-05T09:12:00.000Z"
+  },
+  {
+    "id": "planta-costela-de-adao",
+    "title": "Planta Costela de Adão",
+    "description": "Planta natural em vaso de cerâmica para ambientes internos.",
+    "category": "Objetos",
+    "room": "Varanda",
+    "status": "Ativo",
+    "images": [],
+    "createdAt": "2026-09-01T13:40:00.000Z",
+    "updatedAt": "2026-09-04T13:40:00.000Z"
+  },
+  {
+    "id": "tapete-siena",
+    "title": "Tapete Siena",
+    "description": "Tapete em fibra natural com trama artesanal e toque macio.",
+    "category": "Móveis",
+    "room": "Quarto",
+    "status": "Ativo",
+    "images": [],
+    "createdAt": "2026-09-01T17:22:00.000Z",
+    "updatedAt": "2026-09-02T17:22:00.000Z"
+  }
+]

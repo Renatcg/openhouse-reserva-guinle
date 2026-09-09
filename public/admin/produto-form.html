@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Produto · Admin Reserva Guinle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: '#f6f3ec',
+          ink: '#1f2a22',
+          forest: '#1f3327',
+          gold: '#c8a862',
+          stone: '#8a8578',
+        },
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .tracked-sm { letter-spacing: 0.08em; }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased">
+
+<div class="min-h-screen flex">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="hidden lg:flex flex-col w-[250px] shrink-0 bg-forest text-cream/90 relative">
+    <div class="px-7 pt-9 pb-6">
+      <h1 class="font-serif text-xl tracking-[0.2em] text-white">RESERVA GUINLE</h1>
+      <p class="tracked-sm text-[9px] text-cream/50 mt-1">OPEN HOUSE · CASA MODELO</p>
+    </div>
+    <div class="mx-7 h-px bg-white/15 mb-4"></div>
+
+    <nav class="flex-1 px-4 space-y-1">
+      <a href="produtos.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375C2.754 3.75 2.25 4.254 2.25 4.875v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>
+        Produtos
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+        Categorias
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+        Usuários
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.49l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        Configurações
+      </a>
+    </nav>
+
+    <div class="px-4 pb-4">
+      <div class="mx-3 h-px bg-white/15 mb-4"></div>
+      <a href="#" id="logout-link" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25" /></svg>
+        Sair
+      </a>
+    </div>
+
+    <div class="p-7 relative overflow-hidden mt-auto" style="min-height:230px;">
+      <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=600&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-60" />
+      <div class="absolute inset-0 bg-gradient-to-t from-forest via-forest/60 to-transparent"></div>
+      <p class="relative tracked-sm text-[10px] text-white/90 leading-[1.9] font-medium">
+        NATUREZA,<br>ARQUITETURA<br>E BEM-ESTAR EM<br>PERFEITO EQUILÍBRIO.
+      </p>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="flex-1 min-w-0">
+
+    <!-- Topbar -->
+    <header class="flex items-center gap-4 px-5 md:px-10 py-5 border-b border-black/5 bg-cream/80 backdrop-blur sticky top-0 z-30">
+      <button class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg border border-black/10" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" /></svg>
+      </button>
+      <div class="relative flex-1 max-w-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-stone absolute left-4 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+        <input type="text" placeholder="Buscar produtos, categorias ou palavras-chave..." class="w-full bg-white border border-black/10 rounded-full pl-11 pr-4 py-2.5 text-sm placeholder:text-stone/70 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+      </div>
+      <div class="ml-auto flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-forest text-white flex items-center justify-center font-serif text-base" id="user-avatar">?</div>
+        <div class="hidden sm:block leading-tight">
+          <p class="text-sm font-medium" id="user-name">—</p>
+          <p class="text-xs text-stone" id="user-role">—</p>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-stone" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+      </div>
+    </header>
+
+    <main class="px-5 md:px-10 py-8 max-w-[1200px]">
+
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-sm text-stone mb-2">
+        <a href="produtos.html" class="hover:text-ink transition">Produtos</a>
+        <span>›</span>
+        <span id="breadcrumb-current" class="text-ink">Novo produto</span>
+      </nav>
+
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <h2 id="page-title" class="font-serif text-4xl md:text-5xl leading-none">Novo produto</h2>
+        <a href="produtos.html" class="shrink-0 inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
+          Voltar para a lista
+        </a>
+      </div>
+
+      <p id="form-error" class="hidden mb-4 text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-xl px-4 py-3"></p>
+      <p id="form-loading" class="hidden mb-4 text-sm text-stone">Carregando produto…</p>
+
+      <form id="product-form" class="bg-white rounded-2xl border border-black/5 p-6 md:p-8">
+        <h3 class="font-serif text-2xl mb-6">Informações do produto</h3>
+
+        <div class="grid md:grid-cols-[1.3fr_1fr] gap-8">
+          <!-- Left column: fields -->
+          <div class="space-y-5">
+            <div>
+              <label for="title" class="block text-sm font-medium text-ink mb-1.5">Título <span class="text-rose-500">*</span></label>
+              <input id="title" name="title" type="text" required maxlength="80" placeholder="Ex.: Poltrona Alba" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label for="category" class="block text-sm font-medium text-ink mb-1.5">Categoria <span class="text-rose-500">*</span></label>
+                <div class="relative">
+                  <select id="category" name="category" required class="w-full appearance-none bg-white border border-black/10 rounded-xl pl-4 pr-9 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20">
+                    <option value="" disabled selected>Selecione uma categoria</option>
+                    <option>Móveis</option>
+                    <option>Iluminação</option>
+                    <option>Objetos</option>
+                  </select>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-stone absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                </div>
+              </div>
+              <div>
+                <label for="room" class="block text-sm font-medium text-ink mb-1.5">Ambiente</label>
+                <div class="relative">
+                  <select id="room" name="room" class="w-full appearance-none bg-white border border-black/10 rounded-xl pl-4 pr-9 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20">
+                    <option value="">Ex.: Sala, Jantar, Quarto</option>
+                    <option>Sala</option>
+                    <option>Jantar</option>
+                    <option>Quarto</option>
+                    <option>Living</option>
+                    <option>Varanda</option>
+                    <option>Escritório</option>
+                    <option>Área externa</option>
+                  </select>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-stone absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="description" class="block text-sm font-medium text-ink mb-1.5">Descrição <span class="text-rose-500">*</span></label>
+              <textarea id="description" name="description" required maxlength="500" rows="6" placeholder="Descreva o produto, seus diferenciais, materiais e acabamentos..." class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20 resize-none"></textarea>
+              <p class="text-right text-xs text-stone mt-1"><span id="desc-count">0</span>/500</p>
+            </div>
+          </div>
+
+          <!-- Right column: images -->
+          <div>
+            <label class="block text-sm font-medium text-ink mb-1.5">Imagens</label>
+            <div id="dropzone" class="border-2 border-dashed border-black/15 rounded-xl px-4 py-8 text-center cursor-pointer hover:border-forest/40 hover:bg-forest/[0.02] transition">
+              <input type="file" id="image-input" accept="image/png,image/jpeg,image/webp" multiple class="hidden" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-stone mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 7.5m0 0L7.5 12m4.5-4.5v13.5" /></svg>
+              <p class="text-sm text-ink">Clique para enviar imagens<br>ou arraste e solte aqui</p>
+              <p class="text-xs text-stone mt-2">PNG, JPG ou WEBP<br>Máx. 5MB por imagem</p>
+            </div>
+
+            <div id="image-list" class="grid grid-cols-3 gap-2.5 mt-4"></div>
+            <p id="image-error" class="hidden text-xs text-rose-600 mt-2"></p>
+          </div>
+        </div>
+
+        <div class="h-px bg-black/5 my-7"></div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+          <div>
+            <p class="text-sm font-medium text-ink mb-2">Status</p>
+            <label class="flex items-center gap-3 cursor-pointer select-none">
+              <span class="relative inline-flex items-center">
+                <input type="checkbox" id="status-toggle" class="peer sr-only" checked />
+                <span class="w-11 h-6 bg-black/15 peer-checked:bg-forest rounded-full transition"></span>
+                <span class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition peer-checked:translate-x-5"></span>
+              </span>
+              <span class="text-sm font-medium" id="status-label">Ativo</span>
+            </label>
+            <p class="text-xs text-stone mt-1.5">Produtos inativos não aparecem no catálogo.</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <a href="produtos.html" class="px-6 py-3 rounded-full text-sm font-medium border border-black/10 text-ink hover:bg-black/[0.03] transition">Cancelar</a>
+            <button type="submit" id="save-btn" class="px-7 py-3 rounded-full text-sm font-medium bg-forest text-white hover:brightness-110 transition">
+              <span id="save-label">Salvar produto</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </main>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const editId = params.get('id');
+  const isEdit = !!editId;
+
+  let existingImages = []; // URLs de imagens já salvas (modo edição)
+  let newFiles = [];       // arquivos novos ainda não enviados
+
+  // ---------- Sessão ----------
+  (async function checkSession() {
+    try {
+      const res = await fetch('/api/me', { credentials: 'include' });
+      if (!res.ok) { window.location.replace('/login.html'); return; }
+      const { user } = await res.json();
+      document.getElementById('user-name').textContent = user.name || 'Administrador';
+      document.getElementById('user-role').textContent = user.role || 'Administrador';
+      document.getElementById('user-avatar').textContent = (user.name || 'A').charAt(0).toUpperCase();
+    } catch (err) {
+      window.location.replace('/login.html');
+    }
+  })();
+
+  document.getElementById('logout-link').addEventListener('click', async (e) => {
+    e.preventDefault();
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+    window.location.href = '/login.html';
+  });
+
+  // ---------- Campos ----------
+  const titleEl = document.getElementById('title');
+  const categoryEl = document.getElementById('category');
+  const roomEl = document.getElementById('room');
+  const descEl = document.getElementById('description');
+  const descCount = document.getElementById('desc-count');
+  const statusToggle = document.getElementById('status-toggle');
+  const statusLabel = document.getElementById('status-label');
+  const formError = document.getElementById('form-error');
+  const formLoading = document.getElementById('form-loading');
+  const imageList = document.getElementById('image-list');
+  const imageError = document.getElementById('image-error');
+  const dropzone = document.getElementById('dropzone');
+  const imageInput = document.getElementById('image-input');
+  const saveBtn = document.getElementById('save-btn');
+  const saveLabel = document.getElementById('save-label');
+
+  descEl.addEventListener('input', () => { descCount.textContent = descEl.value.length; });
+  statusToggle.addEventListener('change', () => {
+    statusLabel.textContent = statusToggle.checked ? 'Ativo' : 'Inativo';
+  });
+
+  // ---------- Upload / preview de imagens ----------
+  function renderImages() {
+    const items = [
+      ...existingImages.map((url, i) => ({ type: 'existing', url, index: i })),
+      ...newFiles.map((file, i) => ({ type: 'new', url: URL.createObjectURL(file), index: i })),
+    ];
+
+    imageList.innerHTML = items.map((item, pos) => `
+      <div class="relative group">
+        <img src="${item.url}" class="w-full aspect-square object-cover rounded-lg border border-black/10" />
+        <button type="button" data-type="${item.type}" data-index="${item.index}" class="remove-image absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white shadow flex items-center justify-center text-stone hover:text-rose-600 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+        ${pos === 0 ? '<span class="absolute bottom-1.5 left-1.5 bg-forest text-white text-[10px] px-2 py-0.5 rounded-full font-medium">Principal</span>' : ''}
+      </div>
+    `).join('');
+
+    imageList.querySelectorAll('.remove-image').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.dataset.type;
+        const idx = parseInt(btn.dataset.index);
+        if (type === 'existing') existingImages.splice(idx, 1);
+        else newFiles.splice(idx, 1);
+        renderImages();
+      });
+    });
+  }
+
+  function addFiles(fileList) {
+    imageError.classList.add('hidden');
+    const files = Array.from(fileList);
+    const allowed = ['image/png', 'image/jpeg', 'image/webp'];
+    const total = existingImages.length + newFiles.length + files.length;
+
+    if (total > 8) {
+      imageError.textContent = 'Máximo de 8 imagens por produto.';
+      imageError.classList.remove('hidden');
+      return;
+    }
+
+    for (const file of files) {
+      if (!allowed.includes(file.type)) {
+        imageError.textContent = `"${file.name}" não é PNG, JPG ou WEBP.`;
+        imageError.classList.remove('hidden');
+        continue;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        imageError.textContent = `"${file.name}" passa de 5MB.`;
+        imageError.classList.remove('hidden');
+        continue;
+      }
+      newFiles.push(file);
+    }
+    renderImages();
+  }
+
+  dropzone.addEventListener('click', () => imageInput.click());
+  imageInput.addEventListener('change', (e) => addFiles(e.target.files));
+
+  ['dragenter', 'dragover'].forEach(evt => dropzone.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dropzone.classList.add('border-forest/50', 'bg-forest/[0.03]');
+  }));
+  ['dragleave', 'drop'].forEach(evt => dropzone.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('border-forest/50', 'bg-forest/[0.03]');
+  }));
+  dropzone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+  });
+
+  // ---------- Carrega produto existente (modo edição) ----------
+  async function loadProduct() {
+    formLoading.classList.remove('hidden');
+    try {
+      const res = await fetch(`/api/products/${editId}`);
+      if (!res.ok) throw new Error('not found');
+      const { product } = await res.json();
+
+      document.getElementById('page-title').textContent = 'Editar produto';
+      document.getElementById('breadcrumb-current').textContent = 'Editar produto';
+      document.title = `Editar ${product.title} · Admin Reserva Guinle`;
+      saveLabel.textContent = 'Salvar alterações';
+
+      titleEl.value = product.title;
+      categoryEl.value = product.category;
+      roomEl.value = product.room || '';
+      descEl.value = product.description;
+      descCount.textContent = product.description.length;
+      statusToggle.checked = product.status === 'Ativo';
+      statusLabel.textContent = product.status;
+      existingImages = [...(product.images || [])];
+      renderImages();
+    } catch (err) {
+      formError.textContent = 'Não foi possível carregar este produto.';
+      formError.classList.remove('hidden');
+    } finally {
+      formLoading.classList.add('hidden');
+    }
+  }
+
+  if (isEdit) loadProduct();
+
+  // ---------- Salvar (criar ou editar) ----------
+  document.getElementById('product-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formError.classList.add('hidden');
+    saveBtn.disabled = true;
+    saveLabel.textContent = 'Salvando...';
+
+    const formData = new FormData();
+    formData.append('title', titleEl.value.trim());
+    formData.append('category', categoryEl.value);
+    formData.append('room', roomEl.value);
+    formData.append('description', descEl.value.trim());
+    formData.append('status', statusToggle.checked ? 'Ativo' : 'Inativo');
+    formData.append('existingImages', JSON.stringify(existingImages));
+    newFiles.forEach(file => formData.append('images', file));
+
+    try {
+      const res = await fetch(isEdit ? `/api/products/${editId}` : '/api/products', {
+        method: isEdit ? 'PUT' : 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        formError.textContent = data.error || 'Não foi possível salvar o produto.';
+        formError.classList.remove('hidden');
+        saveBtn.disabled = false;
+        saveLabel.textContent = isEdit ? 'Salvar alterações' : 'Salvar produto';
+        return;
+      }
+
+      window.location.href = 'produtos.html';
+    } catch (err) {
+      formError.textContent = 'Erro de conexão com o servidor.';
+      formError.classList.remove('hidden');
+      saveBtn.disabled = false;
+      saveLabel.textContent = isEdit ? 'Salvar alterações' : 'Salvar produto';
+    }
+  });
+</script>
+</body>
+</html>

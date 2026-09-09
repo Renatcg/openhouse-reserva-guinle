@@ -111,23 +111,23 @@
           <h2 class="font-serif text-4xl md:text-5xl leading-none mb-3">Catálogo da Casa Modelo</h2>
           <p class="text-stone text-sm md:text-base">Gerencie os produtos que serão exibidos no Open House Reserva Guinle.</p>
         </div>
-        <button class="shrink-0 inline-flex items-center gap-2 bg-forest text-white px-5 py-3 rounded-full text-sm font-medium hover:brightness-110 transition">
+        <a href="produto-form.html" class="shrink-0 inline-flex items-center gap-2 bg-forest text-white px-5 py-3 rounded-full text-sm font-medium hover:brightness-110 transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
           Novo produto
-        </button>
+        </a>
       </div>
 
       <!-- Tabs + sort -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div class="flex gap-2">
-          <button class="tab-btn flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-forest text-white" data-tab="todos">
-            Todos <span class="bg-white/20 text-white text-xs px-1.5 py-0.5 rounded-full">24</span>
+          <button class="tab-btn flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-forest text-white" data-tab="Todos">
+            Todos <span class="bg-white/20 text-white text-xs px-1.5 py-0.5 rounded-full" id="count-todos">0</span>
           </button>
-          <button class="tab-btn flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-black/10 text-ink" data-tab="ativos">
-            Ativos <span class="bg-black/5 text-ink text-xs px-1.5 py-0.5 rounded-full">22</span>
+          <button class="tab-btn flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-black/10 text-ink" data-tab="Ativo">
+            Ativos <span class="bg-black/5 text-ink text-xs px-1.5 py-0.5 rounded-full" id="count-ativos">0</span>
           </button>
-          <button class="tab-btn flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-black/10 text-ink" data-tab="inativos">
-            Inativos <span class="bg-black/5 text-ink text-xs px-1.5 py-0.5 rounded-full">2</span>
+          <button class="tab-btn flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-black/10 text-ink" data-tab="Inativo">
+            Inativos <span class="bg-black/5 text-ink text-xs px-1.5 py-0.5 rounded-full" id="count-inativos">0</span>
           </button>
         </div>
         <div class="relative">
@@ -163,7 +163,7 @@
 
         <!-- Pagination -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4 border-t border-black/5">
-          <p class="text-sm text-stone">Mostrando 1 a 8 de 24 produtos</p>
+          <p class="text-sm text-stone" id="pagination-summary">Mostrando 0 produtos</p>
           <div class="flex items-center gap-1.5">
             <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-black/10 text-stone hover:bg-black/5" aria-label="Anterior">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
@@ -214,57 +214,107 @@
     window.location.href = '/login.html';
   });
 
-  const products = [
-    { name: "Poltrona Alba", desc: "Poltrona estofada com estrutura de madeira e design contemporâneo...", category: "Móveis", room: "Sala", status: "Ativo", updated: "10/09/2026 14:32", img: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=200&auto=format&fit=crop" },
-    { name: "Mesa Lume", desc: "Mesa de apoio em madeira com base metálica e acabamento fosco.", category: "Móveis", room: "Sala", status: "Ativo", updated: "09/09/2026 11:20", img: "https://images.unsplash.com/photo-1499933374294-4584851497cc?q=80&w=200&auto=format&fit=crop" },
-    { name: "Pendente Orbe", desc: "Luminária pendente em vidro opalino com design minimalista.", category: "Iluminação", room: "Jantar", status: "Ativo", updated: "08/09/2026 16:15", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=200&auto=format&fit=crop" },
-    { name: "Banco Nilo", desc: "Banco em madeira maciça com assento em palha natural.", category: "Móveis", room: "Living", status: "Ativo", updated: "08/09/2026 10:48", img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=200&auto=format&fit=crop" },
-    { name: "Vaso Terral", desc: "Vaso decorativo em cerâmica artesanal com textura natural.", category: "Objetos", room: "Sala", status: "Ativo", updated: "07/09/2026 18:05", img: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?q=80&w=200&auto=format&fit=crop" },
-    { name: "Almofada Linen", desc: "Almofada em linho com acabamento artesanal e toque macio.", category: "Objetos", room: "Quarto", status: "Inativo", updated: "05/09/2026 09:12", img: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?q=80&w=200&auto=format&fit=crop" },
-    { name: "Planta Costela de Adão", desc: "Planta natural em vaso de cerâmica para ambientes internos.", category: "Objetos", room: "Varanda", status: "Ativo", updated: "04/09/2026 13:40", img: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=200&auto=format&fit=crop" },
-    { name: "Tapete Siena", desc: "Tapete em fibra natural com trama artesanal e toque macio.", category: "Móveis", room: "Quarto", status: "Ativo", updated: "02/09/2026 17:22", img: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=200&auto=format&fit=crop" },
-  ];
-
   const statusClasses = {
     "Ativo": "bg-emerald-50 text-emerald-700",
     "Inativo": "bg-rose-50 text-rose-600",
   };
 
   const tbody = document.getElementById('table-body');
-  tbody.innerHTML = products.map(p => `
-    <tr class="hover:bg-black/[0.015] transition">
-      <td class="py-3.5 pl-5"><input type="checkbox" class="rounded border-black/20" /></td>
-      <td class="py-3.5 px-3">
-        <img src="${p.img}" alt="${p.name}" class="w-12 h-12 rounded-lg object-cover" />
-      </td>
-      <td class="py-3.5 px-3 max-w-[280px]">
-        <p class="font-serif text-lg leading-tight">${p.name}</p>
-        <p class="text-xs text-stone leading-snug mt-0.5">${p.desc}</p>
-      </td>
-      <td class="py-3.5 px-3 text-ink/80">${p.category}</td>
-      <td class="py-3.5 px-3 text-ink/80">${p.room}</td>
-      <td class="py-3.5 px-3">
-        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium ${statusClasses[p.status]}">${p.status}</span>
-      </td>
-      <td class="py-3.5 px-3 text-ink/70 whitespace-nowrap">${p.updated}</td>
-      <td class="py-3.5 px-5">
-        <div class="flex items-center justify-end gap-3 text-stone">
-          <button class="hover:text-ink transition" aria-label="Editar">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" /></svg>
-          </button>
-          <button class="hover:text-ink transition" aria-label="Duplicar">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg>
-          </button>
-          <button class="hover:text-rose-600 transition" aria-label="Excluir">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-          </button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
+  const paginationSummary = document.getElementById('pagination-summary');
+  let allProducts = [];
+  let activeTab = 'Todos';
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    const pad = n => String(n).padStart(2, '0');
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function updateCounts() {
+    document.getElementById('count-todos').textContent = allProducts.length;
+    document.getElementById('count-ativos').textContent = allProducts.filter(p => p.status === 'Ativo').length;
+    document.getElementById('count-inativos').textContent = allProducts.filter(p => p.status === 'Inativo').length;
+  }
+
+  function render() {
+    const list = activeTab === 'Todos' ? allProducts : allProducts.filter(p => p.status === activeTab);
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="py-14 text-center text-stone text-sm">Nenhum produto cadastrado ainda. Clique em "Novo produto" para começar.</td></tr>`;
+    } else {
+      tbody.innerHTML = list.map(p => `
+        <tr class="hover:bg-black/[0.015] transition">
+          <td class="py-3.5 pl-5"><input type="checkbox" class="rounded border-black/20" /></td>
+          <td class="py-3.5 px-3">
+            ${p.images && p.images[0]
+              ? `<img src="${p.images[0]}" alt="${p.title}" class="w-12 h-12 rounded-lg object-cover" />`
+              : `<div class="w-12 h-12 rounded-lg bg-black/5 flex items-center justify-center text-stone"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M18 12.75h.008v.008H18v-.008zM3.75 6h16.5a1.5 1.5 0 011.5 1.5v9a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-9a1.5 1.5 0 011.5-1.5z" /></svg></div>`}
+          </td>
+          <td class="py-3.5 px-3 max-w-[280px]">
+            <p class="font-serif text-lg leading-tight">${p.title}</p>
+            <p class="text-xs text-stone leading-snug mt-0.5 line-clamp-2">${p.description}</p>
+          </td>
+          <td class="py-3.5 px-3 text-ink/80">${p.category}</td>
+          <td class="py-3.5 px-3 text-ink/80">${p.room || '—'}</td>
+          <td class="py-3.5 px-3">
+            <span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium ${statusClasses[p.status]}">${p.status}</span>
+          </td>
+          <td class="py-3.5 px-3 text-ink/70 whitespace-nowrap">${formatDate(p.updatedAt)}</td>
+          <td class="py-3.5 px-5">
+            <div class="flex items-center justify-end gap-3 text-stone">
+              <a href="produto-form.html?id=${p.id}" class="hover:text-ink transition" aria-label="Editar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" /></svg>
+              </a>
+              <button data-id="${p.id}" class="delete-btn hover:text-rose-600 transition" aria-label="Excluir">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    paginationSummary.textContent = list.length === 0
+      ? 'Nenhum produto'
+      : `Mostrando ${list.length} de ${list.length} produto${list.length === 1 ? '' : 's'}`;
+
+    tbody.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const product = allProducts.find(p => p.id === id);
+        if (!confirm(`Excluir "${product ? product.title : 'este produto'}"? Essa ação não pode ser desfeita.`)) return;
+
+        try {
+          const res = await fetch(`/api/products/${id}`, { method: 'DELETE', credentials: 'include' });
+          if (!res.ok) throw new Error();
+          allProducts = allProducts.filter(p => p.id !== id);
+          updateCounts();
+          render();
+        } catch (err) {
+          alert('Não foi possível excluir o produto. Tente novamente.');
+        }
+      });
+    });
+  }
+
+  async function loadProducts() {
+    tbody.innerHTML = `<tr><td colspan="8" class="py-14 text-center text-stone text-sm">Carregando produtos…</td></tr>`;
+    try {
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      allProducts = data.products || [];
+    } catch (err) {
+      allProducts = [];
+    }
+    updateCounts();
+    render();
+  }
+
+  loadProducts();
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      activeTab = btn.dataset.tab;
       document.querySelectorAll('.tab-btn').forEach(b => {
         b.classList.remove('bg-forest', 'text-white');
         b.classList.add('bg-white', 'border', 'border-black/10', 'text-ink');
@@ -275,6 +325,7 @@
       btn.classList.add('bg-forest', 'text-white');
       btn.querySelector('span').classList.remove('bg-black/5', 'text-ink');
       btn.querySelector('span').classList.add('bg-white/20', 'text-white');
+      render();
     });
   });
 </script>
