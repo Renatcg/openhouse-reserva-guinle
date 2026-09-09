@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Catálogo · Open House Reserva Guinle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: '#f6f3ec',
+          ink: '#1f2a22',
+          forest: '#1f3327',
+          gold: '#c8a862',
+          stone: '#8a8578',
+        },
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .tracked { letter-spacing: 0.14em; }
+  .tracked-sm { letter-spacing: 0.08em; }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased">
+
+  <!-- ===== HEADER ===== -->
+  <header class="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-10 pt-6 md:pt-10 pb-4">
+    <div>
+      <h1 class="font-serif text-2xl md:text-3xl tracking-[0.2em] text-ink">RESERVA GUINLE</h1>
+      <p class="tracked text-[10px] md:text-xs text-stone mt-1">OPEN HOUSE · CASA MODELO</p>
+    </div>
+    <div class="flex items-center gap-4 md:gap-6">
+      <button id="cart-btn" class="relative flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full bg-white shadow-sm hover:shadow-md transition" aria-label="Ver seleção">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m-2.25 0h12l1.05 10.05a1.5 1.5 0 01-1.5 1.65H6.45a1.5 1.5 0 01-1.5-1.65L6 10.5z" />
+        </svg>
+        <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-gold text-ink text-[11px] font-semibold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+      </button>
+      <button class="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white shadow-sm hover:shadow-md transition" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="max-w-7xl mx-auto px-5 md:px-10 pb-8 md:pb-12">
+    <div class="grid md:grid-cols-[1.2fr_1fr] gap-6 md:gap-10 items-stretch">
+      <div class="flex flex-col justify-center">
+        <p class="tracked text-[11px] md:text-xs text-gold font-semibold mb-3">CATÁLOGO DA CASA MODELO</p>
+        <h2 class="font-serif text-4xl md:text-6xl leading-[1.05] text-ink mb-4 md:mb-6">
+          Tudo o que você viu,<br class="hidden md:block"> em um só lugar.
+        </h2>
+        <p class="text-stone text-base md:text-lg max-w-md leading-relaxed">
+          Selecione os itens que deseja conhecer melhor e solicite seu orçamento pelo WhatsApp.
+        </p>
+      </div>
+      <div class="relative rounded-2xl overflow-hidden min-h-[180px] md:min-h-full">
+        <img src="https://images.unsplash.com/photo-1545165375-1b744b9ed444?q=80&w=1200&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent"></div>
+        <div class="absolute bottom-5 left-5 md:bottom-8 md:left-8">
+          <p class="tracked-sm text-[10px] md:text-xs text-white leading-[1.9] font-medium drop-shadow-sm">
+            BOM<br>VIVER<br>TAMBÉM<br>SE REVELA<br>NOS DETALHES.
+          </p>
+          <div class="w-8 h-[2px] bg-gold mt-2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FILTERS ===== -->
+  <nav class="max-w-7xl mx-auto px-5 md:px-10 pb-6 md:pb-8">
+    <div class="flex gap-2 md:gap-3 overflow-x-auto no-scrollbar pb-1" id="filters">
+      <button data-filter="Todos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-forest text-white transition">Todos</button>
+      <button data-filter="Sala" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Sala</button>
+      <button data-filter="Jantar" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Jantar</button>
+      <button data-filter="Quartos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Quartos</button>
+      <button data-filter="Iluminação" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Iluminação</button>
+      <button data-filter="Objetos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Objetos</button>
+    </div>
+  </nav>
+
+  <!-- ===== PRODUCT GRID ===== -->
+  <main class="max-w-7xl mx-auto px-5 md:px-10 pb-32 md:pb-28">
+    <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      <!-- cards injected by JS -->
+    </div>
+  </main>
+
+  <!-- ===== STICKY SELECTION BAR ===== -->
+  <div id="sticky-bar" class="fixed bottom-0 left-0 right-0 bg-forest text-white z-40 hidden">
+    <div class="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between">
+      <p class="text-sm md:text-base">
+        <span id="sticky-count" class="font-serif text-2xl text-gold align-middle mr-2">0</span>
+        <span class="align-middle">itens selecionados</span>
+      </p>
+      <button class="bg-gold text-ink px-5 md:px-7 py-2.5 md:py-3 rounded-full text-sm md:text-base font-medium hover:brightness-95 transition flex items-center gap-2">
+        Ver seleção <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </div>
+
+  <footer class="text-center pb-28 md:pb-8">
+    <p class="tracked-sm text-[10px] md:text-xs text-stone/70">CATÁLOGO EXCLUSIVO DO OPEN HOUSE RESERVA GUINLE</p>
+  </footer>
+
+<script>
+  const products = [
+    { id: 1, name: "Poltrona Alba", category: "Sala", tag: "Estofado • Sala", img: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=800&auto=format&fit=crop" },
+    { id: 2, name: "Mesa Lume", category: "Sala", tag: "Mesa de apoio • Sala", img: "https://images.unsplash.com/photo-1499933374294-4584851497cc?q=80&w=800&auto=format&fit=crop" },
+    { id: 3, name: "Pendente Orbe", category: "Iluminação", tag: "Iluminação • Jantar", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format&fit=crop" },
+    { id: 4, name: "Banco Nilo", category: "Objetos", tag: "Madeira • Living", img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800&auto=format&fit=crop" },
+    { id: 5, name: "Vaso Terra", category: "Objetos", tag: "Cerâmica • Objetos", img: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?q=80&w=800&auto=format&fit=crop" },
+    { id: 6, name: "Arranjo Verde", category: "Objetos", tag: "Planta • Objetos", img: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=800&auto=format&fit=crop" },
+    { id: 7, name: "Cadeira Junco", category: "Jantar", tag: "Fibra natural • Jantar", img: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=800&auto=format&fit=crop" },
+    { id: 8, name: "Tapete Areia", category: "Quartos", tag: "Têxtil • Quartos", img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800&auto=format&fit=crop" },
+  ];
+
+  let selected = new Set([1, 2]); // pré-selecionados para refletir o mock
+  let activeFilter = "Todos";
+
+  const grid = document.getElementById('grid');
+  const cartCount = document.getElementById('cart-count');
+  const stickyBar = document.getElementById('sticky-bar');
+  const stickyCount = document.getElementById('sticky-count');
+
+  function render() {
+    const list = activeFilter === "Todos" ? products : products.filter(p => p.category === activeFilter);
+    grid.innerHTML = list.map(p => {
+      const isSelected = selected.has(p.id);
+      return `
+        <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+          <div class="relative aspect-square">
+            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" />
+            <button data-id="${p.id}" class="toggle-icon absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition ${isSelected ? 'bg-forest text-white' : 'bg-white/90 text-ink hover:bg-white'}">
+              ${isSelected
+                ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>'
+                : '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>'
+              }
+            </button>
+          </div>
+          <div class="p-4 md:p-5 flex flex-col gap-3 flex-1">
+            <div>
+              <h3 class="font-serif text-xl md:text-2xl text-ink leading-tight">${p.name}</h3>
+              <p class="text-xs md:text-sm text-stone mt-0.5">${p.tag}</p>
+            </div>
+            <button data-id="${p.id}" class="toggle-btn mt-auto w-full py-2.5 rounded-full text-sm font-medium transition flex items-center justify-center gap-1.5 ${isSelected ? 'bg-forest text-white' : 'bg-white text-ink border border-black/15 hover:border-black/30'}">
+              ${isSelected ? 'Selecionado <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>' : 'Selecionar'}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.querySelectorAll('.toggle-icon, .toggle-btn').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = parseInt(el.dataset.id);
+        selected.has(id) ? selected.delete(id) : selected.add(id);
+        render();
+        updateCounters();
+      });
+    });
+  }
+
+  function updateCounters() {
+    const n = selected.size;
+    cartCount.textContent = n;
+    stickyCount.textContent = n;
+    stickyBar.classList.toggle('hidden', n === 0);
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilter = btn.dataset.filter;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-forest', 'text-white');
+        b.classList.add('bg-white', 'text-ink', 'border', 'border-black/10');
+      });
+      btn.classList.remove('bg-white', 'text-ink', 'border', 'border-black/10');
+      btn.classList.add('bg-forest', 'text-white');
+      render();
+    });
+  });
+
+  render();
+  updateCounters();
+</script>
+</body>
+</html>
