@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Confirme sua presença · Open House Reserva Guinle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: '#f6f3ec',
+          ink: '#1f2a22',
+          forest: '#1f3327',
+          gold: '#c8a862',
+          stone: '#8a8578',
+        },
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .tracked-sm { letter-spacing: 0.08em; }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased">
+
+  <!-- ===== HEADER ===== -->
+  <header class="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-10 pt-6 pb-5 gap-4">
+    <a href="index.html">
+      <h1 class="font-serif text-xl md:text-2xl tracking-[0.2em] text-ink">RESERVA GUINLE</h1>
+      <p class="tracked-sm text-[9px] md:text-[10px] text-stone mt-1">OPEN HOUSE · CASA MODELO</p>
+    </a>
+    <nav class="hidden lg:flex items-center gap-8 text-sm text-ink/80">
+      <a href="index.html#evento" class="hover:text-ink transition">O evento</a>
+      <a href="index.html#casa" class="hover:text-ink transition">A casa modelo</a>
+      <a href="index.html#chegar" class="hover:text-ink transition">Como chegar</a>
+      <a href="index.html#contato" class="hover:text-ink transition">Contato</a>
+    </nav>
+    <span class="w-[1px] hidden lg:block"></span>
+  </header>
+
+  <!-- ===== FORM SECTION ===== -->
+  <section class="max-w-7xl mx-auto px-5 md:px-10 pb-16">
+    <div class="w-10 h-[2px] bg-gold mb-5"></div>
+    <h2 class="font-serif text-4xl md:text-5xl leading-none mb-3">Confirme sua presença</h2>
+    <p class="text-stone text-base mb-8 max-w-lg leading-relaxed">
+      Preencha seus dados para confirmar sua participação no Open House da Casa Modelo Reserva Guinle.
+    </p>
+
+    <div class="grid lg:grid-cols-[1.15fr_0.85fr] gap-8 lg:gap-12 items-start">
+
+      <div class="bg-white rounded-2xl border border-black/5 p-6 md:p-8 order-2 lg:order-1">
+        <h3 class="font-serif text-2xl mb-5">Seus dados</h3>
+
+        <div id="date-badge" class="flex items-start gap-3 bg-forest/[0.04] border border-forest/10 rounded-xl p-4 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-forest shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-semibold text-ink" id="date-label">11 de outubro de 2024</p>
+            <p class="text-xs text-stone">Sábado · 10h às 18h</p>
+          </div>
+          <p class="text-xs text-stone max-w-[160px] leading-snug">Esta é a data reservada para sua visita. Caso precise de alteração, nossa equipe entrará em contato.</p>
+        </div>
+
+        <form id="rsvp-form" class="space-y-4" novalidate>
+          <div>
+            <label for="name" class="block text-sm font-medium text-ink mb-1.5">Nome completo <span class="text-rose-500">*</span></label>
+            <input id="name" type="text" required placeholder="Ex.: Marcelo Silva" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-ink mb-1.5">E-mail <span class="text-rose-500">*</span></label>
+            <input id="email" type="email" required placeholder="seu@email.com" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+          </div>
+
+          <div>
+            <label for="phone" class="block text-sm font-medium text-ink mb-1.5">Telefone / WhatsApp <span class="text-rose-500">*</span></label>
+            <div class="flex gap-2">
+              <div class="relative shrink-0">
+                <select id="phone-code" class="appearance-none h-full bg-white border border-black/10 rounded-xl pl-4 pr-8 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20">
+                  <option>+55</option>
+                  <option>+1</option>
+                  <option>+351</option>
+                </select>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-stone absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+              </div>
+              <input id="phone" type="tel" required placeholder="(11) 9 9999-9999" class="flex-1 min-w-0 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+          </div>
+
+          <div>
+            <label for="company" class="block text-sm font-medium text-ink mb-1.5">Empresa (opcional)</label>
+            <input id="company" type="text" placeholder="Ex.: Empresa ou área de atuação" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+          </div>
+
+          <label class="flex items-start gap-2.5 text-sm text-ink/80 cursor-pointer select-none pt-1">
+            <input type="checkbox" id="confirm-checkbox" required checked class="mt-0.5 rounded border-black/20" />
+            Confirmo minha presença na data acima.
+          </label>
+
+          <p id="form-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2"></p>
+
+          <button type="submit" id="submit-btn" class="w-full bg-forest text-white py-3.5 rounded-xl font-medium hover:brightness-110 transition flex items-center justify-center gap-2">
+            <span id="submit-label">Confirmar presença</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+          </button>
+
+          <p class="flex items-center justify-center gap-1.5 text-xs text-stone pt-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+            Seus dados estão protegidos e serão utilizados apenas para este evento.
+          </p>
+        </form>
+      </div>
+
+      <div class="relative rounded-2xl overflow-hidden min-h-[280px] lg:min-h-[560px] order-1 lg:order-2">
+        <img src="https://images.unsplash.com/photo-1571055107559-3e67626fa8be?q=80&w=1200&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6">
+          <p class="tracked-sm text-[10px] text-white leading-[1.9] font-medium drop-shadow-sm">
+            ARQUITETURA<br>QUE INSPIRA<br>E BEM-ESTAR EM<br>PERFEITO EQUILÍBRIO.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<script>
+  // A data do convite normalmente vem de um token único na URL
+  // (?convidado=abc123), atrelado ao dia definido para aquele convidado.
+  // Aqui simulamos com a data padrão vinda do link de convite.
+  const params = new URLSearchParams(window.location.search);
+  const guestDate = params.get('data') || '11 de outubro de 2024';
+  document.getElementById('date-label').textContent = guestDate;
+
+  const form = document.getElementById('rsvp-form');
+  const formError = document.getElementById('form-error');
+  const submitBtn = document.getElementById('submit-btn');
+  const submitLabel = document.getElementById('submit-label');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formError.classList.add('hidden');
+
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const confirmed = document.getElementById('confirm-checkbox').checked;
+
+    if (!name || !email || !phone) {
+      formError.textContent = 'Preencha nome, e-mail e telefone para confirmar.';
+      formError.classList.remove('hidden');
+      return;
+    }
+    if (!confirmed) {
+      formError.textContent = 'Confirme a caixa de seleção para prosseguir.';
+      formError.classList.remove('hidden');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitLabel.textContent = 'Confirmando...';
+
+    try {
+      localStorage.setItem('ohrg_rsvp_status', 'confirmed');
+      localStorage.setItem('ohrg_rsvp_data', JSON.stringify({ name, email, phone, date: guestDate }));
+    } catch (err) {}
+
+    await new Promise(r => setTimeout(r, 400));
+    window.location.href = 'confirmado.html';
+  });
+</script>
+</body>
+</html>

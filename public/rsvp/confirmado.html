@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Presença confirmada · Open House Reserva Guinle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: '#f6f3ec',
+          ink: '#1f2a22',
+          forest: '#1f3327',
+          gold: '#c8a862',
+          stone: '#8a8578',
+        },
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .tracked-sm { letter-spacing: 0.08em; }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased">
+
+  <!-- ===== HEADER ===== -->
+  <header class="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-10 pt-6 pb-5 gap-4">
+    <a href="index.html">
+      <h1 class="font-serif text-xl md:text-2xl tracking-[0.2em] text-ink">RESERVA GUINLE</h1>
+      <p class="tracked-sm text-[9px] md:text-[10px] text-stone mt-1">OPEN HOUSE · CASA MODELO</p>
+    </a>
+    <nav class="hidden lg:flex items-center gap-8 text-sm text-ink/80">
+      <a href="index.html#evento" class="hover:text-ink transition">O evento</a>
+      <a href="index.html#casa" class="hover:text-ink transition">A casa modelo</a>
+      <a href="index.html#chegar" class="hover:text-ink transition">Como chegar</a>
+      <a href="index.html#contato" class="hover:text-ink transition">Contato</a>
+    </nav>
+    <button id="calendar-btn" class="shrink-0 inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+      Adicionar ao meu calendário
+    </button>
+  </header>
+
+  <!-- ===== SUCCESS SECTION ===== -->
+  <section class="max-w-7xl mx-auto px-5 md:px-10 pb-16">
+    <div class="grid lg:grid-cols-[1fr_0.85fr] gap-8 lg:gap-12 items-center">
+
+      <div class="py-6">
+        <div class="w-14 h-14 rounded-full bg-forest text-white flex items-center justify-center mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+        </div>
+        <h2 class="font-serif text-4xl md:text-5xl leading-none mb-4" id="guest-title">Presença confirmada!</h2>
+        <p class="text-stone text-base leading-relaxed mb-7 max-w-md" id="guest-message">
+          Recebemos seus dados e sua participação no Open House da Casa Modelo Reserva Guinle está confirmada.
+        </p>
+
+        <div class="flex items-center gap-3 bg-white border border-black/5 rounded-xl p-4 mb-7 max-w-sm">
+          <div class="w-10 h-10 rounded-lg bg-forest/[0.06] flex items-center justify-center text-forest shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-ink" id="date-label">11 de outubro de 2024</p>
+            <p class="text-xs text-stone">Sábado · 10h às 18h</p>
+          </div>
+        </div>
+
+        <p class="text-sm text-stone mb-7">
+          Em breve, você receberá mais informações sobre o evento por e-mail e WhatsApp.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <button id="calendar-btn-2" class="inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-6 py-3 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+            Adicionar ao meu calendário
+          </button>
+          <a href="index.html" class="text-sm text-forest hover:underline underline-offset-2 font-medium">Voltar para a página inicial</a>
+        </div>
+      </div>
+
+      <div class="relative rounded-2xl overflow-hidden min-h-[280px] lg:min-h-[480px]">
+        <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=1200&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6">
+          <p class="tracked-sm text-[10px] text-white leading-[1.9] font-medium drop-shadow-sm">
+            MAIS QUE UM LUGAR.<br>UMA FORMA DE VIVER.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<script>
+  try {
+    const raw = localStorage.getItem('ohrg_rsvp_data');
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data.date) document.getElementById('date-label').textContent = data.date;
+      if (data.name) {
+        const firstName = data.name.trim().split(' ')[0];
+        document.getElementById('guest-message').textContent =
+          `Recebemos seus dados, ${firstName}. Sua participação no Open House da Casa Modelo Reserva Guinle está confirmada.`;
+      }
+    } else {
+      // Ninguém confirmou ainda por este navegador — evita mostrar a
+      // tela de sucesso "solta"; manda de volta pro formulário.
+      window.location.replace('confirmar.html');
+    }
+  } catch (err) {}
+
+  function addToCalendar() {
+    const title = encodeURIComponent('Open House · Casa Modelo Reserva Guinle');
+    const details = encodeURIComponent('Confirmação de presença no Open House da Casa Modelo Reserva Guinle.');
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}`;
+    window.open(url, '_blank');
+  }
+  document.getElementById('calendar-btn').addEventListener('click', addToCalendar);
+  document.getElementById('calendar-btn-2').addEventListener('click', addToCalendar);
+</script>
+</body>
+</html>
