@@ -317,6 +317,37 @@ app.get('/api/webhook/rsvp', requireWebhookKey, (req, res) => {
   });
 });
 
+// ---------- Roteamento por domínio (rsvp.qualifika.com.br) ----------
+// Quando o app é acessado pelo domínio do RSVP, a raiz "/" deve cair na tela
+// do convidado (rsvp/index.html) e "/admin" deve cair direto na área
+// administrativa de convidados, em vez do catálogo.
+const RSVP_HOSTS = (process.env.RSVP_HOST || '')
+  .split(',')
+  .map(h => h.trim().toLowerCase())
+  .filter(Boolean);
+
+function isRsvpHost(req) {
+  if (!RSVP_HOSTS.length) return false;
+  return RSVP_HOSTS.includes((req.hostname || '').toLowerCase());
+}
+
+// Pequeno endpoint público para o front-end saber se está sendo acessado
+// pelo domínio do RSVP (usado para montar links curtos no admin de convidados).
+app.get('/api/config', (req, res) => {
+  res.json({ rsvpHost: isRsvpHost(req) });
+});
+
+app.get('/', (req, res, next) => {
+  if (!isRsvpHost(req)) return next();
+  const qs = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+  res.redirect(`/rsvp/index.html${qs}`);
+});
+
+app.get(['/admin', '/admin/'], (req, res, next) => {
+  if (!isRsvpHost(req)) return next();
+  res.redirect('/admin/rsvp-convidados.html');
+});
+
 // ---------- Área protegida (páginas HTML do admin) ----------
 // Protege /admin/*.html no servidor: sem sessão válida, redireciona pro login
 // antes mesmo de servir o arquivo estático.

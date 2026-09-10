@@ -184,6 +184,17 @@
 </div>
 
 <script>
+  window.__RSVP_HOST__ = false;
+  const __configReady = (async function loadConfig() {
+    try {
+      const res = await fetch('/api/config');
+      if (res.ok) {
+        const cfg = await res.json();
+        window.__RSVP_HOST__ = !!cfg.rsvpHost;
+      }
+    } catch (err) { /* mantém padrão (false) se falhar */ }
+  })();
+
   (async function checkSession() {
     try {
       const res = await fetch('/api/me', { credentials: 'include' });
@@ -246,6 +257,12 @@
   }
 
   function inviteUrl(token) {
+    // Quando o admin é aberto pelo domínio do RSVP, gera o link curto pela raiz
+    // (o servidor redireciona "/" para a tela do convidado nesse domínio).
+    // Em qualquer outro domínio (ex: catalogo.qualifika.com.br), usa o caminho completo.
+    if (window.__RSVP_HOST__) {
+      return `${window.location.origin}/?t=${token}`;
+    }
     return `${window.location.origin}/rsvp/index.html?t=${token}`;
   }
 
@@ -382,7 +399,7 @@
     }
   });
 
-  loadGuests();
+  __configReady.then(loadGuests);
 </script>
 </body>
 </html>
