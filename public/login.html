@@ -127,9 +127,22 @@
     pass.type = pass.type === 'password' ? 'text' : 'password';
   });
 
-  // Se já tem sessão válida, pula direto pra lista de produtos
+  // Depois de logado, manda para a área certa: RSVP se o domínio for o do
+  // RSVP, senão o admin de produtos do catálogo (comportamento padrão).
+  async function pickAdminHome() {
+    try {
+      const res = await fetch('/api/config');
+      if (res.ok) {
+        const cfg = await res.json();
+        if (cfg.rsvpHost) return '/admin/rsvp-convidados.html';
+      }
+    } catch (err) { /* segue com o padrão do catálogo */ }
+    return '/admin/produtos.html';
+  }
+
+  // Se já tem sessão válida, pula direto pra área administrativa certa
   fetch('/api/me', { credentials: 'include' })
-    .then(r => r.ok ? window.location.replace('/admin/produtos.html') : null)
+    .then(async r => { if (r.ok) window.location.replace(await pickAdminHome()); })
     .catch(() => {});
 
   form.addEventListener('submit', async (e) => {
@@ -158,7 +171,7 @@
         return;
       }
 
-      window.location.href = '/admin/produtos.html';
+      window.location.href = await pickAdminHome();
     } catch (err) {
       errorMsg.textContent = 'Erro de conexão com o servidor.';
       errorMsg.classList.remove('hidden');

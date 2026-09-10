@@ -339,22 +339,28 @@ app.get('/api/config', (req, res) => {
 
 app.get('/', (req, res, next) => {
   if (!isRsvpHost(req)) return next();
+  res.set('Cache-Control', 'no-store');
   const qs = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
   res.redirect(`/rsvp/index.html${qs}`);
 });
 
 app.get(['/admin', '/admin/'], (req, res, next) => {
   if (!isRsvpHost(req)) return next();
+  res.set('Cache-Control', 'no-store');
   res.redirect('/admin/rsvp-convidados.html');
 });
 
 // ---------- Área protegida (páginas HTML do admin) ----------
 // Protege /admin/*.html no servidor: sem sessão válida, redireciona pro login
 // antes mesmo de servir o arquivo estático.
-app.use('/admin', requireAuthPage, express.static(path.join(PUBLIC_DIR, 'admin')));
+const noCacheForHtml = (res, filePath) => {
+  if (filePath.endsWith('.html')) res.set('Cache-Control', 'no-store');
+};
+
+app.use('/admin', requireAuthPage, express.static(path.join(PUBLIC_DIR, 'admin'), { setHeaders: noCacheForHtml }));
 
 // ---------- Estáticos públicos (catálogo, login, RSVP) ----------
-app.use(express.static(PUBLIC_DIR));
+app.use(express.static(PUBLIC_DIR, { setHeaders: noCacheForHtml }));
 
 // ---------- Erros de upload (multer) em formato JSON ----------
 app.use((err, req, res, next) => {
