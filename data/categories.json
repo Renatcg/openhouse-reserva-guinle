@@ -1,0 +1,7 @@
+[
+  { "id": "cat-sala", "title": "Sala", "createdAt": "2026-09-10T00:00:00.000Z", "updatedAt": "2026-09-10T00:00:00.000Z" },
+  { "id": "cat-jantar", "title": "Jantar", "createdAt": "2026-09-10T00:00:00.000Z", "updatedAt": "2026-09-10T00:00:00.000Z" },
+  { "id": "cat-quartos", "title": "Quartos", "createdAt": "2026-09-10T00:00:00.000Z", "updatedAt": "2026-09-10T00:00:00.000Z" },
+  { "id": "cat-iluminacao", "title": "Iluminação", "createdAt": "2026-09-10T00:00:00.000Z", "updatedAt": "2026-09-10T00:00:00.000Z" },
+  { "id": "cat-objetos", "title": "Objetos", "createdAt": "2026-09-10T00:00:00.000Z", "updatedAt": "2026-09-10T00:00:00.000Z" }
+]

@@ -139,10 +139,7 @@
                 <label for="category" class="block text-sm font-medium text-ink mb-1.5">Categoria <span class="text-rose-500">*</span></label>
                 <div class="relative">
                   <select id="category" name="category" required class="w-full appearance-none bg-white border border-black/10 rounded-xl pl-4 pr-9 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20">
-                    <option value="" disabled selected>Selecione uma categoria</option>
-                    <option>Móveis</option>
-                    <option>Iluminação</option>
-                    <option>Objetos</option>
+                    <option value="" disabled selected>Carregando categorias…</option>
                   </select>
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-stone absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
                 </div>
@@ -336,6 +333,25 @@
     if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
   });
 
+  // ---------- Carrega categorias (do admin de categorias) ----------
+  let pendingCategoryValue = null;
+  async function loadCategories() {
+    try {
+      const res = await fetch('/api/categories');
+      const data = await res.json();
+      const categories = data.categories || [];
+      categoryEl.innerHTML = '<option value="" disabled selected>Selecione uma categoria</option>' +
+        categories.map(c => `<option value="${c.title.replace(/"/g, '&quot;')}">${c.title}</option>`).join('');
+      if (pendingCategoryValue) {
+        categoryEl.value = pendingCategoryValue;
+        pendingCategoryValue = null;
+      }
+    } catch (err) {
+      categoryEl.innerHTML = '<option value="" disabled selected>Não foi possível carregar categorias</option>';
+    }
+  }
+  loadCategories();
+
   // ---------- Carrega produto existente (modo edição) ----------
   async function loadProduct() {
     formLoading.classList.remove('hidden');
@@ -350,7 +366,11 @@
       saveLabel.textContent = 'Salvar alterações';
 
       titleEl.value = product.title;
-      categoryEl.value = product.category;
+      if (Array.from(categoryEl.options).some(o => o.value === product.category)) {
+        categoryEl.value = product.category;
+      } else {
+        pendingCategoryValue = product.category;
+      }
       roomEl.value = product.room || '';
       descEl.value = product.description;
       descCount.textContent = product.description.length;

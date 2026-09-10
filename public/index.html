@@ -86,18 +86,14 @@
   <nav class="max-w-7xl mx-auto px-5 md:px-10 pb-6 md:pb-8">
     <div class="flex gap-2 md:gap-3 overflow-x-auto no-scrollbar pb-1" id="filters">
       <button data-filter="Todos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-forest text-white transition">Todos</button>
-      <button data-filter="Sala" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Sala</button>
-      <button data-filter="Jantar" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Jantar</button>
-      <button data-filter="Quartos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Quartos</button>
-      <button data-filter="Iluminação" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Iluminação</button>
-      <button data-filter="Objetos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">Objetos</button>
+      <!-- demais categorias injetadas por JS -->
     </div>
   </nav>
 
   <!-- ===== PRODUCT GRID ===== -->
   <main class="max-w-7xl mx-auto px-5 md:px-10 pb-32 md:pb-28">
     <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-      <!-- cards injected by JS -->
+      <p class="col-span-full text-center text-stone text-sm py-10">Carregando produtos…</p>
     </div>
   </main>
 
@@ -108,8 +104,8 @@
         <span id="sticky-count" class="font-serif text-2xl text-gold align-middle mr-2">0</span>
         <span class="align-middle">itens selecionados</span>
       </p>
-      <button class="bg-gold text-ink px-5 md:px-7 py-2.5 md:py-3 rounded-full text-sm md:text-base font-medium hover:brightness-95 transition flex items-center gap-2">
-        Ver seleção <span aria-hidden="true">→</span>
+      <button id="request-quote-btn" class="bg-gold text-ink px-5 md:px-7 py-2.5 md:py-3 rounded-full text-sm md:text-base font-medium hover:brightness-95 transition flex items-center gap-2">
+        Solicitar orçamento <span aria-hidden="true">→</span>
       </button>
     </div>
   </div>
@@ -119,33 +115,61 @@
   </footer>
 
 <script>
-  const products = [
-    { id: 1, name: "Poltrona Alba", category: "Sala", tag: "Estofado • Sala", img: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=800&auto=format&fit=crop" },
-    { id: 2, name: "Mesa Lume", category: "Sala", tag: "Mesa de apoio • Sala", img: "https://images.unsplash.com/photo-1499933374294-4584851497cc?q=80&w=800&auto=format&fit=crop" },
-    { id: 3, name: "Pendente Orbe", category: "Iluminação", tag: "Iluminação • Jantar", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format&fit=crop" },
-    { id: 4, name: "Banco Nilo", category: "Objetos", tag: "Madeira • Living", img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800&auto=format&fit=crop" },
-    { id: 5, name: "Vaso Terra", category: "Objetos", tag: "Cerâmica • Objetos", img: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?q=80&w=800&auto=format&fit=crop" },
-    { id: 6, name: "Arranjo Verde", category: "Objetos", tag: "Planta • Objetos", img: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=800&auto=format&fit=crop" },
-    { id: 7, name: "Cadeira Junco", category: "Jantar", tag: "Fibra natural • Jantar", img: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=800&auto=format&fit=crop" },
-    { id: 8, name: "Tapete Areia", category: "Quartos", tag: "Têxtil • Quartos", img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800&auto=format&fit=crop" },
-  ];
+  // Número de WhatsApp que recebe os pedidos de orçamento (formato internacional, só dígitos).
+  // TROQUE pelo número real antes de divulgar o link do catálogo.
+  const WHATSAPP_NUMBER = '5511999999999';
 
-  let selected = new Set([1, 2]); // pré-selecionados para refletir o mock
+  const PLACEHOLDER_IMG = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#eee7d8"/><path d="M40 140l35-45 25 30 30-40 30 55z" fill="#c9c0aa"/><circle cx="70" cy="70" r="14" fill="#c9c0aa"/></svg>`
+  );
+
+  let products = [];
+  let categories = [];
+  let selected = new Set();
   let activeFilter = "Todos";
 
   const grid = document.getElementById('grid');
+  const filtersEl = document.getElementById('filters');
   const cartCount = document.getElementById('cart-count');
   const stickyBar = document.getElementById('sticky-bar');
   const stickyCount = document.getElementById('sticky-count');
 
+  function renderFilters() {
+    const extra = categories.map(c => `
+      <button data-filter="${c.title.replace(/"/g, '&quot;')}" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">${c.title}</button>
+    `).join('');
+    filtersEl.innerHTML = `<button data-filter="Todos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-forest text-white transition">Todos</button>${extra}`;
+
+    filtersEl.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.filter;
+        filtersEl.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.remove('bg-forest', 'text-white');
+          b.classList.add('bg-white', 'text-ink', 'border', 'border-black/10');
+        });
+        btn.classList.remove('bg-white', 'text-ink', 'border', 'border-black/10');
+        btn.classList.add('bg-forest', 'text-white');
+        render();
+      });
+    });
+  }
+
   function render() {
-    const list = activeFilter === "Todos" ? products : products.filter(p => p.category === activeFilter);
+    const active = products.filter(p => p.status === 'Ativo');
+    const list = activeFilter === "Todos" ? active : active.filter(p => p.category === activeFilter);
+
+    if (list.length === 0) {
+      grid.innerHTML = `<p class="col-span-full text-center text-stone text-sm py-10">Nenhum produto nessa categoria ainda.</p>`;
+      return;
+    }
+
     grid.innerHTML = list.map(p => {
       const isSelected = selected.has(p.id);
+      const img = (p.images && p.images[0]) || PLACEHOLDER_IMG;
       return `
         <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
           <div class="relative aspect-square">
-            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" />
+            <img src="${img}" alt="${p.title}" class="w-full h-full object-cover" />
             <button data-id="${p.id}" class="toggle-icon absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition ${isSelected ? 'bg-forest text-white' : 'bg-white/90 text-ink hover:bg-white'}">
               ${isSelected
                 ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>'
@@ -155,8 +179,8 @@
           </div>
           <div class="p-4 md:p-5 flex flex-col gap-3 flex-1">
             <div>
-              <h3 class="font-serif text-xl md:text-2xl text-ink leading-tight">${p.name}</h3>
-              <p class="text-xs md:text-sm text-stone mt-0.5">${p.tag}</p>
+              <h3 class="font-serif text-xl md:text-2xl text-ink leading-tight">${p.title}</h3>
+              <p class="text-xs md:text-sm text-stone mt-0.5 line-clamp-2">${p.description || ''}</p>
             </div>
             <button data-id="${p.id}" class="toggle-btn mt-auto w-full py-2.5 rounded-full text-sm font-medium transition flex items-center justify-center gap-1.5 ${isSelected ? 'bg-forest text-white' : 'bg-white text-ink border border-black/15 hover:border-black/30'}">
               ${isSelected ? 'Selecionado <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>' : 'Selecionar'}
@@ -166,9 +190,9 @@
       `;
     }).join('');
 
-    document.querySelectorAll('.toggle-icon, .toggle-btn').forEach(el => {
+    grid.querySelectorAll('.toggle-icon, .toggle-btn').forEach(el => {
       el.addEventListener('click', () => {
-        const id = parseInt(el.dataset.id);
+        const id = el.dataset.id;
         selected.has(id) ? selected.delete(id) : selected.add(id);
         render();
         updateCounters();
@@ -183,21 +207,42 @@
     stickyBar.classList.toggle('hidden', n === 0);
   }
 
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      activeFilter = btn.dataset.filter;
-      document.querySelectorAll('.filter-btn').forEach(b => {
-        b.classList.remove('bg-forest', 'text-white');
-        b.classList.add('bg-white', 'text-ink', 'border', 'border-black/10');
-      });
-      btn.classList.remove('bg-white', 'text-ink', 'border', 'border-black/10');
-      btn.classList.add('bg-forest', 'text-white');
-      render();
-    });
+  function requestQuote() {
+    const chosen = products.filter(p => selected.has(p.id));
+    if (chosen.length === 0) return;
+
+    const lines = chosen.map(p => `• ${p.title}`).join('\n');
+    const message = `Olá! Vi no catálogo do Open House Reserva Guinle e gostaria de um orçamento para os seguintes itens:\n\n${lines}`;
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  }
+
+  document.getElementById('request-quote-btn').addEventListener('click', requestQuote);
+  document.getElementById('cart-btn').addEventListener('click', () => {
+    stickyBar.scrollIntoView({ behavior: 'smooth', block: 'end' });
   });
 
-  render();
-  updateCounters();
+  async function init() {
+    try {
+      const [productsRes, categoriesRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/categories'),
+      ]);
+      const productsData = await productsRes.json();
+      const categoriesData = await categoriesRes.json();
+      products = productsData.products || [];
+      categories = categoriesData.categories || [];
+    } catch (err) {
+      products = [];
+      categories = [];
+      grid.innerHTML = `<p class="col-span-full text-center text-stone text-sm py-10">Não foi possível carregar o catálogo agora. Tente novamente em instantes.</p>`;
+    }
+    renderFilters();
+    render();
+    updateCounters();
+  }
+
+  init();
 </script>
 </body>
 </html>

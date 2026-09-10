@@ -16,6 +16,7 @@ const {
   requireAuthPage,
 } = require('./auth');
 const products = require('./products');
+const categories = require('./categories');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -144,6 +145,39 @@ app.delete('/api/products/:id', requireAuthApi, (req, res) => {
   const ok = products.remove(req.params.id);
   if (!ok) return res.status(404).json({ error: 'Produto não encontrado.' });
   res.json({ ok: true });
+});
+
+// ---------- Rotas de categorias (API) ----------
+// Leitura é pública (usada no catálogo e no formulário de produto).
+// Criar/editar título exige sessão de admin válida. Sem exclusão por ora.
+
+app.get('/api/categories', (req, res) => {
+  res.json({ categories: categories.loadAll() });
+});
+
+app.post('/api/categories', requireAuthApi, (req, res) => {
+  const { title } = req.body || {};
+  if (!title || !title.trim()) return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
+
+  const exists = categories.loadAll().some(c => c.title.trim().toLowerCase() === title.trim().toLowerCase());
+  if (exists) return res.status(409).json({ error: 'Já existe uma categoria com esse nome.' });
+
+  const category = categories.create({ title: title.trim() });
+  res.status(201).json({ category });
+});
+
+app.put('/api/categories/:id', requireAuthApi, (req, res) => {
+  const existing = categories.findById(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Categoria não encontrada.' });
+
+  const { title } = req.body || {};
+  if (!title || !title.trim()) return res.status(400).json({ error: 'Nome da categoria é obrigatório.' });
+
+  const duplicate = categories.loadAll().some(c => c.id !== req.params.id && c.title.trim().toLowerCase() === title.trim().toLowerCase());
+  if (duplicate) return res.status(409).json({ error: 'Já existe uma categoria com esse nome.' });
+
+  const category = categories.update(req.params.id, { title: title.trim() });
+  res.json({ category });
 });
 
 // ---------- Área protegida (páginas HTML do admin) ----------
