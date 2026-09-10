@@ -41,48 +41,47 @@
       <h1 class="font-serif text-xl md:text-2xl tracking-[0.2em] text-ink">RESERVA GUINLE</h1>
       <p class="tracked-sm text-[9px] md:text-[10px] text-stone mt-1">OPEN HOUSE · CASA MODELO</p>
     </div>
-    <nav class="hidden lg:flex items-center gap-8 text-sm text-ink/80">
-      <a href="#evento" class="hover:text-ink transition">O evento</a>
-      <a href="#casa" class="hover:text-ink transition">A casa modelo</a>
-      <a href="#chegar" class="hover:text-ink transition">Como chegar</a>
-      <a href="#contato" class="hover:text-ink transition">Contato</a>
-    </nav>
-    <a id="cta-top" href="confirmar.html" class="shrink-0 bg-forest text-white px-5 py-2.5 rounded-full text-sm font-medium hover:brightness-110 transition">Confirmar minha presença</a>
   </header>
 
-  <!-- ===== HERO ===== -->
-  <section class="max-w-7xl mx-auto px-5 md:px-10 pb-16">
+  <!-- ===== ESTADO: CARREGANDO ===== -->
+  <section id="state-loading" class="max-w-7xl mx-auto px-5 md:px-10 py-24 text-center">
+    <p class="text-stone text-sm">Carregando seu convite…</p>
+  </section>
+
+  <!-- ===== ESTADO: CONVITE INVÁLIDO ===== -->
+  <section id="state-invalid" class="hidden max-w-2xl mx-auto px-5 md:px-10 py-24 text-center">
+    <div class="w-14 h-14 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+    </div>
+    <h2 class="font-serif text-3xl md:text-4xl mb-3">Convite não encontrado</h2>
+    <p class="text-stone text-sm md:text-base max-w-md mx-auto">
+      Este link de convite não é válido ou pode ter expirado. Verifique se você abriu o link exatamente como recebeu, ou fale com quem te convidou para o Open House.
+    </p>
+  </section>
+
+  <!-- ===== ESTADO: CONVITE VÁLIDO ===== -->
+  <section id="state-valid" class="hidden max-w-7xl mx-auto px-5 md:px-10 pb-16">
     <div class="grid lg:grid-cols-[0.85fr_1.15fr] gap-8 lg:gap-12 items-stretch">
 
       <div class="flex flex-col justify-center py-2">
         <div class="w-10 h-[2px] bg-gold mb-5"></div>
         <h2 class="font-serif text-4xl md:text-5xl leading-[1.08] mb-4">Sua presença torna este momento ainda mais especial.</h2>
         <p class="text-stone text-base leading-relaxed mb-8 max-w-md">
-          Confirme sua participação no Open House da Casa Modelo Reserva Guinle.
+          Você foi convidado para o Open House da Casa Modelo Reserva Guinle, no dia reservado abaixo.
         </p>
 
-        <div class="grid grid-cols-3 gap-3 mb-8">
-          <div class="border border-black/10 rounded-xl p-3.5 bg-white/50">
-            <p class="tracked-sm text-[9px] text-stone font-medium mb-1.5">DIA 1</p>
-            <p class="font-serif text-3xl leading-none">10</p>
-            <p class="text-[11px] text-stone mt-1">OUT</p>
-            <p class="tracked-sm text-[9px] text-stone/70 mt-1">SEXTA</p>
-          </div>
-          <div class="border border-black/10 rounded-xl p-3.5 bg-white/50">
-            <p class="tracked-sm text-[9px] text-stone font-medium mb-1.5">DIA 2</p>
-            <p class="font-serif text-3xl leading-none">11</p>
-            <p class="text-[11px] text-stone mt-1">OUT</p>
-            <p class="tracked-sm text-[9px] text-stone/70 mt-1">SÁBADO</p>
-          </div>
-          <div class="border border-black/10 rounded-xl p-3.5 bg-white/50">
-            <p class="tracked-sm text-[9px] text-stone font-medium mb-1.5">DIA 3</p>
-            <p class="font-serif text-3xl leading-none">12</p>
-            <p class="text-[11px] text-stone mt-1">OUT</p>
-            <p class="tracked-sm text-[9px] text-stone/70 mt-1">DOMINGO</p>
-          </div>
+        <div class="border border-black/10 rounded-2xl p-5 bg-white/60 mb-8 max-w-sm">
+          <p class="tracked-sm text-[10px] text-gold font-semibold mb-2" id="day-short">SEU DIA RESERVADO</p>
+          <p class="font-serif text-3xl leading-none mb-1" id="day-weekday">—</p>
+          <p class="text-sm text-stone" id="day-date">—</p>
         </div>
 
-        <div class="grid grid-cols-3 gap-3">
+        <a id="cta-btn" href="#" class="inline-flex w-fit items-center gap-2 bg-forest text-white px-6 py-3.5 rounded-full text-sm md:text-base font-medium hover:brightness-110 transition">
+          <span id="cta-label">Confirmar minha presença</span>
+          <span aria-hidden="true">→</span>
+        </a>
+
+        <div class="grid grid-cols-3 gap-3 mt-10">
           <div class="flex flex-col items-start gap-2">
             <div class="w-9 h-9 rounded-full bg-forest/[0.06] flex items-center justify-center text-forest">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
@@ -122,14 +121,49 @@
   </section>
 
 <script>
-  // Se o convidado já confirmou presença por este link, o CTA leva
-  // direto para a tela de "já confirmado" em vez do formulário.
-  try {
-    if (localStorage.getItem('ohrg_rsvp_status') === 'confirmed') {
-      document.getElementById('cta-top').href = 'ja-confirmado.html';
-      document.getElementById('cta-top').textContent = 'Ver minha confirmação';
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('t');
+
+  const stateLoading = document.getElementById('state-loading');
+  const stateInvalid = document.getElementById('state-invalid');
+  const stateValid = document.getElementById('state-valid');
+
+  function showState(state) {
+    stateLoading.classList.add('hidden');
+    stateInvalid.classList.add('hidden');
+    stateValid.classList.add('hidden');
+    state.classList.remove('hidden');
+  }
+
+  async function init() {
+    if (!token) { showState(stateInvalid); return; }
+
+    try {
+      const res = await fetch(`/api/rsvp/${encodeURIComponent(token)}`);
+      if (!res.ok) { showState(stateInvalid); return; }
+      const data = await res.json();
+
+      document.getElementById('day-short').textContent = data.day.short.toUpperCase();
+      document.getElementById('day-weekday').textContent = data.day.weekday;
+      document.getElementById('day-date').textContent = data.day.dateLabel;
+
+      const ctaBtn = document.getElementById('cta-btn');
+      const ctaLabel = document.getElementById('cta-label');
+      if (data.status === 'Confirmado') {
+        ctaBtn.href = `ja-confirmado.html?t=${encodeURIComponent(token)}`;
+        ctaLabel.textContent = 'Ver minha confirmação';
+      } else {
+        ctaBtn.href = `confirmar.html?t=${encodeURIComponent(token)}`;
+        ctaLabel.textContent = 'Confirmar minha presença';
+      }
+
+      showState(stateValid);
+    } catch (err) {
+      showState(stateInvalid);
     }
-  } catch (err) {}
+  }
+
+  init();
 </script>
 </body>
 </html>

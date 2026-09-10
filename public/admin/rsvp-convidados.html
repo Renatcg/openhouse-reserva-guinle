@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Convidados RSVP · Admin Reserva Guinle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: '#f6f3ec',
+          ink: '#1f2a22',
+          forest: '#1f3327',
+          gold: '#c8a862',
+          stone: '#8a8578',
+        },
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .tracked-sm { letter-spacing: 0.08em; }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased">
+
+<div class="min-h-screen flex">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="hidden lg:flex flex-col w-[250px] shrink-0 bg-forest text-cream/90 relative">
+    <div class="px-7 pt-9 pb-6">
+      <h1 class="font-serif text-xl tracking-[0.2em] text-white">RESERVA GUINLE</h1>
+      <p class="tracked-sm text-[9px] text-cream/50 mt-1">OPEN HOUSE · CASA MODELO</p>
+    </div>
+    <div class="mx-7 h-px bg-white/15 mb-4"></div>
+
+    <nav class="flex-1 px-4 space-y-1">
+      <a href="produtos.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375C2.754 3.75 2.25 4.254 2.25 4.875v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>
+        Produtos
+      </a>
+      <a href="categorias.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+        Categorias
+      </a>
+      <a href="rsvp-convidados.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75a4.5 4.5 0 10-9 0m9 0a4.5 4.5 0 01-9 0m9 0h1.5a3 3 0 003-3v-1.5a3 3 0 00-3-3h-1.5m-9 7.5H6a3 3 0 01-3-3v-1.5a3 3 0 013-3h1.5m9-3.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
+        Convidados RSVP
+      </a>
+      <button type="button" data-soon="Usuários" class="soon-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition text-left">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+        Usuários
+        <span class="ml-auto text-[9px] tracked-sm text-cream/40">EM BREVE</span>
+      </button>
+    </nav>
+
+    <div class="px-4 pb-4">
+      <div class="mx-3 h-px bg-white/15 mb-4"></div>
+      <a href="#" id="logout-link" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25" /></svg>
+        Sair
+      </a>
+    </div>
+
+    <div class="p-7 relative overflow-hidden mt-auto" style="min-height:230px;">
+      <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=600&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-60" />
+      <div class="absolute inset-0 bg-gradient-to-t from-forest via-forest/60 to-transparent"></div>
+      <p class="relative tracked-sm text-[10px] text-white/90 leading-[1.9] font-medium">
+        DETALHES<br>QUE TORNAM<br>A VIDA<br>EXTRAORDINÁRIA.
+      </p>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="flex-1 min-w-0">
+
+    <!-- Topbar -->
+    <header class="flex items-center gap-4 px-5 md:px-10 py-5 border-b border-black/5 bg-cream/80 backdrop-blur sticky top-0 z-30">
+      <button class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg border border-black/10" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" /></svg>
+      </button>
+      <div class="relative flex-1 max-w-xl">
+        <p class="font-serif text-lg text-ink/60">Convidados do RSVP</p>
+      </div>
+      <div class="ml-auto relative" id="user-menu-wrap">
+        <button type="button" id="user-menu-btn" class="flex items-center gap-3" aria-haspopup="true" aria-expanded="false">
+          <div class="w-9 h-9 rounded-full bg-forest text-white flex items-center justify-center font-serif text-base" id="user-avatar">?</div>
+          <div class="hidden sm:block leading-tight text-left">
+            <p class="text-sm font-medium" id="user-name">—</p>
+            <p class="text-xs text-stone" id="user-role">—</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-stone" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+        </button>
+        <div id="user-menu" class="hidden absolute right-0 top-full mt-2 w-52 bg-white rounded-xl border border-black/5 shadow-lg py-1.5 z-40">
+          <button type="button" id="logout-link-top" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 text-left">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25" /></svg>
+            Sair
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="px-5 md:px-10 py-8 max-w-[1200px]">
+
+      <div class="mb-6">
+        <p class="tracked-sm text-[11px] text-gold font-semibold mb-2">RSVP</p>
+        <h2 class="font-serif text-4xl md:text-5xl leading-none mb-3">Convidados</h2>
+        <p class="text-stone text-sm md:text-base">Cadastre os telefones por dia do evento. Cada um gera um link único — só quem confirmar com esse telefone consegue preencher o resto do formulário.</p>
+      </div>
+
+      <!-- Webhook info -->
+      <div class="bg-white rounded-2xl border border-black/5 p-4 md:p-5 mb-6 flex items-start gap-3">
+        <div class="w-9 h-9 rounded-lg bg-forest/[0.06] flex items-center justify-center text-forest shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>
+        </div>
+        <div class="text-sm text-stone leading-relaxed">
+          <span class="text-ink font-medium">Endpoint para o pipeline da Mauad:</span>
+          <code class="bg-black/5 px-1.5 py-0.5 rounded text-xs">GET /api/webhook/rsvp</code>
+          — autenticado com a chave <code class="bg-black/5 px-1.5 py-0.5 rounded text-xs">RSVP_WEBHOOK_KEY</code> do servidor, enviada no header <code class="bg-black/5 px-1.5 py-0.5 rounded text-xs">x-api-key</code> ou <code class="bg-black/5 px-1.5 py-0.5 rounded text-xs">Authorization: Bearer</code>.
+        </div>
+      </div>
+
+      <!-- Adicionar convidados -->
+      <form id="add-form" class="bg-white rounded-2xl border border-black/5 p-5 md:p-6 mb-6">
+        <h3 class="font-serif text-2xl mb-4">Adicionar convidados</h3>
+        <div class="grid sm:grid-cols-[200px_1fr] gap-4">
+          <div>
+            <label for="day-select" class="block text-sm font-medium text-ink mb-1.5">Dia do evento</label>
+            <select id="day-select" required class="w-full appearance-none bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20">
+              <!-- opções injetadas por JS -->
+            </select>
+          </div>
+          <div>
+            <label for="phones-input" class="block text-sm font-medium text-ink mb-1.5">Telefones (um por linha)</label>
+            <textarea id="phones-input" rows="4" required placeholder="11999990000&#10;11999990001; Nome ou observação opcional&#10;11999990002" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20 font-mono"></textarea>
+            <p class="text-xs text-stone mt-1.5">Um telefone por linha. Pode adicionar "; observação" depois do telefone pra te ajudar a identificar quem é (não aparece pro convidado).</p>
+          </div>
+        </div>
+        <p id="add-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2 mt-4"></p>
+        <button type="submit" id="add-btn" class="mt-4 inline-flex items-center gap-2 bg-forest text-white px-5 py-3 rounded-xl text-sm font-medium hover:brightness-110 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          <span id="add-btn-label">Adicionar</span>
+        </button>
+      </form>
+
+      <!-- Filtro por dia -->
+      <div class="flex gap-2 mb-4" id="day-filters"></div>
+
+      <!-- Lista -->
+      <div class="bg-white rounded-2xl border border-black/5 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm min-w-[820px]">
+            <thead>
+              <tr class="bg-black/[0.02] text-left text-stone text-xs tracked-sm border-b border-black/5">
+                <th class="py-3 px-5 font-medium">DIA</th>
+                <th class="py-3 px-3 font-medium">TELEFONE</th>
+                <th class="py-3 px-3 font-medium">STATUS</th>
+                <th class="py-3 px-3 font-medium">CONFIRMADO POR</th>
+                <th class="py-3 px-3 font-medium">ACOMPANHANTE</th>
+                <th class="py-3 px-3 font-medium">LINK DO CONVITE</th>
+                <th class="py-3 px-5 font-medium text-right">AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody id="table-body" class="divide-y divide-black/5">
+              <tr><td colspan="7" class="py-14 text-center text-stone text-sm">Carregando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  (async function checkSession() {
+    try {
+      const res = await fetch('/api/me', { credentials: 'include' });
+      if (!res.ok) { window.location.replace('/login.html'); return; }
+      const { user } = await res.json();
+      document.getElementById('user-name').textContent = user.name || 'Administrador';
+      document.getElementById('user-role').textContent = user.role || 'Administrador';
+      document.getElementById('user-avatar').textContent = (user.name || 'A').charAt(0).toUpperCase();
+    } catch (err) {
+      window.location.replace('/login.html');
+    }
+  })();
+
+  async function doLogout() {
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+    window.location.href = '/login.html';
+  }
+  document.getElementById('logout-link').addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
+  document.getElementById('logout-link-top').addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
+
+  document.querySelectorAll('.soon-link').forEach(btn => {
+    btn.addEventListener('click', () => {
+      alert(`"${btn.dataset.soon}" ainda não foi implementado nesta versão.`);
+    });
+  });
+
+  const userMenuBtn = document.getElementById('user-menu-btn');
+  const userMenu = document.getElementById('user-menu');
+  userMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !userMenu.classList.contains('hidden');
+    userMenu.classList.toggle('hidden', isOpen);
+    userMenuBtn.setAttribute('aria-expanded', String(!isOpen));
+  });
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('user-menu-wrap').contains(e.target)) {
+      userMenu.classList.add('hidden');
+      userMenuBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // ---------- Convidados ----------
+  const daySelect = document.getElementById('day-select');
+  const phonesInput = document.getElementById('phones-input');
+  const addForm = document.getElementById('add-form');
+  const addError = document.getElementById('add-error');
+  const addBtn = document.getElementById('add-btn');
+  const addBtnLabel = document.getElementById('add-btn-label');
+  const dayFiltersEl = document.getElementById('day-filters');
+  const tbody = document.getElementById('table-body');
+
+  let allGuests = [];
+  let days = {};
+  let activeDayFilter = 'Todos';
+
+  function statusBadge(status) {
+    return status === 'Confirmado'
+      ? '<span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">Confirmado</span>'
+      : '<span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700">Pendente</span>';
+  }
+
+  function inviteUrl(token) {
+    return `${window.location.origin}/rsvp/index.html?t=${token}`;
+  }
+
+  function renderDayFilters() {
+    const dayButtons = Object.values(days).map(d => `
+      <button data-day="${d.short}" class="day-filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">${d.short}</button>
+    `).join('');
+    dayFiltersEl.innerHTML = `<button data-day="Todos" class="day-filter-btn shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-forest text-white transition">Todos</button>${dayButtons}`;
+
+    dayFiltersEl.querySelectorAll('.day-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeDayFilter = btn.dataset.day;
+        dayFiltersEl.querySelectorAll('.day-filter-btn').forEach(b => {
+          b.classList.remove('bg-forest', 'text-white');
+          b.classList.add('bg-white', 'text-ink', 'border', 'border-black/10');
+        });
+        btn.classList.remove('bg-white', 'text-ink', 'border', 'border-black/10');
+        btn.classList.add('bg-forest', 'text-white');
+        renderTable();
+      });
+    });
+  }
+
+  function renderTable() {
+    const list = activeDayFilter === 'Todos' ? allGuests : allGuests.filter(g => g.dayInfo.short === activeDayFilter);
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="py-14 text-center text-stone text-sm">Nenhum convidado cadastrado ainda.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(g => {
+      const confirmedBy = g.confirmation ? `${g.confirmation.name}<br><span class="text-xs text-stone">${g.confirmation.email}</span>` : '—';
+      const companion = g.confirmation && g.confirmation.companion ? g.confirmation.companion.name : '—';
+      const link = inviteUrl(g.token);
+      return `
+        <tr class="hover:bg-black/[0.015] transition align-top">
+          <td class="py-3.5 px-5 whitespace-nowrap">${g.dayInfo.short}<br><span class="text-xs text-stone">${g.dayInfo.label}</span></td>
+          <td class="py-3.5 px-3 whitespace-nowrap">${g.phone}${g.label ? `<br><span class="text-xs text-stone">${g.label}</span>` : ''}</td>
+          <td class="py-3.5 px-3">${statusBadge(g.status)}</td>
+          <td class="py-3.5 px-3 max-w-[220px]">${confirmedBy}</td>
+          <td class="py-3.5 px-3">${companion}</td>
+          <td class="py-3.5 px-3">
+            <button data-link="${link}" class="copy-link-btn inline-flex items-center gap-1.5 text-xs text-forest hover:underline">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg>
+              Copiar link
+            </button>
+          </td>
+          <td class="py-3.5 px-5 text-right">
+            <button data-id="${g.id}" class="delete-btn text-stone hover:text-rose-600 transition" aria-label="Excluir">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    tbody.querySelectorAll('.copy-link-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.link);
+          const original = btn.innerHTML;
+          btn.innerHTML = 'Copiado!';
+          setTimeout(() => { btn.innerHTML = original; }, 1500);
+        } catch (err) {
+          prompt('Copie o link abaixo:', btn.dataset.link);
+        }
+      });
+    });
+
+    tbody.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Excluir este convite? O link deixará de funcionar.')) return;
+        try {
+          const res = await fetch(`/api/admin/rsvp/guests/${btn.dataset.id}`, { method: 'DELETE', credentials: 'include' });
+          if (!res.ok) throw new Error();
+          await loadGuests();
+        } catch (err) {
+          alert('Não foi possível excluir. Tente novamente.');
+        }
+      });
+    });
+  }
+
+  async function loadGuests() {
+    try {
+      const res = await fetch('/api/admin/rsvp/guests', { credentials: 'include' });
+      if (res.status === 401) { window.location.replace('/login.html'); return; }
+      const data = await res.json();
+      days = data.days || {};
+      allGuests = (data.guests || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      daySelect.innerHTML = Object.values(days).map(d => `<option value="${d.key}">${d.short} — ${d.label}</option>`).join('');
+      renderDayFilters();
+      renderTable();
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="7" class="py-14 text-center text-rose-600 text-sm">Não foi possível carregar os convidados.</td></tr>`;
+    }
+  }
+
+  addForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    addError.classList.add('hidden');
+
+    const lines = phonesInput.value.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length === 0) return;
+
+    const entries = lines.map(line => {
+      const [phonePart, ...rest] = line.split(';');
+      return { phone: phonePart.trim(), label: rest.join(';').trim() };
+    });
+
+    addBtn.disabled = true;
+    addBtnLabel.textContent = 'Adicionando...';
+
+    try {
+      const res = await fetch('/api/admin/rsvp/guests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ day: daySelect.value, entries }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Não foi possível adicionar os convidados.');
+
+      phonesInput.value = '';
+      await loadGuests();
+    } catch (err) {
+      addError.textContent = err.message;
+      addError.classList.remove('hidden');
+    } finally {
+      addBtn.disabled = false;
+      addBtnLabel.textContent = 'Adicionar';
+    }
+  });
+
+  loadGuests();
+</script>
+</body>
+</html>

@@ -17,6 +17,7 @@ const {
 } = require('./auth');
 const products = require('./products');
 const categories = require('./categories');
+const rsvp = require('./rsvp');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -178,6 +179,142 @@ app.put('/api/categories/:id', requireAuthApi, (req, res) => {
 
   const category = categories.update(req.params.id, { title: title.trim() });
   res.json({ category });
+});
+
+// ---------- Rotas do RSVP (API) ----------
+// O convite de cada pessoa é identificado por um token único na URL.
+// GET é público (é o que a página do convidado usa), mas nunca devolve o
+// telefone cadastrado — só o dia do evento e, se já confirmado, o nome.
+
+app.get('/api/rsvp/:token', (req, res) => {
+  const guest = rsvp.findByToken(req.params.token);
+  if (!guest) return res.status(404).json({ error: 'Convite não encontrado.' });
+
+  res.json({
+    day: rsvp.DAYS[guest.day],
+    status: guest.status,
+    name: guest.confirmation ? guest.confirmation.name : null,
+    companionName: guest.confirmation && guest.confirmation.companion ? guest.confirmation.companion.name : null,
+  });
+});
+
+app.post('/api/rsvp/:token/verificar-telefone', (req, res) => {
+  const guest = rsvp.findByToken(req.params.token);
+  if (!guest) return res.status(404).json({ error: 'Convite não encontrado.' });
+
+  const { phone } = req.body || {};
+  const ok = rsvp.verifyPhone(req.params.token, phone || '');
+  res.json({ ok });
+});
+
+app.post('/api/rsvp/:token/confirmar', (req, res) => {
+  const guest = rsvp.findByToken(req.params.token);
+  if (!guest) return res.status(404).json({ error: 'Convite não encontrado.' });
+
+  const { phone, name, email, companion } = req.body || {};
+
+  // O telefone é validado de novo no servidor — a checagem no navegador é só
+  // conveniência de UX, quem garante de verdade é aqui.
+  if (!rsvp.verifyPhone(req.params.token, phone || '')) {
+    return res.status(403).json({ error: 'Telefone não confere com o convite.' });
+  }
+  if (!name || !name.trim()) return res.status(400).json({ error: 'Nome completo é obrigatório.' });
+  if (!email || !email.trim()) return res.status(400).json({ error: 'E-mail é obrigatório.' });
+  if (companion && companion.name && companion.name.trim() && (!companion.email || !companion.email.trim())) {
+    return res.status(400).json({ error: 'Informe o e-mail do acompanhante.' });
+  }
+
+  const updated = rsvp.confirm(req.params.token, {
+    name: name.trim(),
+    email: email.trim(),
+    phone: phone.trim(),
+    companion: companion ? {
+      name: (companion.name || '').trim(),
+      email: (companion.email || '').trim(),
+      phone: (companion.phone || '').trim(),
+    } : null,
+  });
+
+  res.json({
+    day: rsvp.DAYS[updated.day],
+    status: updated.status,
+    name: updated.confirmation.name,
+    companionName: updated.confirmation.companion ? updated.confirmation.companion.name : null,
+  });
+});
+
+// ---------- Admin do RSVP (API) — exige sessão ----------
+
+app.get('/api/admin/rsvp/guests', requireAuthApi, (req, res) => {
+  const guests = rsvp.loadAll().map(g => ({
+    ...g,
+    dayInfo: rsvp.DAYS[g.day],
+  }));
+  res.json({ guests, days: rsvp.DAYS });
+});
+
+app.post('/api/admin/rsvp/guests', requireAuthApi, (req, res) => {
+  const { day, entries } = req.body || {};
+  if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
+  if (!Array.isArray(entries) || entries.length === 0) {
+    return res.status(400).json({ error: 'Informe pelo menos um telefone.' });
+  }
+
+  const cleaned = entries
+    .map(e => (typeof e === 'string' ? { phone: e } : e))
+    .filter(e => e.phone && rsvp.normalizePhone(e.phone).length >= 8);
+
+  if (cleaned.length === 0) {
+    return res.status(400).json({ error: 'Nenhum telefone válido encontrado (mínimo 8 dígitos).' });
+  }
+
+  const created = rsvp.createMany(day, cleaned);
+  res.status(201).json({ guests: created });
+});
+
+app.delete('/api/admin/rsvp/guests/:id', requireAuthApi, (req, res) => {
+  const ok = rsvp.remove(req.params.id);
+  if (!ok) return res.status(404).json({ error: 'Convidado não encontrado.' });
+  res.json({ ok: true });
+});
+
+// ---------- Webhook do RSVP (para o pipeline da Mauad consultar a lista) ----------
+// Autenticado por chave estática, não por sessão de admin — é um sistema externo
+// consultando, não um navegador logado. Chave em RSVP_WEBHOOK_KEY (.env).
+
+function requireWebhookKey(req, res, next) {
+  const expected = process.env.RSVP_WEBHOOK_KEY;
+  if (!expected) return res.status(500).json({ error: 'RSVP_WEBHOOK_KEY não configurada no servidor.' });
+
+  const header = req.get('authorization') || '';
+  const bearer = header.startsWith('Bearer ') ? header.slice(7) : null;
+  const provided = bearer || req.get('x-api-key') || req.query.key;
+
+  if (provided !== expected) return res.status(401).json({ error: 'Chave de acesso inválida.' });
+  next();
+}
+
+app.get('/api/webhook/rsvp', requireWebhookKey, (req, res) => {
+  const guests = rsvp.loadAll();
+  const list = guests.map(g => ({
+    id: g.id,
+    day: g.day,
+    dayLabel: rsvp.DAYS[g.day] ? rsvp.DAYS[g.day].label : g.day,
+    dateLabel: rsvp.DAYS[g.day] ? rsvp.DAYS[g.day].dateLabel : null,
+    phone: g.phone,
+    label: g.label,
+    status: g.status,
+    guest: g.confirmation ? { name: g.confirmation.name, email: g.confirmation.email, phone: g.confirmation.phone } : null,
+    companion: g.confirmation && g.confirmation.companion ? g.confirmation.companion : null,
+    confirmedAt: g.confirmation ? g.confirmation.confirmedAt : null,
+  }));
+
+  res.json({
+    generatedAt: new Date().toISOString(),
+    total: list.length,
+    confirmed: list.filter(g => g.status === 'Confirmado').length,
+    guests: list,
+  });
 });
 
 // ---------- Área protegida (páginas HTML do admin) ----------

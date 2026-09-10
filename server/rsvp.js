@@ -1,0 +1,133 @@
+// Helpers de leitura/escrita do "banco" de convidados do RSVP (arquivo JSON simples).
+// Cada convidado tem um token único (o link do convite) e um telefone cadastrado
+// que precisa bater com o telefone informado na tela pra liberar o resto do formulário.
+
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const GUESTS_FILE = path.join(DATA_DIR, 'guests.json');
+
+// Dias do evento. Mudar aqui reflete em toda a tela do convidado e no admin.
+const DAYS = {
+  dia1: { key: 'dia1', short: 'Dia 1', label: 'Sexta, 10 de outubro', weekday: 'Sexta-feira', dateLabel: '10 de outubro de 2026' },
+  dia2: { key: 'dia2', short: 'Dia 2', label: 'Sábado, 11 de outubro', weekday: 'Sábado', dateLabel: '11 de outubro de 2026' },
+  dia3: { key: 'dia3', short: 'Dia 3', label: 'Domingo, 12 de outubro', weekday: 'Domingo', dateLabel: '12 de outubro de 2026' },
+};
+
+function ensureFile() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(GUESTS_FILE)) fs.writeFileSync(GUESTS_FILE, '[]\n');
+}
+
+function loadAll() {
+  ensureFile();
+  return JSON.parse(fs.readFileSync(GUESTS_FILE, 'utf-8'));
+}
+
+function saveAll(guests) {
+  ensureFile();
+  fs.writeFileSync(GUESTS_FILE, JSON.stringify(guests, null, 2) + '\n');
+}
+
+// Só dígitos, pra comparar telefones sem depender de máscara/espaços/traços/DDI.
+function normalizePhone(phone) {
+  return (phone || '').replace(/\D/g, '');
+}
+
+function findById(id) {
+  return loadAll().find(g => g.id === id) || null;
+}
+
+function findByToken(token) {
+  return loadAll().find(g => g.token === token) || null;
+}
+
+function generateToken() {
+  return crypto.randomBytes(9).toString('base64url'); // ~12 chars, seguro pra URL
+}
+
+function create({ day, phone, label }) {
+  if (!DAYS[day]) throw new Error(`Dia inválido: ${day}`);
+  const guests = loadAll();
+  const now = new Date().toISOString();
+  let token = generateToken();
+  while (guests.some(g => g.token === token)) token = generateToken(); // colisão é raríssima, mas por garantia
+
+  const guest = {
+    id: crypto.randomUUID(),
+    token,
+    day,
+    phone: normalizePhone(phone),
+    label: (label || '').trim(),
+    status: 'Pendente',
+    confirmation: null,
+    createdAt: now,
+    updatedAt: now,
+  };
+  guests.push(guest);
+  saveAll(guests);
+  return guest;
+}
+
+function createMany(day, entries) {
+  return entries.map(entry => create({
+    day,
+    phone: typeof entry === 'string' ? entry : entry.phone,
+    label: typeof entry === 'string' ? '' : entry.label,
+  }));
+}
+
+function verifyPhone(token, phone) {
+  const guest = findByToken(token);
+  if (!guest) return false;
+  return guest.phone.length > 0 && guest.phone === normalizePhone(phone);
+}
+
+function confirm(token, data) {
+  const guests = loadAll();
+  const idx = guests.findIndex(g => g.token === token);
+  if (idx === -1) return null;
+
+  const guest = guests[idx];
+  const now = new Date().toISOString();
+  const updated = {
+    ...guest,
+    status: 'Confirmado',
+    confirmation: {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      companion: data.companion && data.companion.name
+        ? { name: data.companion.name, email: data.companion.email || '', phone: data.companion.phone || '' }
+        : null,
+      confirmedAt: now,
+    },
+    updatedAt: now,
+  };
+  guests[idx] = updated;
+  saveAll(guests);
+  return updated;
+}
+
+function remove(id) {
+  const guests = loadAll();
+  const next = guests.filter(g => g.id !== id);
+  const removed = next.length !== guests.length;
+  if (removed) saveAll(next);
+  return removed;
+}
+
+module.exports = {
+  DAYS,
+  loadAll,
+  findById,
+  findByToken,
+  create,
+  createMany,
+  verifyPhone,
+  confirm,
+  remove,
+  normalizePhone,
+};

@@ -41,78 +41,111 @@
       <h1 class="font-serif text-xl md:text-2xl tracking-[0.2em] text-ink">RESERVA GUINLE</h1>
       <p class="tracked-sm text-[9px] md:text-[10px] text-stone mt-1">OPEN HOUSE · CASA MODELO</p>
     </a>
-    <nav class="hidden lg:flex items-center gap-8 text-sm text-ink/80">
-      <a href="index.html#evento" class="hover:text-ink transition">O evento</a>
-      <a href="index.html#casa" class="hover:text-ink transition">A casa modelo</a>
-      <a href="index.html#chegar" class="hover:text-ink transition">Como chegar</a>
-      <a href="index.html#contato" class="hover:text-ink transition">Contato</a>
-    </nav>
-    <span class="w-[1px] hidden lg:block"></span>
   </header>
 
+  <!-- ===== ESTADO: CARREGANDO / INVÁLIDO ===== -->
+  <section id="state-loading" class="max-w-2xl mx-auto px-5 md:px-10 py-24 text-center">
+    <p class="text-stone text-sm">Carregando seu convite…</p>
+  </section>
+
+  <section id="state-invalid" class="hidden max-w-2xl mx-auto px-5 md:px-10 py-24 text-center">
+    <div class="w-14 h-14 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+    </div>
+    <h2 class="font-serif text-3xl md:text-4xl mb-3">Convite não encontrado</h2>
+    <p class="text-stone text-sm md:text-base max-w-md mx-auto">Este link não é válido. Confira se você abriu o link exatamente como recebeu.</p>
+  </section>
+
+  <!-- ===== ESTADO: JÁ CONFIRMADO ===== -->
+  <section id="state-already" class="hidden max-w-2xl mx-auto px-5 md:px-10 py-24 text-center">
+    <div class="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+    </div>
+    <h2 class="font-serif text-3xl md:text-4xl mb-3">Você já confirmou presença</h2>
+    <p class="text-stone text-sm md:text-base max-w-md mx-auto mb-6">Não precisa preencher de novo — já está tudo certo.</p>
+    <a id="already-link" href="#" class="inline-flex items-center gap-2 bg-forest text-white px-6 py-3 rounded-full text-sm font-medium hover:brightness-110 transition">Ver minha confirmação →</a>
+  </section>
+
   <!-- ===== FORM SECTION ===== -->
-  <section class="max-w-7xl mx-auto px-5 md:px-10 pb-16">
+  <section id="state-form" class="hidden max-w-7xl mx-auto px-5 md:px-10 pb-16">
     <div class="w-10 h-[2px] bg-gold mb-5"></div>
     <h2 class="font-serif text-4xl md:text-5xl leading-none mb-3">Confirme sua presença</h2>
     <p class="text-stone text-base mb-8 max-w-lg leading-relaxed">
-      Preencha seus dados para confirmar sua participação no Open House da Casa Modelo Reserva Guinle.
+      Primeiro confirme o telefone para o qual este convite foi enviado. Depois, complete seus dados e, se for o caso, os do seu acompanhante.
     </p>
 
     <div class="grid lg:grid-cols-[1.15fr_0.85fr] gap-8 lg:gap-12 items-start">
 
       <div class="bg-white rounded-2xl border border-black/5 p-6 md:p-8 order-2 lg:order-1">
-        <h3 class="font-serif text-2xl mb-5">Seus dados</h3>
 
-        <div id="date-badge" class="flex items-start gap-3 bg-forest/[0.04] border border-forest/10 rounded-xl p-4 mb-6">
+        <div class="flex items-start gap-3 bg-forest/[0.04] border border-forest/10 rounded-xl p-4 mb-6">
           <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-forest shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
           </div>
           <div class="flex-1">
-            <p class="text-sm font-semibold text-ink" id="date-label">11 de outubro de 2024</p>
-            <p class="text-xs text-stone">Sábado · 10h às 18h</p>
+            <p class="text-sm font-semibold text-ink" id="day-weekday">—</p>
+            <p class="text-xs text-stone" id="day-date">—</p>
           </div>
-          <p class="text-xs text-stone max-w-[160px] leading-snug">Esta é a data reservada para sua visita. Caso precise de alteração, nossa equipe entrará em contato.</p>
         </div>
 
-        <form id="rsvp-form" class="space-y-4" novalidate>
+        <!-- Passo 1: verificação de telefone -->
+        <div id="phone-gate">
+          <h3 class="font-serif text-2xl mb-1">Primeiro, confirme seu telefone</h3>
+          <p class="text-sm text-stone mb-4">Digite o telefone para o qual este convite foi enviado.</p>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input id="gate-phone" type="tel" inputmode="numeric" placeholder="(11) 9 9999-9999" class="flex-1 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            <button type="button" id="gate-verify-btn" class="shrink-0 bg-forest text-white px-6 py-3 rounded-xl text-sm font-medium hover:brightness-110 transition">Verificar</button>
+          </div>
+          <p id="gate-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2 mt-3"></p>
+        </div>
+
+        <!-- Passo 2: formulário completo (desbloqueado após telefone confirmado) -->
+        <form id="rsvp-form" class="space-y-4 mt-6 hidden" novalidate>
+          <div class="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+            Telefone confirmado — complete seus dados abaixo.
+          </div>
+
           <div>
             <label for="name" class="block text-sm font-medium text-ink mb-1.5">Nome completo <span class="text-rose-500">*</span></label>
-            <input id="name" type="text" required placeholder="Ex.: Marcelo Silva" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            <input id="name" type="text" required placeholder="Ex.: Marcelo Silva" disabled class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20 disabled:bg-black/[0.03] disabled:text-stone/50" />
           </div>
 
           <div>
             <label for="email" class="block text-sm font-medium text-ink mb-1.5">E-mail <span class="text-rose-500">*</span></label>
-            <input id="email" type="email" required placeholder="seu@email.com" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            <input id="email" type="email" required placeholder="seu@email.com" disabled class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20 disabled:bg-black/[0.03] disabled:text-stone/50" />
           </div>
 
           <div>
-            <label for="phone" class="block text-sm font-medium text-ink mb-1.5">Telefone / WhatsApp <span class="text-rose-500">*</span></label>
-            <div class="flex gap-2">
-              <div class="relative shrink-0">
-                <select id="phone-code" class="appearance-none h-full bg-white border border-black/10 rounded-xl pl-4 pr-8 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20">
-                  <option>+55</option>
-                  <option>+1</option>
-                  <option>+351</option>
-                </select>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-stone absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-              </div>
-              <input id="phone" type="tel" required placeholder="(11) 9 9999-9999" class="flex-1 min-w-0 bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            <label for="phone" class="block text-sm font-medium text-ink mb-1.5">Telefone</label>
+            <input id="phone" type="tel" readonly class="w-full bg-black/[0.03] border border-black/10 rounded-xl px-4 py-3 text-sm text-stone/70" />
+          </div>
+
+          <div class="h-px bg-black/5 my-2"></div>
+
+          <label class="flex items-start gap-2.5 text-sm text-ink/80 cursor-pointer select-none">
+            <input type="checkbox" id="companion-toggle" disabled class="mt-0.5 rounded border-black/20" />
+            Vou levar um acompanhante
+          </label>
+
+          <div id="companion-fields" class="space-y-4 hidden">
+            <div>
+              <label for="companion-name" class="block text-sm font-medium text-ink mb-1.5">Nome completo do acompanhante <span class="text-rose-500">*</span></label>
+              <input id="companion-name" type="text" placeholder="Ex.: Ana Silva" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+            <div>
+              <label for="companion-email" class="block text-sm font-medium text-ink mb-1.5">E-mail do acompanhante <span class="text-rose-500">*</span></label>
+              <input id="companion-email" type="email" placeholder="acompanhante@email.com" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+            <div>
+              <label for="companion-phone" class="block text-sm font-medium text-ink mb-1.5">Telefone do acompanhante</label>
+              <input id="companion-phone" type="tel" placeholder="(11) 9 9999-9999" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
             </div>
           </div>
 
-          <div>
-            <label for="company" class="block text-sm font-medium text-ink mb-1.5">Empresa (opcional)</label>
-            <input id="company" type="text" placeholder="Ex.: Empresa ou área de atuação" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
-          </div>
-
-          <label class="flex items-start gap-2.5 text-sm text-ink/80 cursor-pointer select-none pt-1">
-            <input type="checkbox" id="confirm-checkbox" required checked class="mt-0.5 rounded border-black/20" />
-            Confirmo minha presença na data acima.
-          </label>
-
           <p id="form-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2"></p>
 
-          <button type="submit" id="submit-btn" class="w-full bg-forest text-white py-3.5 rounded-xl font-medium hover:brightness-110 transition flex items-center justify-center gap-2">
+          <button type="submit" id="submit-btn" disabled class="w-full bg-forest text-white py-3.5 rounded-xl font-medium hover:brightness-110 transition flex items-center justify-center gap-2 disabled:opacity-50">
             <span id="submit-label">Confirmar presença</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
           </button>
@@ -137,49 +170,159 @@
   </section>
 
 <script>
-  // A data do convite normalmente vem de um token único na URL
-  // (?convidado=abc123), atrelado ao dia definido para aquele convidado.
-  // Aqui simulamos com a data padrão vinda do link de convite.
   const params = new URLSearchParams(window.location.search);
-  const guestDate = params.get('data') || '11 de outubro de 2024';
-  document.getElementById('date-label').textContent = guestDate;
+  const token = params.get('t');
 
-  const form = document.getElementById('rsvp-form');
-  const formError = document.getElementById('form-error');
+  const stateLoading = document.getElementById('state-loading');
+  const stateInvalid = document.getElementById('state-invalid');
+  const stateAlready = document.getElementById('state-already');
+  const stateForm = document.getElementById('state-form');
+
+  function showState(state) {
+    [stateLoading, stateInvalid, stateAlready, stateForm].forEach(s => s.classList.add('hidden'));
+    state.classList.remove('hidden');
+  }
+
+  let verifiedPhone = null; // só o servidor confirma de verdade; isso aqui é só pra UX
+
+  async function init() {
+    if (!token) { showState(stateInvalid); return; }
+    try {
+      const res = await fetch(`/api/rsvp/${encodeURIComponent(token)}`);
+      if (!res.ok) { showState(stateInvalid); return; }
+      const data = await res.json();
+
+      document.getElementById('day-weekday').textContent = data.day.weekday;
+      document.getElementById('day-date').textContent = data.day.dateLabel;
+
+      if (data.status === 'Confirmado') {
+        document.getElementById('already-link').href = `ja-confirmado.html?t=${encodeURIComponent(token)}`;
+        showState(stateAlready);
+        return;
+      }
+
+      showState(stateForm);
+    } catch (err) {
+      showState(stateInvalid);
+    }
+  }
+
+  // ---------- Passo 1: verificar telefone ----------
+  const gatePhone = document.getElementById('gate-phone');
+  const gateVerifyBtn = document.getElementById('gate-verify-btn');
+  const gateError = document.getElementById('gate-error');
+  const phoneGate = document.getElementById('phone-gate');
+  const rsvpForm = document.getElementById('rsvp-form');
+  const nameEl = document.getElementById('name');
+  const emailEl = document.getElementById('email');
+  const phoneEl = document.getElementById('phone');
+  const companionToggle = document.getElementById('companion-toggle');
+  const companionFields = document.getElementById('companion-fields');
   const submitBtn = document.getElementById('submit-btn');
+
+  async function verifyPhone() {
+    gateError.classList.add('hidden');
+    const phone = gatePhone.value.trim();
+    if (!phone) return;
+
+    gateVerifyBtn.disabled = true;
+    gateVerifyBtn.textContent = 'Verificando...';
+
+    try {
+      const res = await fetch(`/api/rsvp/${encodeURIComponent(token)}/verificar-telefone`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await res.json();
+
+      if (!data.ok) {
+        gateError.textContent = 'Esse telefone não confere com o convite. Confira o número e tente de novo.';
+        gateError.classList.remove('hidden');
+        return;
+      }
+
+      verifiedPhone = phone;
+      phoneEl.value = phone;
+      [nameEl, emailEl, companionToggle].forEach(el => el.disabled = false);
+      submitBtn.disabled = false;
+      phoneGate.classList.add('hidden');
+      rsvpForm.classList.remove('hidden');
+    } catch (err) {
+      gateError.textContent = 'Erro de conexão. Tente novamente.';
+      gateError.classList.remove('hidden');
+    } finally {
+      gateVerifyBtn.disabled = false;
+      gateVerifyBtn.textContent = 'Verificar';
+    }
+  }
+
+  gateVerifyBtn.addEventListener('click', verifyPhone);
+  gatePhone.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); verifyPhone(); } });
+
+  companionToggle.addEventListener('change', () => {
+    companionFields.classList.toggle('hidden', !companionToggle.checked);
+  });
+
+  // ---------- Passo 2: enviar confirmação ----------
+  const formError = document.getElementById('form-error');
   const submitLabel = document.getElementById('submit-label');
 
-  form.addEventListener('submit', async (e) => {
+  rsvpForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     formError.classList.add('hidden');
 
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const confirmed = document.getElementById('confirm-checkbox').checked;
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim();
 
-    if (!name || !email || !phone) {
-      formError.textContent = 'Preencha nome, e-mail e telefone para confirmar.';
+    if (!name || !email) {
+      formError.textContent = 'Preencha nome completo e e-mail.';
       formError.classList.remove('hidden');
       return;
     }
-    if (!confirmed) {
-      formError.textContent = 'Confirme a caixa de seleção para prosseguir.';
-      formError.classList.remove('hidden');
-      return;
+
+    let companion = null;
+    if (companionToggle.checked) {
+      const companionName = document.getElementById('companion-name').value.trim();
+      const companionEmail = document.getElementById('companion-email').value.trim();
+      const companionPhone = document.getElementById('companion-phone').value.trim();
+      if (!companionName || !companionEmail) {
+        formError.textContent = 'Preencha ao menos nome e e-mail do acompanhante, ou desmarque a opção.';
+        formError.classList.remove('hidden');
+        return;
+      }
+      companion = { name: companionName, email: companionEmail, phone: companionPhone };
     }
 
     submitBtn.disabled = true;
     submitLabel.textContent = 'Confirmando...';
 
     try {
-      localStorage.setItem('ohrg_rsvp_status', 'confirmed');
-      localStorage.setItem('ohrg_rsvp_data', JSON.stringify({ name, email, phone, date: guestDate }));
-    } catch (err) {}
+      const res = await fetch(`/api/rsvp/${encodeURIComponent(token)}/confirmar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: verifiedPhone, name, email, companion }),
+      });
+      const data = await res.json();
 
-    await new Promise(r => setTimeout(r, 400));
-    window.location.href = 'confirmado.html';
+      if (!res.ok) {
+        formError.textContent = data.error || 'Não foi possível confirmar. Tente novamente.';
+        formError.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitLabel.textContent = 'Confirmar presença';
+        return;
+      }
+
+      window.location.href = `confirmado.html?t=${encodeURIComponent(token)}`;
+    } catch (err) {
+      formError.textContent = 'Erro de conexão com o servidor.';
+      formError.classList.remove('hidden');
+      submitBtn.disabled = false;
+      submitLabel.textContent = 'Confirmar presença';
+    }
   });
+
+  init();
 </script>
 </body>
 </html>

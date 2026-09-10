@@ -41,20 +41,25 @@
       <h1 class="font-serif text-xl md:text-2xl tracking-[0.2em] text-ink">RESERVA GUINLE</h1>
       <p class="tracked-sm text-[9px] md:text-[10px] text-stone mt-1">OPEN HOUSE · CASA MODELO</p>
     </a>
-    <nav class="hidden lg:flex items-center gap-8 text-sm text-ink/80">
-      <a href="index.html#evento" class="hover:text-ink transition">O evento</a>
-      <a href="index.html#casa" class="hover:text-ink transition">A casa modelo</a>
-      <a href="index.html#chegar" class="hover:text-ink transition">Como chegar</a>
-      <a href="index.html#contato" class="hover:text-ink transition">Contato</a>
-    </nav>
     <button id="calendar-btn" class="shrink-0 inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-5 py-2.5 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
       Adicionar ao meu calendário
     </button>
   </header>
 
+  <!-- ===== ESTADO: CARREGANDO / INVÁLIDO ===== -->
+  <section id="state-loading" class="max-w-2xl mx-auto px-5 md:px-10 py-24 text-center">
+    <p class="text-stone text-sm">Carregando…</p>
+  </section>
+
+  <section id="state-invalid" class="hidden max-w-2xl mx-auto px-5 md:px-10 py-24 text-center">
+    <h2 class="font-serif text-3xl md:text-4xl mb-3">Nada por aqui ainda</h2>
+    <p class="text-stone text-sm md:text-base max-w-md mx-auto mb-6">Não encontramos uma confirmação para este link. Se você ainda não confirmou, volte para o convite.</p>
+    <a href="index.html" class="inline-flex items-center gap-2 bg-forest text-white px-6 py-3 rounded-full text-sm font-medium hover:brightness-110 transition">Voltar ao convite</a>
+  </section>
+
   <!-- ===== SUCCESS SECTION ===== -->
-  <section class="max-w-7xl mx-auto px-5 md:px-10 pb-16">
+  <section id="state-success" class="hidden max-w-7xl mx-auto px-5 md:px-10 pb-16">
     <div class="grid lg:grid-cols-[1fr_0.85fr] gap-8 lg:gap-12 items-center">
 
       <div class="py-6">
@@ -66,18 +71,19 @@
           Recebemos seus dados e sua participação no Open House da Casa Modelo Reserva Guinle está confirmada.
         </p>
 
-        <div class="flex items-center gap-3 bg-white border border-black/5 rounded-xl p-4 mb-7 max-w-sm">
+        <div class="flex items-center gap-3 bg-white border border-black/5 rounded-xl p-4 mb-4 max-w-sm">
           <div class="w-10 h-10 rounded-lg bg-forest/[0.06] flex items-center justify-center text-forest shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
           </div>
           <div>
-            <p class="text-sm font-semibold text-ink" id="date-label">11 de outubro de 2024</p>
-            <p class="text-xs text-stone">Sábado · 10h às 18h</p>
+            <p class="text-sm font-semibold text-ink" id="date-label">—</p>
+            <p class="text-xs text-stone" id="weekday-label">—</p>
           </div>
         </div>
 
-        <p class="text-sm text-stone mb-7">
-          Em breve, você receberá mais informações sobre o evento por e-mail e WhatsApp.
+        <p id="companion-note" class="hidden text-sm text-stone flex items-center gap-2 mb-7">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-forest shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
+          Acompanhante confirmado: <span id="companion-name" class="text-ink font-medium"></span>
         </p>
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -102,22 +108,53 @@
   </section>
 
 <script>
-  try {
-    const raw = localStorage.getItem('ohrg_rsvp_data');
-    if (raw) {
-      const data = JSON.parse(raw);
-      if (data.date) document.getElementById('date-label').textContent = data.date;
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('t');
+
+  const stateLoading = document.getElementById('state-loading');
+  const stateInvalid = document.getElementById('state-invalid');
+  const stateSuccess = document.getElementById('state-success');
+
+  function showState(state) {
+    [stateLoading, stateInvalid, stateSuccess].forEach(s => s.classList.add('hidden'));
+    state.classList.remove('hidden');
+  }
+
+  let dayData = null;
+
+  async function init() {
+    if (!token) { showState(stateInvalid); return; }
+    try {
+      const res = await fetch(`/api/rsvp/${encodeURIComponent(token)}`);
+      if (!res.ok) { showState(stateInvalid); return; }
+      const data = await res.json();
+
+      if (data.status !== 'Confirmado') {
+        // Ainda não confirmou por este link — manda de volta pro formulário.
+        window.location.replace(`confirmar.html?t=${encodeURIComponent(token)}`);
+        return;
+      }
+
+      dayData = data.day;
+      document.getElementById('date-label').textContent = data.day.dateLabel;
+      document.getElementById('weekday-label').textContent = data.day.weekday;
+
       if (data.name) {
         const firstName = data.name.trim().split(' ')[0];
         document.getElementById('guest-message').textContent =
           `Recebemos seus dados, ${firstName}. Sua participação no Open House da Casa Modelo Reserva Guinle está confirmada.`;
       }
-    } else {
-      // Ninguém confirmou ainda por este navegador — evita mostrar a
-      // tela de sucesso "solta"; manda de volta pro formulário.
-      window.location.replace('confirmar.html');
+
+      if (data.companionName) {
+        document.getElementById('companion-name').textContent = data.companionName;
+        document.getElementById('companion-note').classList.remove('hidden');
+      }
+
+      showState(stateSuccess);
+    } catch (err) {
+      showState(stateInvalid);
     }
-  } catch (err) {}
+  }
 
   function addToCalendar() {
     const title = encodeURIComponent('Open House · Casa Modelo Reserva Guinle');
@@ -127,6 +164,8 @@
   }
   document.getElementById('calendar-btn').addEventListener('click', addToCalendar);
   document.getElementById('calendar-btn-2').addEventListener('click', addToCalendar);
+
+  init();
 </script>
 </body>
 </html>
