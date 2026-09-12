@@ -161,6 +161,32 @@ function confirm(token, data) {
   return updated;
 }
 
+// Registra (ou atualiza) a indicação de amigo, feita na tela de "presença
+// confirmada" — separada da confirmação em si, então pode ser preenchida
+// depois, ou nem ser preenchida.
+function setReferral(token, referral) {
+  const guests = loadAll();
+  const idx = guests.findIndex(g => g.token === token);
+  if (idx === -1) return null;
+
+  const guest = guests[idx];
+  if (!guest.confirmation) return null; // só faz sentido depois de confirmado
+
+  const updated = {
+    ...guest,
+    confirmation: {
+      ...guest.confirmation,
+      referral: referral && referral.name
+        ? { name: referral.name, phone: referral.phone || '' }
+        : null,
+    },
+    updatedAt: new Date().toISOString(),
+  };
+  guests[idx] = updated;
+  saveAll(guests);
+  return updated;
+}
+
 function remove(id) {
   const guests = loadAll();
   const next = guests.filter(g => g.id !== id);
@@ -198,6 +224,7 @@ module.exports = {
   update,
   verifyPhone,
   confirm,
+  setReferral,
   remove,
   recordInviteResult,
   normalizePhone,

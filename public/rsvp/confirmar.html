@@ -123,42 +123,20 @@
 
           <div class="h-px bg-black/5 my-2"></div>
 
-          <label class="flex items-start gap-2.5 text-sm text-ink/80 cursor-pointer select-none">
-            <input type="checkbox" id="companion-toggle" disabled class="mt-0.5 rounded border-black/20" />
-            Vou levar um acompanhante
-          </label>
+          <p class="text-sm font-medium text-ink">Dados do acompanhante <span class="text-stone font-normal">(se houver)</span></p>
 
-          <div id="companion-fields" class="space-y-4 hidden">
+          <div class="space-y-4">
             <div>
-              <label for="companion-name" class="block text-sm font-medium text-ink mb-1.5">Nome completo do acompanhante <span class="text-rose-500">*</span></label>
-              <input id="companion-name" type="text" placeholder="Ex.: Ana Silva" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+              <label for="companion-name" class="block text-sm font-medium text-ink mb-1.5">Nome completo do acompanhante</label>
+              <input id="companion-name" type="text" placeholder="Ex.: Ana Silva" disabled class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20 disabled:bg-black/[0.03] disabled:text-stone/50" />
             </div>
             <div>
-              <label for="companion-email" class="block text-sm font-medium text-ink mb-1.5">E-mail do acompanhante <span class="text-rose-500">*</span></label>
-              <input id="companion-email" type="email" placeholder="acompanhante@email.com" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+              <label for="companion-email" class="block text-sm font-medium text-ink mb-1.5">E-mail do acompanhante</label>
+              <input id="companion-email" type="email" placeholder="acompanhante@email.com" disabled class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20 disabled:bg-black/[0.03] disabled:text-stone/50" />
             </div>
             <div>
               <label for="companion-phone" class="block text-sm font-medium text-ink mb-1.5">Telefone do acompanhante</label>
-              <input id="companion-phone" type="tel" placeholder="(11) 9 9999-9999" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
-            </div>
-          </div>
-
-          <div class="h-px bg-black/5 my-2"></div>
-
-          <div class="bg-gold/[0.08] border border-gold/20 rounded-xl p-4">
-            <p class="text-sm font-medium text-ink mb-1">Conhece alguém que ia adorar estar aqui?</p>
-            <p class="text-xs text-stone leading-relaxed mb-3">
-              Se tiver alguém em mente que gostaria de conhecer a Casa Modelo e, quem sabe, ser seu vizinho em um dos dias do evento, indique abaixo — nós cuidamos do convite.
-            </p>
-            <div class="space-y-3">
-              <div>
-                <label for="referral-name" class="block text-sm font-medium text-ink mb-1.5">Nome completo</label>
-                <input id="referral-name" type="text" placeholder="Ex.: Marina Souza" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
-              </div>
-              <div>
-                <label for="referral-phone" class="block text-sm font-medium text-ink mb-1.5">Telefone</label>
-                <input id="referral-phone" type="tel" placeholder="(11) 9 9999-9999" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
-              </div>
+              <input id="companion-phone" type="tel" placeholder="(11) 9 9999-9999" disabled class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20 disabled:bg-black/[0.03] disabled:text-stone/50" />
             </div>
           </div>
 
@@ -236,8 +214,9 @@
   const nameEl = document.getElementById('name');
   const emailEl = document.getElementById('email');
   const phoneEl = document.getElementById('phone');
-  const companionToggle = document.getElementById('companion-toggle');
-  const companionFields = document.getElementById('companion-fields');
+  const companionNameEl = document.getElementById('companion-name');
+  const companionEmailEl = document.getElementById('companion-email');
+  const companionPhoneEl = document.getElementById('companion-phone');
   const submitBtn = document.getElementById('submit-btn');
 
   async function verifyPhone() {
@@ -264,7 +243,7 @@
 
       verifiedPhone = phone;
       phoneEl.value = phone;
-      [nameEl, emailEl, companionToggle].forEach(el => el.disabled = false);
+      [nameEl, emailEl, companionNameEl, companionEmailEl, companionPhoneEl].forEach(el => el.disabled = false);
       submitBtn.disabled = false;
       phoneGate.classList.add('hidden');
       rsvpForm.classList.remove('hidden');
@@ -279,10 +258,6 @@
 
   gateVerifyBtn.addEventListener('click', verifyPhone);
   gatePhone.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); verifyPhone(); } });
-
-  companionToggle.addEventListener('change', () => {
-    companionFields.classList.toggle('hidden', !companionToggle.checked);
-  });
 
   // ---------- Passo 2: enviar confirmação ----------
   const formError = document.getElementById('form-error');
@@ -302,28 +277,16 @@
     }
 
     let companion = null;
-    if (companionToggle.checked) {
-      const companionName = document.getElementById('companion-name').value.trim();
-      const companionEmail = document.getElementById('companion-email').value.trim();
-      const companionPhone = document.getElementById('companion-phone').value.trim();
+    const companionName = companionNameEl.value.trim();
+    const companionEmail = companionEmailEl.value.trim();
+    const companionPhone = companionPhoneEl.value.trim();
+    if (companionName || companionEmail) {
       if (!companionName || !companionEmail) {
-        formError.textContent = 'Preencha ao menos nome e e-mail do acompanhante, ou desmarque a opção.';
+        formError.textContent = 'Preencha nome e e-mail do acompanhante, ou deixe os dois em branco.';
         formError.classList.remove('hidden');
         return;
       }
       companion = { name: companionName, email: companionEmail, phone: companionPhone };
-    }
-
-    let referral = null;
-    const referralName = document.getElementById('referral-name').value.trim();
-    const referralPhone = document.getElementById('referral-phone').value.trim();
-    if (referralName) {
-      if (!referralPhone) {
-        formError.textContent = 'Informe o telefone da pessoa indicada, ou deixe os dois campos em branco.';
-        formError.classList.remove('hidden');
-        return;
-      }
-      referral = { name: referralName, phone: referralPhone };
     }
 
     submitBtn.disabled = true;
@@ -333,7 +296,7 @@
       const res = await fetch(`/api/rsvp/${encodeURIComponent(token)}/confirmar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: verifiedPhone, name, email, companion, referral }),
+        body: JSON.stringify({ phone: verifiedPhone, name, email, companion }),
       });
       const data = await res.json();
 

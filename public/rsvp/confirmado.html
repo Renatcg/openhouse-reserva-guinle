@@ -85,12 +85,36 @@
           Acompanhante confirmado: <span id="companion-name" class="text-ink font-medium"></span>
         </p>
 
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
           <button id="calendar-btn-2" class="inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-6 py-3 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
             Adicionar ao meu calendário
           </button>
           <a href="index.html" class="text-sm text-forest hover:underline underline-offset-2 font-medium">Voltar para a página inicial</a>
+        </div>
+
+        <!-- Indicação de amigo -->
+        <div id="referral-box" class="bg-gold/[0.08] border border-gold/20 rounded-xl p-4 max-w-md">
+          <p class="text-sm font-medium text-ink mb-1">Conhece alguém que adoraria viver aqui?</p>
+          <p class="text-xs text-stone leading-relaxed mb-3">
+            Se tiver alguém em mente que gostaria de conhecer a Casa Modelo e, quem sabe, ser seu vizinho em um dos dias do evento, indique abaixo — nós cuidamos do convite.
+          </p>
+          <div id="referral-form-fields" class="space-y-3">
+            <div>
+              <label for="referral-name" class="block text-sm font-medium text-ink mb-1.5">Nome completo</label>
+              <input id="referral-name" type="text" placeholder="Ex.: Marina Souza" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+            <div>
+              <label for="referral-phone" class="block text-sm font-medium text-ink mb-1.5">Telefone</label>
+              <input id="referral-phone" type="tel" placeholder="(11) 9 9999-9999" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+            <p id="referral-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2"></p>
+            <button type="button" id="referral-submit-btn" class="w-full bg-forest text-white py-3 rounded-xl text-sm font-medium hover:brightness-110 transition">Indicar</button>
+          </div>
+          <p id="referral-success" class="hidden text-sm text-emerald-700 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+            Obrigado pela indicação — vamos cuidar do convite.
+          </p>
         </div>
       </div>
 
@@ -163,6 +187,56 @@
   }
   document.getElementById('calendar-btn').addEventListener('click', addToCalendar);
   document.getElementById('calendar-btn-2').addEventListener('click', addToCalendar);
+
+  // ---------- Indicação de amigo ----------
+  const referralNameEl = document.getElementById('referral-name');
+  const referralPhoneEl = document.getElementById('referral-phone');
+  const referralError = document.getElementById('referral-error');
+  const referralSubmitBtn = document.getElementById('referral-submit-btn');
+  const referralFormFields = document.getElementById('referral-form-fields');
+  const referralSuccess = document.getElementById('referral-success');
+
+  async function submitReferral() {
+    referralError.classList.add('hidden');
+    const name = referralNameEl.value.trim();
+    const phone = referralPhoneEl.value.trim();
+
+    if (!name || !phone) {
+      referralError.textContent = 'Preencha nome e telefone da pessoa indicada.';
+      referralError.classList.remove('hidden');
+      return;
+    }
+
+    referralSubmitBtn.disabled = true;
+    referralSubmitBtn.textContent = 'Enviando...';
+
+    try {
+      const res = await fetch(`/api/rsvp/${encodeURIComponent(token)}/indicar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        referralError.textContent = data.error || 'Não foi possível enviar. Tente novamente.';
+        referralError.classList.remove('hidden');
+        referralSubmitBtn.disabled = false;
+        referralSubmitBtn.textContent = 'Indicar';
+        return;
+      }
+
+      referralFormFields.classList.add('hidden');
+      referralSuccess.classList.remove('hidden');
+    } catch (err) {
+      referralError.textContent = 'Erro de conexão. Tente novamente.';
+      referralError.classList.remove('hidden');
+      referralSubmitBtn.disabled = false;
+      referralSubmitBtn.textContent = 'Indicar';
+    }
+  }
+
+  referralSubmitBtn.addEventListener('click', submitReferral);
 
   init();
 </script>

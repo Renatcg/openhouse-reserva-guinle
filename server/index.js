@@ -313,6 +313,24 @@ app.post('/api/rsvp/:token/confirmar', (req, res) => {
   });
 });
 
+// Indicação de amigo — preenchida na tela de sucesso, depois da confirmação.
+app.post('/api/rsvp/:token/indicar', (req, res) => {
+  const guest = rsvp.findByToken(req.params.token);
+  if (!guest) return res.status(404).json({ error: 'Convite não encontrado.' });
+  if (guest.status !== 'Confirmado') {
+    return res.status(400).json({ error: 'Confirme sua presença antes de indicar alguém.' });
+  }
+
+  const { name, phone } = req.body || {};
+  if (!name || !name.trim()) return res.status(400).json({ error: 'Informe o nome da pessoa indicada.' });
+  if (!phone || !phone.trim()) return res.status(400).json({ error: 'Informe o telefone da pessoa indicada.' });
+
+  const updated = rsvp.setReferral(req.params.token, { name: name.trim(), phone: phone.trim() });
+  if (!updated) return res.status(404).json({ error: 'Convite não encontrado.' });
+
+  res.json({ ok: true });
+});
+
 // ---------- Admin do RSVP (API) — exige sessão ----------
 
 app.get('/api/admin/rsvp/guests', rsvpAuth.requireAuthApi, (req, res) => {
