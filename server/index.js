@@ -379,6 +379,17 @@ app.put('/api/admin/rsvp/guests/:id', rsvpAuth.requireAuthApi, (req, res) => {
   res.json({ guest: { ...updated, dayInfo: rsvp.DAYS[updated.day] } });
 });
 
+app.post('/api/admin/rsvp/guests/:id/cancelar-confirmacao', rsvpAuth.requireAuthApi, (req, res) => {
+  const existing = rsvp.findById(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Convidado não encontrado.' });
+  if (existing.status !== 'Confirmado') {
+    return res.status(400).json({ error: 'Este convidado ainda não confirmou presença.' });
+  }
+
+  const updated = rsvp.cancelConfirmation(req.params.id);
+  res.json({ guest: { ...updated, dayInfo: rsvp.DAYS[updated.day] } });
+});
+
 app.delete('/api/admin/rsvp/guests/:id', rsvpAuth.requireAuthApi, (req, res) => {
   const ok = rsvp.remove(req.params.id);
   if (!ok) return res.status(404).json({ error: 'Convidado não encontrado.' });

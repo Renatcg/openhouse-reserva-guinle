@@ -161,6 +161,25 @@ function confirm(token, data) {
   return updated;
 }
 
+// Cancela uma confirmação de presença já feita (ação do admin) — volta o
+// convidado pro estado "Pendente" e limpa os dados preenchidos, pra ele
+// poder confirmar de novo pelo mesmo link se for o caso.
+function cancelConfirmation(id) {
+  const guests = loadAll();
+  const idx = guests.findIndex(g => g.id === id);
+  if (idx === -1) return null;
+
+  const updated = {
+    ...guests[idx],
+    status: 'Pendente',
+    confirmation: null,
+    updatedAt: new Date().toISOString(),
+  };
+  guests[idx] = updated;
+  saveAll(guests);
+  return updated;
+}
+
 // Registra (ou atualiza) a indicação de amigo, feita na tela de "presença
 // confirmada" — separada da confirmação em si, então pode ser preenchida
 // depois, ou nem ser preenchida.
@@ -224,6 +243,7 @@ module.exports = {
   update,
   verifyPhone,
   confirm,
+  cancelConfirmation,
   setReferral,
   remove,
   recordInviteResult,

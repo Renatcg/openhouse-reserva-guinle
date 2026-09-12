@@ -373,6 +373,7 @@
               <button type="button" data-action="copy" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Copiar link</button>
               <button type="button" data-action="edit" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Editar</button>
               <button type="button" data-action="changeday" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Mudar de data</button>
+              ${g.status === 'Confirmado' ? `<button type="button" data-action="cancelconfirm" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-amber-700 hover:bg-amber-50 text-left">Cancelar confirmação</button>` : ''}
               <div class="my-1 h-px bg-black/5"></div>
               <button type="button" data-action="delete" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 text-left">Excluir</button>
             </div>
@@ -413,6 +414,15 @@
           openGuestModal('edit', guest);
         } else if (btn.dataset.action === 'changeday') {
           openDayModal(guest);
+        } else if (btn.dataset.action === 'cancelconfirm') {
+          if (!confirm('Cancelar a confirmação de presença deste convidado? Ele poderá confirmar de novo pelo mesmo link.')) return;
+          try {
+            const res = await fetch(`/api/admin/rsvp/guests/${id}/cancelar-confirmacao`, { method: 'POST', credentials: 'include' });
+            if (!res.ok) throw new Error();
+            await loadGuests();
+          } catch (err) {
+            alert('Não foi possível cancelar a confirmação. Tente novamente.');
+          }
         } else if (btn.dataset.action === 'delete') {
           if (!confirm('Excluir este convite? O link deixará de funcionar.')) return;
           try {
