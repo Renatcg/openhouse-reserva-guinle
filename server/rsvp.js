@@ -21,9 +21,16 @@ function ensureFile() {
   if (!fs.existsSync(GUESTS_FILE)) fs.writeFileSync(GUESTS_FILE, '[]\n');
 }
 
+const DEFAULT_INVITES = () => ({
+  whatsapp: { status: 'Não enviado', sentAt: null, error: null },
+  email: { status: 'Não enviado', sentAt: null, error: null },
+});
+
 function loadAll() {
   ensureFile();
-  return JSON.parse(fs.readFileSync(GUESTS_FILE, 'utf-8'));
+  const guests = JSON.parse(fs.readFileSync(GUESTS_FILE, 'utf-8'));
+  // Convidados criados antes do rastreio de convites ganham o valor padrão.
+  return guests.map(g => (g.invites ? g : { ...g, invites: DEFAULT_INVITES() }));
 }
 
 function saveAll(guests) {
@@ -72,6 +79,12 @@ function create({ day, phone, label, contact }) {
     } : null,
     status: 'Pendente',
     confirmation: null,
+    // Rastreia se/quando o convite foi disparado em cada canal — evita
+    // reenvio acidental (política de uso responsável de disparo em massa).
+    invites: {
+      whatsapp: { status: 'Não enviado', sentAt: null, error: null },
+      email: { status: 'Não enviado', sentAt: null, error: null },
+    },
     createdAt: now,
     updatedAt: now,
   };
@@ -156,6 +169,25 @@ function remove(id) {
   return removed;
 }
 
+// Registra o resultado de um disparo (WhatsApp ou e-mail) pra este convidado.
+// channel: 'whatsapp' | 'email'. result: { ok: boolean, error?: string }.
+function recordInviteResult(id, channel, result) {
+  const guests = loadAll();
+  const idx = guests.findIndex(g => g.id === id);
+  if (idx === -1) return null;
+
+  const guest = guests[idx];
+  const invites = guest.invites || DEFAULT_INVITES();
+  invites[channel] = {
+    status: result.ok ? 'Enviado' : 'Falhou',
+    sentAt: result.ok ? new Date().toISOString() : invites[channel].sentAt,
+    error: result.ok ? null : (result.error || 'Erro desconhecido'),
+  };
+  guests[idx] = { ...guest, invites, updatedAt: new Date().toISOString() };
+  saveAll(guests);
+  return guests[idx];
+}
+
 module.exports = {
   DAYS,
   loadAll,
@@ -167,5 +199,6 @@ module.exports = {
   verifyPhone,
   confirm,
   remove,
+  recordInviteResult,
   normalizePhone,
 };

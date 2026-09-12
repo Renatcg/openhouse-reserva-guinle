@@ -53,6 +53,16 @@ data/
 - `/admin/*` é protegido no próprio servidor Express antes de servir o HTML: `requireAuthPage` (catálogo) para a maioria das páginas, e um middleware equivalente próprio do RSVP só para `rsvp-convidados.html`.
 - Rotas de API exigem sessão válida do ambiente correspondente (`/api/me` + `requireAuthApi` no catálogo, `/api/rsvp/me` + sua própria checagem no RSVP).
 
+## Disparo de convites (WhatsApp + e-mail)
+
+Em `/admin/rsvp-convites.html` dá pra configurar, por dia do evento, a imagem e o texto do convite e disparar em massa pros convidados daquele dia.
+
+- **WhatsApp** — via Datafy (`server/whatsapp.js`), que espelha 1:1 a Cloud API da Meta. **Importante:** a Meta só permite iniciar conversa (convite em massa pra quem não te escreveu antes) com um **Message Template pré-aprovado** — o app sempre manda `type: "template"`, nunca texto livre. O fluxo é: (1) escreva o texto de referência na tela, (2) submeta um template com esse conteúdo no painel do Datafy/Meta Business Manager pra aprovação (pode levar de algumas horas a 1-2 dias), (3) cole o nome exato do template aprovado no campo "Nome do template". Sem isso, o envio falha com uma mensagem clara.
+- **E-mail** — via Resend (`server/email.js`), com editor de texto rico (negrito, itálico, cor, tamanho, links) — sem essa limitação de template, porque e-mail não tem a mesma regra de "conversa iniciada".
+- Cada convidado tem o status de envio rastreado por canal (`invites.whatsapp` / `invites.email` no registro do convidado) — o admin nunca reenvia sem pedir explicitamente ("Enviar só pra quem ainda não recebeu" vs. reenviar pra todos).
+- Os disparos exigem marcar a caixa de consentimento na tela antes de enviar, e rodam com uma pequena pausa entre cada mensagem pra não estourar os limites de mensageria da conta.
+- Sem as variáveis de ambiente do WhatsApp/Resend configuradas (ver `.env.example`), os botões de envio ficam desabilitados — o resto do app funciona normalmente.
+
 ## Deploy no EasyPanel
 
 O projeto já tem um `Dockerfile` na raiz, então o EasyPanel consegue buildar direto do GitHub sem configuração extra de build.
@@ -62,11 +72,14 @@ O projeto já tem um `Dockerfile` na raiz, então o EasyPanel consegue buildar d
 3. Em **Environment**, adicione as variáveis:
    - `JWT_SECRET` — uma string aleatória longa (gere uma nova, não reuse a de exemplo do `.env.example`).
    - `NODE_ENV` = `production`
+   - `RSVP_WEBHOOK_KEY`, `RSVP_HOST` — ver `.env.example`.
+   - `WHATSAPP_API_BASE`, `WHATSAPP_API_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` — opcionais, só necessárias pra habilitar o disparo de convites por WhatsApp (ver seção "Disparo de convites" abaixo).
+   - `RESEND_API_KEY`, `RESEND_FROM_EMAIL` — opcionais, só necessárias pra habilitar o disparo por e-mail.
    (o `PORT` já vem `3000` do Dockerfile; não precisa mexer.)
 4. Em **Domains**, aponte o domínio/subdomínio desejado para a porta `3000` — o EasyPanel cuida do HTTPS automaticamente.
 5. Em **Volumes** (ou "Mounts"), adicione dois volumes persistentes — sem isso, cada novo deploy apaga os produtos, convidados e fotos cadastrados:
-   - `/app/data` (guarda `admin.json`, `rsvp-admin.json`, `products.json`, `categories.json`, `guests.json`)
-   - `/app/public/uploads` (guarda as fotos dos produtos)
+   - `/app/data` (guarda `admin.json`, `rsvp-admin.json`, `products.json`, `categories.json`, `guests.json`, `invite-content.json`)
+   - `/app/public/uploads` (guarda as fotos dos produtos e as imagens dos convites)
 6. Deploy. No primeiro deploy, os arquivos que já vieram do repositório servem de ponto de partida (usuário admin padrão do catálogo `admin` / `Admin@12345`, e do RSVP `rsvp` / `Rsvp@12345` — troque as duas senhas depois criando um novo hash e rodando `npm run seed:admin` / `npm run seed:rsvp-admin` localmente, ou trocando manualmente).
 7. Depois de rodando, ative **auto-deploy** nas configurações do serviço para que todo `git push` na branch `main` suba automaticamente uma nova versão.
 

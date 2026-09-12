@@ -1,0 +1,29 @@
+{
+  "dia1": {
+    "imageWhatsapp": null,
+    "imageEmail": null,
+    "whatsappTemplateName": "",
+    "whatsappLanguage": "pt_BR",
+    "whatsappBodyText": "Olá {{1}}! Você está convidado(a) para o Open House da Casa Modelo Reserva Guinle. Confirme sua presença: {{2}}",
+    "emailSubject": "Você está convidado — Open House Reserva Guinle",
+    "emailHtml": "<p>Olá {{nome}},</p><p>Você está convidado(a) para o <strong>Open House da Casa Modelo Reserva Guinle</strong>.</p><p><a href=\"{{link}}\">Confirmar presença</a></p>"
+  },
+  "dia2": {
+    "imageWhatsapp": null,
+    "imageEmail": null,
+    "whatsappTemplateName": "",
+    "whatsappLanguage": "pt_BR",
+    "whatsappBodyText": "Olá {{1}}! Você está convidado(a) para o Open House da Casa Modelo Reserva Guinle. Confirme sua presença: {{2}}",
+    "emailSubject": "Você está convidado — Open House Reserva Guinle",
+    "emailHtml": "<p>Olá {{nome}},</p><p>Você está convidado(a) para o <strong>Open House da Casa Modelo Reserva Guinle</strong>.</p><p><a href=\"{{link}}\">Confirmar presença</a></p>"
+  },
+  "dia3": {
+    "imageWhatsapp": null,
+    "imageEmail": null,
+    "whatsappTemplateName": "",
+    "whatsappLanguage": "pt_BR",
+    "whatsappBodyText": "Olá {{1}}! Você está convidado(a) para o Open House da Casa Modelo Reserva Guinle. Confirme sua presença: {{2}}",
+    "emailSubject": "Você está convidado — Open House Reserva Guinle",
+    "emailHtml": "<p>Olá {{nome}},</p><p>Você está convidado(a) para o <strong>Open House da Casa Modelo Reserva Guinle</strong>.</p><p><a href=\"{{link}}\">Confirmar presença</a></p>"
+  }
+}

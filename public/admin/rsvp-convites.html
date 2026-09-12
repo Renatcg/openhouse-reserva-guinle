@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enviar Convites · Admin Reserva Guinle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: '#f6f3ec',
+          ink: '#1f2a22',
+          forest: '#1f3327',
+          gold: '#c8a862',
+          stone: '#8a8578',
+        },
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .tracked-sm { letter-spacing: 0.08em; }
+  #email-editor { min-height: 220px; }
+  #email-editor:focus { outline: none; }
+  #email-editor a { color: #1f3327; text-decoration: underline; }
+  .toolbar-btn { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; }
+  .toolbar-btn:hover { background: rgba(0,0,0,0.05); }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased">
+
+<div class="min-h-screen flex">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="hidden lg:flex flex-col w-[250px] shrink-0 bg-forest text-cream/90 relative">
+    <div class="px-7 pt-9 pb-6">
+      <h1 class="font-serif text-xl tracking-[0.2em] text-white">RESERVA GUINLE</h1>
+      <p class="tracked-sm text-[9px] text-cream/50 mt-1">OPEN HOUSE · CASA MODELO</p>
+    </div>
+    <div class="mx-7 h-px bg-white/15 mb-4"></div>
+
+    <nav class="flex-1 px-4 space-y-1">
+      <a href="rsvp-convidados.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75a4.5 4.5 0 10-9 0m9 0a4.5 4.5 0 01-9 0m9 0h1.5a3 3 0 003-3v-1.5a3 3 0 00-3-3h-1.5m-9 7.5H6a3 3 0 01-3-3v-1.5a3 3 0 013-3h1.5m9-3.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
+        Convidados RSVP
+      </a>
+      <a href="rsvp-convites.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+        Enviar Convites
+      </a>
+      <button type="button" data-soon="Usuários" class="soon-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition text-left">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+        Usuários
+        <span class="ml-auto text-[9px] tracked-sm text-cream/40">EM BREVE</span>
+      </button>
+    </nav>
+
+    <div class="px-4 pb-4">
+      <div class="mx-3 h-px bg-white/15 mb-4"></div>
+      <a href="#" id="logout-link" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25" /></svg>
+        Sair
+      </a>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="flex-1 min-w-0">
+
+    <!-- Topbar -->
+    <header class="flex items-center gap-4 px-5 md:px-10 py-5 border-b border-black/5 bg-cream/80 backdrop-blur sticky top-0 z-30">
+      <button class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg border border-black/10" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" /></svg>
+      </button>
+      <div class="relative flex-1 max-w-xl">
+        <p class="font-serif text-lg text-ink/60">Enviar Convites</p>
+      </div>
+      <div class="ml-auto relative" id="user-menu-wrap">
+        <button type="button" id="user-menu-btn" class="flex items-center gap-3" aria-haspopup="true" aria-expanded="false">
+          <div class="w-9 h-9 rounded-full bg-forest text-white flex items-center justify-center font-serif text-base" id="user-avatar">?</div>
+          <div class="hidden sm:block leading-tight text-left">
+            <p class="text-sm font-medium" id="user-name">—</p>
+            <p class="text-xs text-stone" id="user-role">—</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-stone" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+        </button>
+        <div id="user-menu" class="hidden absolute right-0 top-full mt-2 w-52 bg-white rounded-xl border border-black/5 shadow-lg py-1.5 z-40">
+          <button type="button" id="logout-link-top" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 text-left">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25" /></svg>
+            Sair
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="px-5 md:px-10 py-8 max-w-[900px]">
+
+      <div class="mb-6">
+        <p class="tracked-sm text-[11px] text-gold font-semibold mb-2">RSVP</p>
+        <h2 class="font-serif text-4xl md:text-5xl leading-none mb-3">Enviar convites</h2>
+        <p class="text-stone text-sm md:text-base">Configure a imagem e o texto de cada dia e dispare por WhatsApp e/ou e-mail. Cada dia tem seu próprio conteúdo.</p>
+      </div>
+
+      <!-- Aviso de compliance -->
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 md:p-5 mb-6 flex items-start gap-3">
+        <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-amber-600 shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+        </div>
+        <div class="text-sm text-amber-900 leading-relaxed">
+          <span class="font-medium">Regra da Meta:</span> pra iniciar conversa (convite em massa), o WhatsApp exige um <strong>Message Template pré-aprovado</strong> — não é possível mandar texto livre. Crie/submeta o template no seu provedor (Datafy) usando o texto abaixo como referência, e só cole o <strong>nome exato</strong> do template aprovado no campo correspondente. Disparos são enviados com uma pausa entre cada um pra respeitar os limites de mensageria da conta.
+        </div>
+      </div>
+
+      <!-- Abas de dia -->
+      <div class="flex gap-2 mb-6" id="day-tabs"></div>
+
+      <div id="content-loading" class="text-center text-stone text-sm py-10">Carregando…</div>
+
+      <div id="content-body" class="hidden space-y-6">
+
+        <!-- Imagens -->
+        <div class="bg-white rounded-2xl border border-black/5 p-5 md:p-6">
+          <h3 class="font-serif text-2xl mb-4">Imagem do convite</h3>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <p class="text-sm font-medium text-ink mb-1.5">Para o WhatsApp</p>
+              <div id="preview-whatsapp" class="aspect-[4/3] bg-black/[0.03] border border-dashed border-black/15 rounded-xl flex items-center justify-center text-xs text-stone overflow-hidden mb-2">Nenhuma imagem</div>
+              <label class="inline-flex items-center gap-2 text-sm text-forest hover:underline cursor-pointer">
+                <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" data-channel="whatsapp" id="file-whatsapp" />
+                Escolher imagem
+              </label>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink mb-1.5">Para o e-mail</p>
+              <div id="preview-email" class="aspect-[4/3] bg-black/[0.03] border border-dashed border-black/15 rounded-xl flex items-center justify-center text-xs text-stone overflow-hidden mb-2">Nenhuma imagem</div>
+              <label class="inline-flex items-center gap-2 text-sm text-forest hover:underline cursor-pointer">
+                <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" data-channel="email" id="file-email" />
+                Escolher imagem
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- WhatsApp -->
+        <div class="bg-white rounded-2xl border border-black/5 p-5 md:p-6">
+          <h3 class="font-serif text-2xl mb-4">Texto do WhatsApp (template)</h3>
+          <div class="grid sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium text-ink mb-1.5">Nome do template aprovado</label>
+              <input id="wa-template-name" type="text" placeholder="ex.: convite_open_house_dia1" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-ink mb-1.5">Idioma do template</label>
+              <input id="wa-language" type="text" placeholder="pt_BR" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+          </div>
+
+          <label class="block text-sm font-medium text-ink mb-1.5">Corpo do texto (referência pra submeter o template)</label>
+          <div class="flex items-center gap-1 mb-1.5">
+            <button type="button" class="toolbar-btn text-stone" title="Negrito" data-wa-wrap="*">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path d="M6 4h6a3.5 3.5 0 010 7H6zM6 11h7a3.5 3.5 0 010 7H6z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="toolbar-btn text-stone italic font-serif text-sm" title="Itálico" data-wa-wrap="_">i</button>
+            <button type="button" class="toolbar-btn text-stone line-through text-sm" title="Riscado" data-wa-wrap="~">S</button>
+            <div class="w-px h-5 bg-black/10 mx-1"></div>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-wa-token="{{1}}" style="width:auto;">+Nome</button>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-wa-token="{{2}}" style="width:auto;">+Link</button>
+          </div>
+          <textarea id="wa-body" rows="4" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-forest/20"></textarea>
+          <p class="text-xs text-stone mt-1.5">{{1}} = primeiro nome do convidado, {{2}} = link do convite. Preenchidos automaticamente no envio.</p>
+
+          <div class="mt-4">
+            <p class="text-xs text-stone mb-1.5">Pré-visualização</p>
+            <div class="bg-[#e5ddd0] rounded-xl p-4">
+              <div class="bg-white rounded-lg rounded-tl-none p-3 max-w-sm shadow-sm">
+                <div id="wa-preview-image" class="hidden mb-2 rounded-lg overflow-hidden"></div>
+                <p id="wa-preview-text" class="text-sm text-ink whitespace-pre-wrap"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- E-mail -->
+        <div class="bg-white rounded-2xl border border-black/5 p-5 md:p-6">
+          <h3 class="font-serif text-2xl mb-4">E-mail</h3>
+          <label class="block text-sm font-medium text-ink mb-1.5">Assunto</label>
+          <input id="email-subject" type="text" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+
+          <label class="block text-sm font-medium text-ink mb-1.5">Corpo do e-mail</label>
+          <div class="flex flex-wrap items-center gap-1 border border-black/10 rounded-t-xl bg-black/[0.02] px-2 py-1.5">
+            <button type="button" class="toolbar-btn text-ink font-bold" title="Negrito" data-cmd="bold">B</button>
+            <button type="button" class="toolbar-btn text-ink italic" title="Itálico" data-cmd="italic">I</button>
+            <button type="button" class="toolbar-btn text-ink underline" title="Sublinhado" data-cmd="underline">U</button>
+            <div class="w-px h-5 bg-black/10 mx-1"></div>
+            <select id="email-font-size" class="text-xs border border-black/10 rounded-lg px-1.5 py-1 bg-white" title="Tamanho">
+              <option value="2">Pequeno</option>
+              <option value="3" selected>Normal</option>
+              <option value="4">Médio</option>
+              <option value="5">Grande</option>
+              <option value="6">Muito grande</option>
+            </select>
+            <input type="color" id="email-color" value="#1f3327" class="w-8 h-8 rounded-lg border border-black/10 cursor-pointer" title="Cor do texto" />
+            <div class="w-px h-5 bg-black/10 mx-1"></div>
+            <button type="button" class="toolbar-btn text-stone" title="Alinhar à esquerda" data-cmd="justifyLeft">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h10.5m-10.5 5.25h16.5" /></svg>
+            </button>
+            <button type="button" class="toolbar-btn text-stone" title="Centralizar" data-cmd="justifyCenter">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M7 12h10m-10 5.25h10" /></svg>
+            </button>
+            <button type="button" class="toolbar-btn text-stone" title="Lista" data-cmd="insertUnorderedList">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm0 5.25h.007v.008H3.75V12zm0 5.25h.007v.008H3.75v-.008z" /></svg>
+            </button>
+            <button type="button" class="toolbar-btn text-stone" title="Link" id="email-link-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>
+            </button>
+            <div class="w-px h-5 bg-black/10 mx-1"></div>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{nome}}" style="width:auto;">+Nome</button>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{link}}" style="width:auto;">+Link</button>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{dia}}" style="width:auto;">+Dia</button>
+          </div>
+          <div id="email-editor" contenteditable="true" class="w-full bg-white border border-t-0 border-black/10 rounded-b-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20"></div>
+        </div>
+
+        <!-- Envio -->
+        <div class="bg-white rounded-2xl border border-black/5 p-5 md:p-6">
+          <h3 class="font-serif text-2xl mb-1">Disparar</h3>
+          <p class="text-sm text-stone mb-4" id="send-summary">—</p>
+
+          <label class="flex items-start gap-2.5 text-sm text-ink/80 cursor-pointer select-none mb-4">
+            <input type="checkbox" id="consent-check" class="mt-0.5 rounded border-black/20" />
+            Confirmo que tenho consentimento pra contatar esses convidados por este canal e que estou ciente das diretrizes de uso da Meta.
+          </label>
+
+          <label class="flex items-center gap-2.5 text-sm text-ink/80 cursor-pointer select-none mb-5">
+            <input type="checkbox" id="only-not-sent-check" checked class="rounded border-black/20" />
+            Enviar só pra quem ainda não recebeu por este canal
+          </label>
+
+          <div class="flex flex-wrap gap-3">
+            <button type="button" id="send-whatsapp-btn" class="inline-flex items-center gap-2 bg-forest text-white px-5 py-3 rounded-xl text-sm font-medium hover:brightness-110 transition disabled:opacity-50">
+              Enviar por WhatsApp
+            </button>
+            <button type="button" id="send-email-btn" class="inline-flex items-center gap-2 bg-ink text-white px-5 py-3 rounded-xl text-sm font-medium hover:brightness-110 transition disabled:opacity-50">
+              Enviar por e-mail
+            </button>
+            <button type="button" id="save-content-btn" class="inline-flex items-center gap-2 border border-black/10 text-ink px-5 py-3 rounded-xl text-sm font-medium hover:bg-black/[0.03] transition">
+              Salvar textos
+            </button>
+          </div>
+
+          <p id="send-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2 mt-4"></p>
+          <div id="send-results" class="hidden mt-4 text-sm"></div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  window.__RSVP_HOST__ = false;
+  const __configReady = (async function loadConfig() {
+    try {
+      const res = await fetch('/api/config');
+      if (res.ok) {
+        const cfg = await res.json();
+        window.__RSVP_HOST__ = !!cfg.rsvpHost;
+      }
+    } catch (err) { /* mantém padrão (false) se falhar */ }
+  })();
+
+  (async function checkSession() {
+    try {
+      const res = await fetch('/api/rsvp/me', { credentials: 'include' });
+      if (!res.ok) { window.location.replace('/admin/rsvp-login.html'); return; }
+      const { user } = await res.json();
+      document.getElementById('user-name').textContent = user.name || 'Administrador';
+      document.getElementById('user-role').textContent = user.role || 'Administrador';
+      document.getElementById('user-avatar').textContent = (user.name || 'A').charAt(0).toUpperCase();
+    } catch (err) {
+      window.location.replace('/admin/rsvp-login.html');
+    }
+  })();
+
+  async function doLogout() {
+    await fetch('/api/rsvp/logout', { method: 'POST', credentials: 'include' });
+    window.location.href = '/admin/rsvp-login.html';
+  }
+  document.getElementById('logout-link').addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
+  document.getElementById('logout-link-top').addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
+
+  document.querySelectorAll('.soon-link').forEach(btn => {
+    btn.addEventListener('click', () => alert(`"${btn.dataset.soon}" ainda não foi implementado nesta versão.`));
+  });
+
+  const userMenuBtn = document.getElementById('user-menu-btn');
+  const userMenu = document.getElementById('user-menu');
+  userMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !userMenu.classList.contains('hidden');
+    userMenu.classList.toggle('hidden', isOpen);
+    userMenuBtn.setAttribute('aria-expanded', String(!isOpen));
+  });
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('user-menu-wrap').contains(e.target)) {
+      userMenu.classList.add('hidden');
+      userMenuBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // ---------- Estado ----------
+  let days = {};
+  let allContent = {};
+  let allGuests = [];
+  let activeDay = 'dia1';
+  let channelsConfigured = { whatsapp: false, email: false };
+
+  const dayTabsEl = document.getElementById('day-tabs');
+  const contentLoading = document.getElementById('content-loading');
+  const contentBody = document.getElementById('content-body');
+
+  const waTemplateName = document.getElementById('wa-template-name');
+  const waLanguage = document.getElementById('wa-language');
+  const waBody = document.getElementById('wa-body');
+  const waPreviewText = document.getElementById('wa-preview-text');
+  const waPreviewImage = document.getElementById('wa-preview-image');
+  const emailSubject = document.getElementById('email-subject');
+  const emailEditor = document.getElementById('email-editor');
+  const previewWhatsapp = document.getElementById('preview-whatsapp');
+  const previewEmail = document.getElementById('preview-email');
+  const sendSummary = document.getElementById('send-summary');
+  const sendError = document.getElementById('send-error');
+  const sendResults = document.getElementById('send-results');
+  const consentCheck = document.getElementById('consent-check');
+  const onlyNotSentCheck = document.getElementById('only-not-sent-check');
+
+  async function loadAllData() {
+    const [invitesRes, guestsRes] = await Promise.all([
+      fetch('/api/admin/rsvp/invites', { credentials: 'include' }),
+      fetch('/api/admin/rsvp/guests', { credentials: 'include' }),
+    ]);
+    if (invitesRes.status === 401 || guestsRes.status === 401) { window.location.replace('/admin/rsvp-login.html'); return; }
+    const invitesData = await invitesRes.json();
+    const guestsData = await guestsRes.json();
+
+    days = invitesData.days || {};
+    allContent = invitesData.content || {};
+    channelsConfigured = invitesData.channelsConfigured || { whatsapp: false, email: false };
+    allGuests = guestsData.guests || [];
+
+    renderDayTabs();
+    renderDayContent();
+
+    contentLoading.classList.add('hidden');
+    contentBody.classList.remove('hidden');
+  }
+
+  function renderDayTabs() {
+    dayTabsEl.innerHTML = Object.values(days).map(d => `
+      <button data-day="${d.key}" class="day-tab-btn shrink-0 px-4 py-2 rounded-full text-sm font-medium transition ${d.key === activeDay ? 'bg-forest text-white' : 'bg-white text-ink border border-black/10 hover:border-black/20'}">${d.short}</button>
+    `).join('');
+    dayTabsEl.querySelectorAll('.day-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeDay = btn.dataset.day;
+        renderDayTabs();
+        renderDayContent();
+      });
+    });
+  }
+
+  function renderDayContent() {
+    const content = allContent[activeDay] || {};
+    waTemplateName.value = content.whatsappTemplateName || '';
+    waLanguage.value = content.whatsappLanguage || 'pt_BR';
+    waBody.value = content.whatsappBodyText || '';
+    emailSubject.value = content.emailSubject || '';
+    emailEditor.innerHTML = content.emailHtml || '';
+
+    renderImagePreview(previewWhatsapp, content.imageWhatsapp);
+    renderImagePreview(previewEmail, content.imageEmail);
+    updateWaPreview();
+
+    const dayGuests = allGuests.filter(g => g.day === activeDay);
+    const confirmed = dayGuests.filter(g => g.status === 'Confirmado').length;
+    const waSent = dayGuests.filter(g => g.invites && g.invites.whatsapp.status === 'Enviado').length;
+    const emailSent = dayGuests.filter(g => g.invites && g.invites.email.status === 'Enviado').length;
+    sendSummary.textContent = `${dayGuests.length} convidados neste dia (${confirmed} confirmados) · WhatsApp enviado pra ${waSent} · E-mail enviado pra ${emailSent}`;
+
+    sendError.classList.add('hidden');
+    sendResults.classList.add('hidden');
+    consentCheck.checked = false;
+
+    document.getElementById('send-whatsapp-btn').disabled = !channelsConfigured.whatsapp;
+    document.getElementById('send-whatsapp-btn').title = channelsConfigured.whatsapp ? '' : 'Configure WHATSAPP_API_TOKEN e WHATSAPP_PHONE_NUMBER_ID no servidor.';
+    document.getElementById('send-email-btn').disabled = !channelsConfigured.email;
+    document.getElementById('send-email-btn').title = channelsConfigured.email ? '' : 'Configure RESEND_API_KEY e RESEND_FROM_EMAIL no servidor.';
+  }
+
+  function renderImagePreview(el, src) {
+    el.innerHTML = src ? `<img src="${src}" class="w-full h-full object-cover" />` : 'Nenhuma imagem';
+  }
+
+  function updateWaPreview() {
+    const text = waBody.value
+      .replace(/\{\{1\}\}/g, 'Marcelo')
+      .replace(/\{\{2\}\}/g, 'https://rsvp.qualifika.com.br/?t=abc123')
+      .replace(/\*(.+?)\*/g, '<strong>$1</strong>')
+      .replace(/_(.+?)_/g, '<em>$1</em>')
+      .replace(/~(.+?)~/g, '<s>$1</s>');
+    waPreviewText.innerHTML = text || '<span class="text-stone">Seu texto aparece aqui…</span>';
+    const content = allContent[activeDay] || {};
+    if (content.imageWhatsapp) {
+      waPreviewImage.innerHTML = `<img src="${content.imageWhatsapp}" class="w-full h-32 object-cover" />`;
+      waPreviewImage.classList.remove('hidden');
+    } else {
+      waPreviewImage.classList.add('hidden');
+    }
+  }
+  waBody.addEventListener('input', updateWaPreview);
+
+  // ---------- Upload de imagem ----------
+  ['whatsapp', 'email'].forEach(channel => {
+    document.getElementById(`file-${channel}`).addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append('image', file);
+      fd.append('channel', channel);
+      try {
+        const res = await fetch(`/api/admin/rsvp/invites/${activeDay}/image`, { method: 'POST', credentials: 'include', body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Não foi possível enviar a imagem.');
+        allContent[activeDay] = data.content;
+        renderImagePreview(channel === 'whatsapp' ? previewWhatsapp : previewEmail, data.content[channel === 'whatsapp' ? 'imageWhatsapp' : 'imageEmail']);
+        updateWaPreview();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        e.target.value = '';
+      }
+    });
+  });
+
+  // ---------- Toolbar do WhatsApp (markdown nativo) ----------
+  document.querySelectorAll('[data-wa-wrap]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mark = btn.dataset.waWrap;
+      const start = waBody.selectionStart, end = waBody.selectionEnd;
+      const value = waBody.value;
+      const selected = value.slice(start, end) || 'texto';
+      waBody.value = value.slice(0, start) + mark + selected + mark + value.slice(end);
+      waBody.focus();
+      updateWaPreview();
+    });
+  });
+  document.querySelectorAll('[data-wa-token]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const token = btn.dataset.waToken;
+      const start = waBody.selectionStart;
+      waBody.value = waBody.value.slice(0, start) + token + waBody.value.slice(start);
+      waBody.focus();
+      updateWaPreview();
+    });
+  });
+
+  // ---------- Toolbar do e-mail (rich text) ----------
+  document.querySelectorAll('[data-cmd]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      emailEditor.focus();
+      document.execCommand(btn.dataset.cmd, false, null);
+    });
+  });
+  document.getElementById('email-font-size').addEventListener('change', (e) => {
+    emailEditor.focus();
+    document.execCommand('fontSize', false, e.target.value);
+  });
+  document.getElementById('email-color').addEventListener('input', (e) => {
+    emailEditor.focus();
+    document.execCommand('foreColor', false, e.target.value);
+  });
+  document.getElementById('email-link-btn').addEventListener('click', () => {
+    const url = prompt('URL do link:', 'https://');
+    if (!url) return;
+    emailEditor.focus();
+    document.execCommand('createLink', false, url);
+  });
+  document.querySelectorAll('[data-email-token]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      emailEditor.focus();
+      document.execCommand('insertText', false, btn.dataset.emailToken);
+    });
+  });
+
+  // ---------- Salvar textos ----------
+  document.getElementById('save-content-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('save-content-btn');
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'Salvando...';
+    try {
+      const res = await fetch(`/api/admin/rsvp/invites/${activeDay}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          whatsappTemplateName: waTemplateName.value.trim(),
+          whatsappLanguage: waLanguage.value.trim(),
+          whatsappBodyText: waBody.value,
+          emailSubject: emailSubject.value,
+          emailHtml: emailEditor.innerHTML,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Não foi possível salvar.');
+      allContent[activeDay] = data.content;
+      btn.textContent = 'Salvo!';
+    } catch (err) {
+      alert(err.message);
+      btn.textContent = original;
+    } finally {
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    }
+  });
+
+  // ---------- Disparo ----------
+  async function sendInvite(channel) {
+    sendError.classList.add('hidden');
+    sendResults.classList.add('hidden');
+
+    if (!consentCheck.checked) {
+      sendError.textContent = 'Marque a confirmação de consentimento antes de enviar.';
+      sendError.classList.remove('hidden');
+      return;
+    }
+
+    const dayGuests = allGuests.filter(g => g.day === activeDay);
+    const pending = onlyNotSentCheck.checked
+      ? dayGuests.filter(g => g.invites && g.invites[channel].status !== 'Enviado')
+      : dayGuests;
+
+    if (pending.length === 0) {
+      sendError.textContent = 'Nenhum convidado pra enviar com esse filtro.';
+      sendError.classList.remove('hidden');
+      return;
+    }
+
+    if (!confirm(`Enviar por ${channel === 'whatsapp' ? 'WhatsApp' : 'e-mail'} pra ${pending.length} convidado(s) do ${days[activeDay].short}?`)) return;
+
+    const btn = document.getElementById(channel === 'whatsapp' ? 'send-whatsapp-btn' : 'send-email-btn');
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'Enviando...';
+
+    try {
+      // Salva o conteúdo atual antes de disparar, pra garantir que o texto/imagem enviados são os que estão na tela.
+      await fetch(`/api/admin/rsvp/invites/${activeDay}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          whatsappTemplateName: waTemplateName.value.trim(),
+          whatsappLanguage: waLanguage.value.trim(),
+          whatsappBodyText: waBody.value,
+          emailSubject: emailSubject.value,
+          emailHtml: emailEditor.innerHTML,
+        }),
+      });
+
+      const res = await fetch(`/api/admin/rsvp/invites/${activeDay}/send-${channel}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ confirmConsent: true, onlyNotSent: onlyNotSentCheck.checked }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Não foi possível enviar.');
+
+      sendResults.classList.remove('hidden');
+      const failedList = data.results.filter(r => !r.ok).map(r => `<li>${allGuests.find(g => g.id === r.id)?.label || r.id}: ${r.error}</li>`).join('');
+      sendResults.innerHTML = `
+        <div class="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 text-emerald-800 mb-2">${data.sent} de ${data.total} enviados com sucesso.</div>
+        ${data.failed > 0 ? `<div class="bg-rose-50 border border-rose-100 rounded-lg px-3 py-2 text-rose-700"><p class="font-medium mb-1">${data.failed} falharam:</p><ul class="list-disc list-inside space-y-0.5">${failedList}</ul></div>` : ''}
+      `;
+
+      await loadAllData();
+    } catch (err) {
+      sendError.textContent = err.message;
+      sendError.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  }
+
+  document.getElementById('send-whatsapp-btn').addEventListener('click', () => sendInvite('whatsapp'));
+  document.getElementById('send-email-btn').addEventListener('click', () => sendInvite('email'));
+
+  __configReady.then(loadAllData);
+</script>
+</body>
+</html>

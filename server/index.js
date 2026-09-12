@@ -19,6 +19,9 @@ const {
 const products = require('./products');
 const categories = require('./categories');
 const rsvp = require('./rsvp');
+const invites = require('./invites');
+const whatsapp = require('./whatsapp');
+const emailClient = require('./email');
 
 // Ambiente de autenticação do RSVP: usuário/senha e sessão totalmente
 // separados do admin do catálogo (cookie próprio "rsvp_admin_session").
@@ -32,10 +35,12 @@ const DATA_DIR = path.join(__dirname, '..', 'data');
 const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
 const RSVP_ADMIN_FILE = path.join(DATA_DIR, 'rsvp-admin.json');
 const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads', 'products');
+const INVITE_UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads', 'invites');
 
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+if (!fs.existsSync(INVITE_UPLOADS_DIR)) fs.mkdirSync(INVITE_UPLOADS_DIR, { recursive: true });
 
-app.use(express.json());
+app.use(express.json({ limit: '8mb' })); // e-mail rico (HTML com imagens embutidas) pode ser grande
 app.use(cookieParser());
 
 // ---------- Upload de imagens de produto ----------
@@ -49,6 +54,22 @@ const upload = multer({
     },
   }),
   limits: { fileSize: 5 * 1024 * 1024, files: 8 },
+  fileFilter: (req, file, cb) => {
+    if (!ALLOWED_MIME.has(file.mimetype)) return cb(new Error('Formato de imagem não suportado (use PNG, JPG ou WEBP).'));
+    cb(null, true);
+  },
+});
+
+// ---------- Upload da imagem do convite (uma por dia, por canal) ----------
+const uploadInvite = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, INVITE_UPLOADS_DIR),
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+      cb(null, `${Date.now()}-${crypto.randomBytes(4).toString('hex')}${ext}`);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
   fileFilter: (req, file, cb) => {
     if (!ALLOWED_MIME.has(file.mimetype)) return cb(new Error('Formato de imagem não suportado (use PNG, JPG ou WEBP).'));
     cb(null, true);
@@ -346,6 +367,165 @@ app.delete('/api/admin/rsvp/guests/:id', rsvpAuth.requireAuthApi, (req, res) => 
   res.json({ ok: true });
 });
 
+// ---------- Convites (imagem + texto por dia) e disparo em massa ----------
+// WhatsApp: exige Message Template pré-aprovado pela Meta — nunca texto livre
+// pra iniciar conversa. E-mail: HTML rico via Resend. Os dois guardam o
+// resultado por convidado (rsvp.recordInviteResult) pra nunca reenviar sem
+// que o admin peça explicitamente.
+
+function buildPublicOrigin(req) {
+  const host = req.hostname || req.get('host');
+  const proto = host === 'localhost' || host === '127.0.0.1' ? 'http' : 'https';
+  return `${proto}://${host}`;
+}
+
+function buildInviteLink(req, token) {
+  const origin = buildPublicOrigin(req);
+  return isRsvpHost(req) ? `${origin}/?t=${token}` : `${origin}/rsvp/index.html?t=${token}`;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+app.get('/api/admin/rsvp/invites', rsvpAuth.requireAuthApi, (req, res) => {
+  res.json({
+    days: rsvp.DAYS,
+    content: invites.loadAll(),
+    channelsConfigured: { whatsapp: whatsapp.isConfigured(), email: emailClient.isConfigured() },
+  });
+});
+
+app.put('/api/admin/rsvp/invites/:day', rsvpAuth.requireAuthApi, (req, res) => {
+  if (!rsvp.DAYS[req.params.day]) return res.status(400).json({ error: 'Dia inválido.' });
+  const updated = invites.updateDay(req.params.day, req.body || {});
+  res.json({ content: updated });
+});
+
+app.post('/api/admin/rsvp/invites/:day/image', rsvpAuth.requireAuthApi, uploadInvite.single('image'), (req, res) => {
+  if (!rsvp.DAYS[req.params.day]) return res.status(400).json({ error: 'Dia inválido.' });
+  const channel = req.body && req.body.channel === 'email' ? 'email' : 'whatsapp';
+  if (!req.file) return res.status(400).json({ error: 'Envie uma imagem.' });
+  const relativePath = `/uploads/invites/${req.file.filename}`;
+  const updated = invites.setImage(req.params.day, channel, relativePath);
+  res.json({ content: updated });
+});
+
+// Dispara o convite por WhatsApp pra todos os convidados pendentes daquele
+// dia (ou pros IDs informados). Sempre via template aprovado — nunca texto
+// livre — e com uma pequena pausa entre envios pra não estourar os limites
+// de disparo da conta.
+app.post('/api/admin/rsvp/invites/:day/send-whatsapp', rsvpAuth.requireAuthApi, async (req, res) => {
+  const day = req.params.day;
+  if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
+  if (!req.body || req.body.confirmConsent !== true) {
+    return res.status(400).json({ error: 'Confirme que tem consentimento pra contatar esses números antes de enviar.' });
+  }
+
+  const content = invites.getDay(day);
+  if (!content.whatsappTemplateName) {
+    return res.status(400).json({ error: 'Informe o nome do template do WhatsApp (aprovado na Meta) antes de enviar.' });
+  }
+
+  const { guestIds, onlyNotSent } = req.body;
+  let targets = rsvp.loadAll().filter(g => g.day === day);
+  if (Array.isArray(guestIds) && guestIds.length) {
+    targets = targets.filter(g => guestIds.includes(g.id));
+  } else if (onlyNotSent !== false) {
+    targets = targets.filter(g => g.invites.whatsapp.status !== 'Enviado');
+  }
+
+  const headerImageLink = content.imageWhatsapp ? `${buildPublicOrigin(req)}${content.imageWhatsapp}` : null;
+  const results = [];
+
+  for (const guest of targets) {
+    if (!guest.phone) {
+      rsvp.recordInviteResult(guest.id, 'whatsapp', { ok: false, error: 'Sem telefone cadastrado.' });
+      results.push({ id: guest.id, ok: false, error: 'Sem telefone cadastrado.' });
+      continue;
+    }
+    const link = buildInviteLink(req, guest.token);
+    const firstName = (guest.label || '').trim().split(' ')[0] || 'convidado(a)';
+    try {
+      await whatsapp.sendTemplateMessage({
+        to: guest.phone,
+        templateName: content.whatsappTemplateName,
+        languageCode: content.whatsappLanguage,
+        headerImageLink,
+        bodyParams: [firstName, link],
+      });
+      rsvp.recordInviteResult(guest.id, 'whatsapp', { ok: true });
+      results.push({ id: guest.id, ok: true });
+    } catch (err) {
+      rsvp.recordInviteResult(guest.id, 'whatsapp', { ok: false, error: err.message });
+      results.push({ id: guest.id, ok: false, error: err.message });
+    }
+    await sleep(300); // ritmo de envio conservador — evita estourar limites de disparo
+  }
+
+  res.json({
+    total: results.length,
+    sent: results.filter(r => r.ok).length,
+    failed: results.filter(r => !r.ok).length,
+    results,
+  });
+});
+
+// Dispara o convite por e-mail (Resend) pra todos os convidados pendentes
+// daquele dia (ou pros IDs informados).
+app.post('/api/admin/rsvp/invites/:day/send-email', rsvpAuth.requireAuthApi, async (req, res) => {
+  const day = req.params.day;
+  if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
+  if (!req.body || req.body.confirmConsent !== true) {
+    return res.status(400).json({ error: 'Confirme que tem consentimento pra contatar esses e-mails antes de enviar.' });
+  }
+
+  const content = invites.getDay(day);
+  const { guestIds, onlyNotSent } = req.body;
+  let targets = rsvp.loadAll().filter(g => g.day === day);
+  if (Array.isArray(guestIds) && guestIds.length) {
+    targets = targets.filter(g => guestIds.includes(g.id));
+  } else if (onlyNotSent !== false) {
+    targets = targets.filter(g => g.invites.email.status !== 'Enviado');
+  }
+
+  const results = [];
+  for (const guest of targets) {
+    const toEmail = (guest.confirmation && guest.confirmation.email) || (guest.contact && guest.contact.email);
+    if (!toEmail) {
+      rsvp.recordInviteResult(guest.id, 'email', { ok: false, error: 'Sem e-mail cadastrado.' });
+      results.push({ id: guest.id, ok: false, error: 'Sem e-mail cadastrado.' });
+      continue;
+    }
+    const link = buildInviteLink(req, guest.token);
+    const name = guest.label || (guest.confirmation && guest.confirmation.name) || '';
+    const dayInfo = rsvp.DAYS[day];
+    let html = invites.fillEmailTokens(content.emailHtml, { name, link, dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel });
+    if (content.imageEmail) {
+      const imgUrl = `${buildPublicOrigin(req)}${content.imageEmail}`;
+      html = `<img src="${imgUrl}" alt="" style="max-width:100%;display:block;margin-bottom:16px;" />` + html;
+    }
+    const subject = invites.fillEmailTokens(content.emailSubject, { name, link, dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel });
+
+    try {
+      await emailClient.sendEmail({ to: toEmail, subject, html });
+      rsvp.recordInviteResult(guest.id, 'email', { ok: true });
+      results.push({ id: guest.id, ok: true });
+    } catch (err) {
+      rsvp.recordInviteResult(guest.id, 'email', { ok: false, error: err.message });
+      results.push({ id: guest.id, ok: false, error: err.message });
+    }
+    await sleep(150);
+  }
+
+  res.json({
+    total: results.length,
+    sent: results.filter(r => r.ok).length,
+    failed: results.filter(r => !r.ok).length,
+    results,
+  });
+});
+
 // ---------- Webhook do RSVP (para o pipeline da Mauad consultar a lista) ----------
 // Autenticado por chave estática, não por sessão de admin — é um sistema externo
 // consultando, não um navegador logado. Chave em RSVP_WEBHOOK_KEY (.env).
@@ -439,6 +619,11 @@ app.get('/admin/rsvp-login.html', (req, res) => {
 app.get('/admin/rsvp-convidados.html', rsvpAuth.requireAuthPage, (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.sendFile(path.join(PUBLIC_DIR, 'admin', 'rsvp-convidados.html'));
+});
+
+app.get('/admin/rsvp-convites.html', rsvpAuth.requireAuthPage, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.sendFile(path.join(PUBLIC_DIR, 'admin', 'rsvp-convites.html'));
 });
 
 app.use('/admin', requireAuthPage, express.static(path.join(PUBLIC_DIR, 'admin'), { setHeaders: noCacheForHtml }));
