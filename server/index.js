@@ -14,10 +14,15 @@ const {
   clearSessionCookie,
   requireAuthApi,
   requireAuthPage,
+  createAuthModule,
 } = require('./auth');
 const products = require('./products');
 const categories = require('./categories');
 const rsvp = require('./rsvp');
+
+// Ambiente de autenticação do RSVP: usuário/senha e sessão totalmente
+// separados do admin do catálogo (cookie próprio "rsvp_admin_session").
+const rsvpAuth = createAuthModule('rsvp_admin_session', '/admin/rsvp-login.html');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +30,7 @@ const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
+const RSVP_ADMIN_FILE = path.join(DATA_DIR, 'rsvp-admin.json');
 const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads', 'products');
 
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -55,6 +61,11 @@ function loadAdmin() {
   return JSON.parse(fs.readFileSync(ADMIN_FILE, 'utf-8'));
 }
 
+function loadRsvpAdmin() {
+  if (!fs.existsSync(RSVP_ADMIN_FILE)) return null;
+  return JSON.parse(fs.readFileSync(RSVP_ADMIN_FILE, 'utf-8'));
+}
+
 // ---------- Rotas de autenticação (API) ----------
 app.post('/api/login', (req, res) => {
   const { email, password, remember } = req.body || {};
@@ -83,6 +94,37 @@ app.post('/api/logout', (req, res) => {
 });
 
 app.get('/api/me', requireAuthApi, (req, res) => {
+  res.json({ user: req.user });
+});
+
+// ---------- Rotas de autenticação do RSVP (ambiente separado) ----------
+app.post('/api/rsvp/login', (req, res) => {
+  const { email, password, remember } = req.body || {};
+  const admin = loadRsvpAdmin();
+
+  if (!admin) {
+    return res.status(500).json({ error: 'Nenhum usuário administrador do RSVP cadastrado. Rode "npm run seed:rsvp-admin".' });
+  }
+
+  const emailOk = (email || '').trim().toLowerCase() === admin.email.toLowerCase();
+  const passOk = password && bcrypt.compareSync(password, admin.passwordHash);
+
+  if (!emailOk || !passOk) {
+    return res.status(401).json({ error: 'E-mail ou senha inválidos.' });
+  }
+
+  const token = rsvpAuth.signToken({ sub: admin.email, name: admin.name, role: admin.role }, !!remember);
+  rsvpAuth.setSessionCookie(res, token, !!remember);
+
+  res.json({ ok: true, user: { name: admin.name, role: admin.role, email: admin.email } });
+});
+
+app.post('/api/rsvp/logout', (req, res) => {
+  rsvpAuth.clearSessionCookie(res);
+  res.json({ ok: true });
+});
+
+app.get('/api/rsvp/me', rsvpAuth.requireAuthApi, (req, res) => {
   res.json({ user: req.user });
 });
 
@@ -245,7 +287,7 @@ app.post('/api/rsvp/:token/confirmar', (req, res) => {
 
 // ---------- Admin do RSVP (API) — exige sessão ----------
 
-app.get('/api/admin/rsvp/guests', requireAuthApi, (req, res) => {
+app.get('/api/admin/rsvp/guests', rsvpAuth.requireAuthApi, (req, res) => {
   const guests = rsvp.loadAll().map(g => ({
     ...g,
     dayInfo: rsvp.DAYS[g.day],
@@ -253,7 +295,7 @@ app.get('/api/admin/rsvp/guests', requireAuthApi, (req, res) => {
   res.json({ guests, days: rsvp.DAYS });
 });
 
-app.post('/api/admin/rsvp/guests', requireAuthApi, (req, res) => {
+app.post('/api/admin/rsvp/guests', rsvpAuth.requireAuthApi, (req, res) => {
   const { day, entries } = req.body || {};
   if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
   if (!Array.isArray(entries) || entries.length === 0) {
@@ -272,7 +314,7 @@ app.post('/api/admin/rsvp/guests', requireAuthApi, (req, res) => {
   res.status(201).json({ guests: created });
 });
 
-app.delete('/api/admin/rsvp/guests/:id', requireAuthApi, (req, res) => {
+app.delete('/api/admin/rsvp/guests/:id', rsvpAuth.requireAuthApi, (req, res) => {
   const ok = rsvp.remove(req.params.id);
   if (!ok) return res.status(404).json({ error: 'Convidado não encontrado.' });
   res.json({ ok: true });
@@ -356,6 +398,20 @@ app.get(['/admin', '/admin/'], (req, res, next) => {
 const noCacheForHtml = (res, filePath) => {
   if (filePath.endsWith('.html')) res.set('Cache-Control', 'no-store');
 };
+
+// O admin do RSVP é um ambiente à parte (usuário/senha próprios, sessão
+// própria via rsvpAuth) — por isso essas duas páginas são tratadas ANTES do
+// mount genérico de /admin (que exige a sessão do catálogo) e nunca passam
+// pelo requireAuthPage do catálogo.
+app.get('/admin/rsvp-login.html', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.sendFile(path.join(PUBLIC_DIR, 'admin', 'rsvp-login.html'));
+});
+
+app.get('/admin/rsvp-convidados.html', rsvpAuth.requireAuthPage, (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.sendFile(path.join(PUBLIC_DIR, 'admin', 'rsvp-convidados.html'));
+});
 
 app.use('/admin', requireAuthPage, express.static(path.join(PUBLIC_DIR, 'admin'), { setHeaders: noCacheForHtml }));
 

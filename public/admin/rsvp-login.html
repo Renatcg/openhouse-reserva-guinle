@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Login · Painel Reserva Guinle</title>
+<title>Login · Painel RSVP Reserva Guinle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -37,39 +37,25 @@
 <body class="min-h-screen relative flex items-center justify-center overflow-hidden">
 
   <!-- Background -->
-  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2000&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover" />
+  <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2000&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover" />
   <div class="absolute inset-0 bg-black/25"></div>
 
   <!-- Top header -->
   <div class="absolute top-8 md:top-10 left-1/2 -translate-x-1/2 text-center z-10">
     <h1 class="font-serif text-2xl md:text-3xl tracking-[0.25em] text-white">RESERVA GUINLE</h1>
-    <p class="tracked-sm text-[10px] md:text-xs text-white/80 mt-1">OPEN HOUSE · CASA MODELO</p>
+    <p class="tracked-sm text-[10px] md:text-xs text-white/80 mt-1">RSVP · OPEN HOUSE</p>
     <div class="w-8 h-[2px] bg-gold mx-auto mt-3"></div>
-  </div>
-
-  <!-- Side captions (desktop) -->
-  <div class="hidden lg:block absolute top-1/3 left-10 z-10">
-    <p class="tracked-sm text-xs text-white/90 leading-[1.9] font-medium">
-      ARQUITETURA<br>QUE INSPIRA<br>NOVAS HISTÓRIAS.
-    </p>
-    <div class="w-8 h-[2px] bg-gold mt-2"></div>
-  </div>
-  <div class="hidden lg:block absolute bottom-16 right-10 z-10 text-right">
-    <p class="tracked-sm text-xs text-white/90 leading-[1.9] font-medium">
-      NATUREZA,<br>ARQUITETURA<br>E BEM-ESTAR EM<br>PERFEITO EQUILÍBRIO.
-    </p>
-    <div class="w-8 h-[2px] bg-gold mt-2 ml-auto"></div>
   </div>
 
   <!-- Login card -->
   <div class="relative z-10 w-full max-w-md mx-4">
     <div class="bg-cream rounded-2xl shadow-2xl px-7 py-9 md:px-10 md:py-11">
-      <p class="tracked-sm text-[11px] text-gold font-semibold text-center mb-3">ÁREA RESTRITA</p>
+      <p class="tracked-sm text-[11px] text-gold font-semibold text-center mb-3">ÁREA RESTRITA · RSVP</p>
       <h2 class="font-serif text-3xl md:text-4xl text-center text-ink leading-tight mb-3">
-        Acesse o painel<br>de produtos
+        Acesse o painel<br>de convidados
       </h2>
       <p class="text-stone text-sm text-center mb-7 leading-relaxed">
-        Faça login para gerenciar o catálogo<br>do Open House Reserva Guinle.
+        Faça login para gerenciar a lista de<br>convidados e confirmações do RSVP.
       </p>
 
       <form id="login-form" class="space-y-5" novalidate>
@@ -111,7 +97,7 @@
       <div class="mt-8 text-center">
         <div class="w-8 h-[2px] bg-gold mx-auto mb-3"></div>
         <p class="font-serif text-lg tracking-[0.2em] text-ink">RESERVA GUINLE</p>
-        <p class="tracked-sm text-[9px] text-stone mt-0.5">OPEN HOUSE · CASA MODELO</p>
+        <p class="tracked-sm text-[9px] text-stone mt-0.5">RSVP · OPEN HOUSE</p>
       </div>
     </div>
   </div>
@@ -127,12 +113,12 @@
     pass.type = pass.type === 'password' ? 'text' : 'password';
   });
 
-  // Este login é só do catálogo (produtos/categorias). O RSVP tem login e
-  // sessão totalmente separados em /admin/rsvp-login.html.
+  // Login e sessão totalmente separados do admin do catálogo — usa
+  // /api/rsvp/login e o cookie próprio do ambiente RSVP.
 
-  // Se já tem sessão válida, pula direto pra lista de produtos
-  fetch('/api/me', { credentials: 'include' })
-    .then(r => { if (r.ok) window.location.replace('/admin/produtos.html'); })
+  // Se já tem sessão válida, pula direto pra lista de convidados
+  fetch('/api/rsvp/me', { credentials: 'include' })
+    .then(r => { if (r.ok) window.location.replace('/admin/rsvp-convidados.html'); })
     .catch(() => {});
 
   form.addEventListener('submit', async (e) => {
@@ -145,7 +131,7 @@
     const password = document.getElementById('password').value;
 
     try {
-      const res = await fetch('/api/login', {
+      const res = await fetch('/api/rsvp/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -161,7 +147,7 @@
         return;
       }
 
-      window.location.href = '/admin/produtos.html';
+      window.location.href = '/admin/rsvp-convidados.html';
     } catch (err) {
       errorMsg.textContent = 'Erro de conexão com o servidor.';
       errorMsg.classList.remove('hidden');

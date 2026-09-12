@@ -46,14 +46,6 @@
     <div class="mx-7 h-px bg-white/15 mb-4"></div>
 
     <nav class="flex-1 px-4 space-y-1">
-      <a href="produtos.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375C2.754 3.75 2.25 4.254 2.25 4.875v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>
-        Produtos
-      </a>
-      <a href="categorias.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-cream/70 hover:bg-white/5 hover:text-white text-sm font-medium transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
-        Categorias
-      </a>
       <a href="rsvp-convidados.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75a4.5 4.5 0 10-9 0m9 0a4.5 4.5 0 01-9 0m9 0h1.5a3 3 0 003-3v-1.5a3 3 0 00-3-3h-1.5m-9 7.5H6a3 3 0 01-3-3v-1.5a3 3 0 013-3h1.5m9-3.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
         Convidados RSVP
@@ -197,20 +189,20 @@
 
   (async function checkSession() {
     try {
-      const res = await fetch('/api/me', { credentials: 'include' });
-      if (!res.ok) { window.location.replace('/login.html'); return; }
+      const res = await fetch('/api/rsvp/me', { credentials: 'include' });
+      if (!res.ok) { window.location.replace('/admin/rsvp-login.html'); return; }
       const { user } = await res.json();
       document.getElementById('user-name').textContent = user.name || 'Administrador';
       document.getElementById('user-role').textContent = user.role || 'Administrador';
       document.getElementById('user-avatar').textContent = (user.name || 'A').charAt(0).toUpperCase();
     } catch (err) {
-      window.location.replace('/login.html');
+      window.location.replace('/admin/rsvp-login.html');
     }
   })();
 
   async function doLogout() {
-    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = '/login.html';
+    await fetch('/api/rsvp/logout', { method: 'POST', credentials: 'include' });
+    window.location.href = '/admin/rsvp-login.html';
   }
   document.getElementById('logout-link').addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
   document.getElementById('logout-link-top').addEventListener('click', (e) => { e.preventDefault(); doLogout(); });
@@ -350,7 +342,7 @@
   async function loadGuests() {
     try {
       const res = await fetch('/api/admin/rsvp/guests', { credentials: 'include' });
-      if (res.status === 401) { window.location.replace('/login.html'); return; }
+      if (res.status === 401) { window.location.replace('/admin/rsvp-login.html'); return; }
       const data = await res.json();
       days = data.days || {};
       allGuests = (data.guests || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
