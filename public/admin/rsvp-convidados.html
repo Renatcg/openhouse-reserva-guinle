@@ -293,7 +293,7 @@
       return `
         <tr class="hover:bg-black/[0.015] transition align-top">
           <td class="py-3.5 px-5 whitespace-nowrap">${g.dayInfo.short}<br><span class="text-xs text-stone">${g.dayInfo.label}</span></td>
-          <td class="py-3.5 px-3 whitespace-nowrap">${g.phone}${g.label ? `<br><span class="text-xs text-stone">${g.label}</span>` : ''}</td>
+          <td class="py-3.5 px-3 whitespace-nowrap">${g.phone}${g.label ? `<br><span class="text-xs text-stone">${g.label}</span>` : ''}${g.contact && g.contact.unit ? `<br><span class="text-[11px] text-gold font-medium">${g.contact.unit}</span>` : ''}</td>
           <td class="py-3.5 px-3">${statusBadge(g.status)}</td>
           <td class="py-3.5 px-3 max-w-[220px]">${confirmedBy}</td>
           <td class="py-3.5 px-3">${companion}</td>

@@ -48,7 +48,7 @@ function generateToken() {
   return crypto.randomBytes(9).toString('base64url'); // ~12 chars, seguro pra URL
 }
 
-function create({ day, phone, label }) {
+function create({ day, phone, label, contact }) {
   if (!DAYS[day]) throw new Error(`Dia inválido: ${day}`);
   const guests = loadAll();
   const now = new Date().toISOString();
@@ -61,6 +61,15 @@ function create({ day, phone, label }) {
     day,
     phone: normalizePhone(phone),
     label: (label || '').trim(),
+    // Dados de referência já conhecidos (ex: vindos da planilha de compradores) —
+    // só pra identificação no admin/webhook. O convidado ainda preenche os dados
+    // dele mesmo no formulário; isso não é usado pra pré-preencher nem pula a
+    // validação de telefone.
+    contact: contact ? {
+      unit: contact.unit || '',
+      email: contact.email || '',
+      address: contact.address || '',
+    } : null,
     status: 'Pendente',
     confirmation: null,
     createdAt: now,
@@ -76,6 +85,7 @@ function createMany(day, entries) {
     day,
     phone: typeof entry === 'string' ? entry : entry.phone,
     label: typeof entry === 'string' ? '' : entry.label,
+    contact: typeof entry === 'string' ? null : entry.contact,
   }));
 }
 

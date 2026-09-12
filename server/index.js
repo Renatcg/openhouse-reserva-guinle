@@ -345,6 +345,7 @@ app.get('/api/webhook/rsvp', requireWebhookKey, (req, res) => {
     dateLabel: rsvp.DAYS[g.day] ? rsvp.DAYS[g.day].dateLabel : null,
     phone: g.phone,
     label: g.label,
+    unit: g.contact ? g.contact.unit : null,
     status: g.status,
     guest: g.confirmation ? { name: g.confirmation.name, email: g.confirmation.email, phone: g.confirmation.phone } : null,
     companion: g.confirmation && g.confirmation.companion ? g.confirmation.companion : null,
