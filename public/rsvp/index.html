@@ -38,8 +38,7 @@
   <!-- ===== HEADER ===== -->
   <header class="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-10 pt-4 pb-2 gap-4">
     <div>
-      <img src="/img/logo-reserva-guinle.png" alt="Reserva Guinle" class="h-16 md:h-20 w-auto" />
-      <p class="tracked-sm text-[9px] md:text-[10px] text-stone mt-1">OPEN HOUSE · CASA MODELO</p>
+      <img src="/img/logo-reserva-guinle.png" alt="Reserva Guinle" class="h-20 md:h-24 w-auto" />
     </div>
   </header>
 
@@ -71,9 +70,8 @@
         </p>
 
         <div class="border border-black/10 rounded-2xl p-5 bg-white/60 mb-8 max-w-sm">
-          <p class="tracked-sm text-[10px] text-gold font-semibold mb-2" id="day-short">SEU DIA RESERVADO</p>
-          <p class="font-serif text-3xl leading-none mb-1" id="day-weekday">—</p>
-          <p class="text-sm text-stone" id="day-date">—</p>
+          <p class="font-serif text-3xl leading-none mb-1" id="day-date">—</p>
+          <p class="text-sm text-stone" id="day-weekday">—</p>
         </div>
 
         <a id="cta-btn" href="#" class="inline-flex w-fit items-center gap-2 bg-forest text-white px-6 py-3.5 rounded-full text-sm md:text-base font-medium hover:brightness-110 transition">
@@ -143,7 +141,6 @@
       if (!res.ok) { showState(stateInvalid); return; }
       const data = await res.json();
 
-      document.getElementById('day-short').textContent = data.day.short.toUpperCase();
       document.getElementById('day-weekday').textContent = data.day.weekday;
       document.getElementById('day-date').textContent = data.day.dateLabel;
 
