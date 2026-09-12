@@ -71,7 +71,7 @@
 
         <div class="border border-black/10 rounded-2xl p-5 bg-white/60 mb-8 max-w-sm">
           <p class="font-serif text-3xl leading-none mb-1" id="day-date">—</p>
-          <p class="text-sm text-stone" id="day-weekday">—</p>
+          <p class="text-sm text-stone"><span id="day-weekday">—</span> <span class="text-stone/50">|</span> <span id="day-time">—</span></p>
         </div>
 
         <a id="cta-btn" href="#" class="inline-flex w-fit items-center gap-2 bg-forest text-white px-6 py-3.5 rounded-full text-sm md:text-base font-medium hover:brightness-110 transition">
@@ -79,24 +79,24 @@
           <span aria-hidden="true">→</span>
         </a>
 
-        <div class="grid grid-cols-3 gap-3 mt-10">
-          <div class="flex flex-col items-start gap-2">
-            <div class="w-9 h-9 rounded-full bg-forest/[0.06] flex items-center justify-center text-forest">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+        <div class="grid grid-cols-3 gap-4 mt-10">
+          <div class="flex flex-col items-start gap-3">
+            <div class="w-14 h-14 rounded-full bg-forest/[0.08] flex items-center justify-center text-forest">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
             </div>
-            <p class="text-xs text-ink/80 leading-snug">Conheça a casa modelo</p>
+            <p class="text-sm font-medium text-ink leading-snug">Experiência única na casa modelo</p>
           </div>
-          <div class="flex flex-col items-start gap-2">
-            <div class="w-9 h-9 rounded-full bg-forest/[0.06] flex items-center justify-center text-forest">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 18a3.75 3.75 0 00.495-7.468 5.99 5.99 0 00-1.925 3.547 5.975 5.975 0 01-2.133-1.001A3.75 3.75 0 0012.75 18z" /></svg>
+          <div class="flex flex-col items-start gap-3">
+            <div class="w-14 h-14 rounded-full bg-forest/[0.08] flex items-center justify-center text-forest">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503-9.375l-3.005-1.343a2.25 2.25 0 00-1.995 0l-3.006 1.343a2.25 2.25 0 01-1.995 0L3.75 4.5v14.25l3.752-1.5a2.25 2.25 0 011.995 0l3.006 1.343a2.25 2.25 0 001.995 0l3.005-1.343a2.25 2.25 0 011.996 0l3.751 1.5V4.5l-3.751 1.5a2.25 2.25 0 01-1.996 0z" /></svg>
             </div>
-            <p class="text-xs text-ink/80 leading-snug">Viva uma experiência única</p>
+            <p class="text-sm font-medium text-ink leading-snug">Tour guiado pelo empreendimento</p>
           </div>
-          <div class="flex flex-col items-start gap-2">
-            <div class="w-9 h-9 rounded-full bg-forest/[0.06] flex items-center justify-center text-forest">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
+          <div class="flex flex-col items-start gap-3">
+            <div class="w-14 h-14 rounded-full bg-forest/[0.08] flex items-center justify-center text-forest">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>
             </div>
-            <p class="text-xs text-ink/80 leading-snug">Conte com nosso time no local</p>
+            <p class="text-sm font-medium text-ink leading-snug">Sunset com coquetel, música e boa companhia</p>
           </div>
         </div>
       </div>
@@ -143,6 +143,7 @@
 
       document.getElementById('day-weekday').textContent = data.day.weekday;
       document.getElementById('day-date').textContent = data.day.dateLabel;
+      document.getElementById('day-time').textContent = data.day.time || '';
 
       const ctaBtn = document.getElementById('cta-btn');
       const ctaLabel = document.getElementById('cta-label');
