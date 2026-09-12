@@ -68,7 +68,7 @@
     </div>
 
     <div class="relative z-10 flex items-center justify-center min-h-screen px-5 md:px-10 py-10">
-      <div class="bg-cream rounded-2xl shadow-2xl p-6 md:p-10 w-full max-w-4xl grid md:grid-cols-2 gap-8 md:gap-10">
+      <div class="bg-cream/50 rounded-2xl shadow-2xl p-6 md:p-10 w-full max-w-4xl grid md:grid-cols-2 gap-8 md:gap-10">
 
         <!-- Coluna 1: confirmação -->
         <div>
@@ -95,13 +95,6 @@
             Acompanhante confirmado: <span id="companion-name" class="text-ink font-medium"></span>
           </p>
 
-          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <button id="calendar-btn-2" class="inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-6 py-3 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
-              Adicionar ao meu calendário
-            </button>
-            <a href="index.html" class="text-sm text-forest hover:underline underline-offset-2 font-medium">Voltar para a página inicial</a>
-          </div>
         </div>
 
         <!-- Coluna 2: indicação de amigo -->
@@ -126,6 +119,15 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
             Obrigado pela indicação — vamos cuidar do convite.
           </p>
+        </div>
+
+        <!-- Ações — ocupa a largura inteira do box -->
+        <div class="md:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <button id="calendar-btn-2" class="inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-6 py-3 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+            Adicionar ao meu calendário
+          </button>
+          <a href="index.html" class="text-sm text-forest hover:underline underline-offset-2 font-medium">Voltar para a página inicial</a>
         </div>
 
       </div>
