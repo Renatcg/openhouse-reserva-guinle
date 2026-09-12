@@ -11,9 +11,9 @@ const GUESTS_FILE = path.join(DATA_DIR, 'guests.json');
 
 // Dias do evento. Mudar aqui reflete em toda a tela do convidado e no admin.
 const DAYS = {
-  dia1: { key: 'dia1', short: 'Dia 1', label: 'Sexta, 9 de outubro', weekday: 'Sexta-feira', dateLabel: '9 de outubro de 2026', time: '15h' },
-  dia2: { key: 'dia2', short: 'Dia 2', label: 'Sábado, 10 de outubro', weekday: 'Sábado', dateLabel: '10 de outubro de 2026', time: '15h' },
-  dia3: { key: 'dia3', short: 'Dia 3', label: 'Domingo, 11 de outubro', weekday: 'Domingo', dateLabel: '11 de outubro de 2026', time: '15h' },
+  dia1: { key: 'dia1', short: 'Dia 1', label: 'Sexta, 9 de outubro', weekday: 'Sexta-feira', dateLabel: '9 de outubro de 2026', time: '15h', isoDate: '2026-10-09', startTime: '15:00', endTime: '20:00' },
+  dia2: { key: 'dia2', short: 'Dia 2', label: 'Sábado, 10 de outubro', weekday: 'Sábado', dateLabel: '10 de outubro de 2026', time: '15h', isoDate: '2026-10-10', startTime: '15:00', endTime: '20:00' },
+  dia3: { key: 'dia3', short: 'Dia 3', label: 'Domingo, 11 de outubro', weekday: 'Domingo', dateLabel: '11 de outubro de 2026', time: '15h', isoDate: '2026-10-11', startTime: '15:00', endTime: '20:00' },
 };
 
 function ensureFile() {

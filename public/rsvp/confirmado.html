@@ -58,50 +58,61 @@
   </section>
 
   <!-- ===== SUCCESS SECTION ===== -->
-  <section id="state-success" class="hidden max-w-7xl mx-auto px-5 md:px-10 pb-16">
-    <div class="grid lg:grid-cols-[1fr_0.85fr] gap-8 lg:gap-12 items-center">
+  <section id="state-success" class="hidden relative min-h-[85vh] mx-5 md:mx-10 mb-10 rounded-2xl overflow-hidden">
+    <img src="https://mauad.net.br/wp-content/uploads/2023/11/GUIN_Loft-Frente-Sede_HR.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
+    <div class="absolute bottom-6 right-6 text-right">
+      <p class="tracked-sm text-[10px] text-white leading-[1.9] font-medium drop-shadow-sm">
+        MAIS QUE UM LUGAR.<br>UMA FORMA DE VIVER.
+      </p>
+    </div>
 
-      <div class="py-6">
-        <div class="w-14 h-14 rounded-full bg-forest text-white flex items-center justify-center mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-        </div>
-        <h2 class="font-serif text-4xl md:text-5xl leading-none mb-4" id="guest-title">Presença confirmada!</h2>
-        <p class="text-stone text-base leading-relaxed mb-7 max-w-md" id="guest-message">
-          Recebemos seus dados e sua participação no Open House da Casa Modelo Reserva Guinle está confirmada.
-        </p>
+    <div class="relative z-10 flex items-end md:items-center min-h-[85vh] px-5 md:px-10 py-10">
+      <div class="bg-white/97 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-10 w-full max-w-4xl grid md:grid-cols-2 gap-8 md:gap-10">
 
-        <div class="flex items-center gap-3 bg-white border border-black/5 rounded-xl p-4 mb-4 max-w-sm">
-          <div class="w-10 h-10 rounded-lg bg-forest/[0.06] flex items-center justify-center text-forest shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+        <!-- Coluna 1: confirmação -->
+        <div>
+          <div class="w-14 h-14 rounded-full bg-forest text-white flex items-center justify-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
           </div>
-          <div>
-            <p class="text-sm font-semibold text-ink" id="date-label">—</p>
-            <p class="text-xs text-stone" id="weekday-label">—</p>
+          <h2 class="font-serif text-3xl md:text-4xl leading-none mb-4" id="guest-title">Presença confirmada!</h2>
+          <p class="text-stone text-base leading-relaxed mb-7 max-w-md" id="guest-message">
+            Recebemos seus dados e sua participação no Open House da Casa Modelo Reserva Guinle está confirmada.
+          </p>
+
+          <div class="flex items-center gap-3 bg-cream border border-black/5 rounded-xl p-4 mb-4 max-w-sm">
+            <div class="w-10 h-10 rounded-lg bg-forest/[0.06] flex items-center justify-center text-forest shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-ink" id="date-label">—</p>
+              <p class="text-xs text-stone" id="weekday-label">—</p>
+            </div>
+          </div>
+
+          <p id="companion-note" class="hidden text-sm text-stone flex items-center gap-2 mb-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-forest shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
+            Acompanhante confirmado: <span id="companion-name" class="text-ink font-medium"></span>
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <button id="calendar-btn-2" class="inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-6 py-3 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+              Adicionar ao meu calendário
+            </button>
+            <a href="index.html" class="text-sm text-forest hover:underline underline-offset-2 font-medium">Voltar para a página inicial</a>
           </div>
         </div>
 
-        <p id="companion-note" class="hidden text-sm text-stone flex items-center gap-2 mb-7">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-forest shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
-          Acompanhante confirmado: <span id="companion-name" class="text-ink font-medium"></span>
-        </p>
-
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
-          <button id="calendar-btn-2" class="inline-flex items-center gap-2 bg-white border border-black/10 text-ink px-6 py-3 rounded-full text-sm font-medium hover:bg-black/[0.03] transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
-            Adicionar ao meu calendário
-          </button>
-          <a href="index.html" class="text-sm text-forest hover:underline underline-offset-2 font-medium">Voltar para a página inicial</a>
-        </div>
-
-        <!-- Indicação de amigo -->
-        <div id="referral-box" class="bg-gold/[0.08] border border-gold/20 rounded-xl p-4 max-w-md">
+        <!-- Coluna 2: indicação de amigo -->
+        <div id="referral-box" class="bg-gold/[0.08] border border-gold/20 rounded-xl p-5 md:p-6 self-start">
           <p class="text-sm font-medium text-ink mb-1">Conhece alguém que adoraria viver aqui?</p>
-          <p class="text-xs text-stone leading-relaxed mb-3">
+          <p class="text-xs text-stone leading-relaxed mb-4">
             Se tiver alguém em mente que gostaria de conhecer a Casa Modelo e, quem sabe, ser seu vizinho em um dos dias do evento, indique abaixo — nós cuidamos do convite.
           </p>
           <div id="referral-form-fields" class="space-y-3">
             <div>
-              <label for="referral-name" class="block text-sm font-medium text-ink mb-1.5">Nome completo</label>
+              <label for="referral-name" class="block text-sm font-medium text-ink mb-1.5">Nome</label>
               <input id="referral-name" type="text" placeholder="Ex.: Marina Souza" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
             </div>
             <div>
@@ -116,16 +127,7 @@
             Obrigado pela indicação — vamos cuidar do convite.
           </p>
         </div>
-      </div>
 
-      <div class="relative rounded-2xl overflow-hidden min-h-[280px] lg:min-h-[480px]">
-        <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=1200&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover" />
-        <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-        <div class="absolute bottom-6 left-6">
-          <p class="tracked-sm text-[10px] text-white leading-[1.9] font-medium drop-shadow-sm">
-            MAIS QUE UM LUGAR.<br>UMA FORMA DE VIVER.
-          </p>
-        </div>
       </div>
     </div>
   </section>
@@ -182,7 +184,13 @@
   function addToCalendar() {
     const title = encodeURIComponent('Open House · Casa Modelo Reserva Guinle');
     const details = encodeURIComponent('Confirmação de presença no Open House da Casa Modelo Reserva Guinle.');
-    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}`;
+    let datesParam = '';
+    if (dayData && dayData.isoDate && dayData.startTime && dayData.endTime) {
+      const start = dayData.isoDate.replace(/-/g, '') + 'T' + dayData.startTime.replace(':', '') + '00';
+      const end = dayData.isoDate.replace(/-/g, '') + 'T' + dayData.endTime.replace(':', '') + '00';
+      datesParam = `&dates=${start}/${end}&ctz=America/Sao_Paulo`;
+    }
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}${datesParam}`;
     window.open(url, '_blank');
   }
   document.getElementById('calendar-btn').addEventListener('click', addToCalendar);
