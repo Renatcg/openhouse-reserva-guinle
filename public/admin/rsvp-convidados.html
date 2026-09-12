@@ -123,55 +123,118 @@
         </div>
       </div>
 
-      <!-- Adicionar convidados -->
-      <form id="add-form" class="bg-white rounded-2xl border border-black/5 p-5 md:p-6 mb-6">
-        <h3 class="font-serif text-2xl mb-4">Adicionar convidados</h3>
-        <div class="grid sm:grid-cols-[200px_1fr] gap-4">
-          <div>
-            <label for="day-select" class="block text-sm font-medium text-ink mb-1.5">Dia do evento</label>
-            <select id="day-select" required class="w-full appearance-none bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20">
-              <!-- opções injetadas por JS -->
-            </select>
-          </div>
-          <div>
-            <label for="phones-input" class="block text-sm font-medium text-ink mb-1.5">Telefones (um por linha)</label>
-            <textarea id="phones-input" rows="4" required placeholder="11999990000&#10;11999990001; Nome ou observação opcional&#10;11999990002" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20 font-mono"></textarea>
-            <p class="text-xs text-stone mt-1.5">Um telefone por linha. Pode adicionar "; observação" depois do telefone pra te ajudar a identificar quem é (não aparece pro convidado).</p>
-          </div>
-        </div>
-        <p id="add-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2 mt-4"></p>
-        <button type="submit" id="add-btn" class="mt-4 inline-flex items-center gap-2 bg-forest text-white px-5 py-3 rounded-xl text-sm font-medium hover:brightness-110 transition">
+      <!-- Barra de ações -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div class="flex gap-2" id="day-filters"></div>
+        <button type="button" id="open-add-modal-btn" class="inline-flex items-center gap-2 bg-forest text-white px-5 py-3 rounded-xl text-sm font-medium hover:brightness-110 transition shrink-0">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-          <span id="add-btn-label">Adicionar</span>
+          Adicionar convidados
         </button>
-      </form>
-
-      <!-- Filtro por dia -->
-      <div class="flex gap-2 mb-4" id="day-filters"></div>
+      </div>
 
       <!-- Lista -->
       <div class="bg-white rounded-2xl border border-black/5 overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-sm min-w-[820px]">
+          <table class="w-full text-sm min-w-[1180px]">
             <thead>
               <tr class="bg-black/[0.02] text-left text-stone text-xs tracked-sm border-b border-black/5">
                 <th class="py-3 px-5 font-medium">DIA</th>
+                <th class="py-3 px-3 font-medium">CONVIDADO</th>
                 <th class="py-3 px-3 font-medium">TELEFONE</th>
+                <th class="py-3 px-3 font-medium">UNIDADE</th>
                 <th class="py-3 px-3 font-medium">STATUS</th>
                 <th class="py-3 px-3 font-medium">CONFIRMADO POR</th>
                 <th class="py-3 px-3 font-medium">ACOMPANHANTE</th>
-                <th class="py-3 px-3 font-medium">LINK DO CONVITE</th>
+                <th class="py-3 px-3 font-medium">INDICAÇÃO</th>
                 <th class="py-3 px-5 font-medium text-right">AÇÕES</th>
               </tr>
             </thead>
             <tbody id="table-body" class="divide-y divide-black/5">
-              <tr><td colspan="7" class="py-14 text-center text-stone text-sm">Carregando…</td></tr>
+              <tr><td colspan="9" class="py-14 text-center text-stone text-sm">Carregando…</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
     </main>
+  </div>
+</div>
+
+<!-- ===== MODAL: ADICIONAR / EDITAR CONVIDADO ===== -->
+<div id="guest-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div id="guest-modal-backdrop" class="absolute inset-0 bg-black/40"></div>
+  <div class="relative bg-cream rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="p-5 md:p-6">
+      <div class="flex items-start justify-between mb-4">
+        <h3 class="font-serif text-2xl" id="guest-modal-title">Adicionar convidados</h3>
+        <button type="button" id="guest-modal-close" class="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg hover:bg-black/5 text-stone" aria-label="Fechar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      <form id="guest-form" class="space-y-4">
+        <div>
+          <label for="modal-day-select" class="block text-sm font-medium text-ink mb-1.5">Dia do evento</label>
+          <select id="modal-day-select" required class="w-full appearance-none bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20">
+            <!-- opções injetadas por JS -->
+          </select>
+        </div>
+
+        <!-- Modo "adicionar": vários telefones de uma vez -->
+        <div id="modal-bulk-fields">
+          <label for="phones-input" class="block text-sm font-medium text-ink mb-1.5">Telefones (um por linha)</label>
+          <textarea id="phones-input" rows="4" placeholder="11999990000&#10;11999990001; Nome ou observação opcional&#10;11999990002" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20 font-mono"></textarea>
+          <p class="text-xs text-stone mt-1.5">Um telefone por linha. Pode adicionar "; observação" depois do telefone pra te ajudar a identificar quem é (não aparece pro convidado).</p>
+        </div>
+
+        <!-- Modo "editar": um convidado por vez, com todos os campos -->
+        <div id="modal-single-fields" class="hidden space-y-4">
+          <div>
+            <label for="modal-phone" class="block text-sm font-medium text-ink mb-1.5">Telefone</label>
+            <input id="modal-phone" type="tel" placeholder="11999990000" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+          </div>
+          <div>
+            <label for="modal-label" class="block text-sm font-medium text-ink mb-1.5">Nome ou observação</label>
+            <input id="modal-label" type="text" placeholder="Nome do convidado" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+          </div>
+          <div>
+            <label for="modal-unit" class="block text-sm font-medium text-ink mb-1.5">Unidade</label>
+            <input id="modal-unit" type="text" placeholder="Ex.: RGLQDLF21" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+          </div>
+          <div>
+            <label for="modal-email" class="block text-sm font-medium text-ink mb-1.5">E-mail</label>
+            <input id="modal-email" type="email" placeholder="email@exemplo.com" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+          </div>
+        </div>
+
+        <p id="guest-modal-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2"></p>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button type="submit" id="guest-modal-submit" class="inline-flex items-center gap-2 bg-forest text-white px-5 py-3 rounded-xl text-sm font-medium hover:brightness-110 transition">
+            <span id="guest-modal-submit-label">Adicionar</span>
+          </button>
+          <button type="button" id="guest-modal-cancel" class="text-sm text-stone hover:text-ink transition">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: MUDAR DE DATA ===== -->
+<div id="day-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div id="day-modal-backdrop" class="absolute inset-0 bg-black/40"></div>
+  <div class="relative bg-cream rounded-2xl shadow-2xl w-full max-w-sm">
+    <div class="p-5 md:p-6">
+      <div class="flex items-start justify-between mb-1">
+        <h3 class="font-serif text-2xl">Mudar de data</h3>
+        <button type="button" id="day-modal-close" class="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg hover:bg-black/5 text-stone" aria-label="Fechar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <p class="text-sm text-stone mb-4" id="day-modal-guest-label">—</p>
+      <div id="day-modal-options" class="space-y-2"></div>
+      <p id="day-modal-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2 mt-3"></p>
+    </div>
   </div>
 </div>
 
@@ -229,18 +292,13 @@
   });
 
   // ---------- Convidados ----------
-  const daySelect = document.getElementById('day-select');
-  const phonesInput = document.getElementById('phones-input');
-  const addForm = document.getElementById('add-form');
-  const addError = document.getElementById('add-error');
-  const addBtn = document.getElementById('add-btn');
-  const addBtnLabel = document.getElementById('add-btn-label');
   const dayFiltersEl = document.getElementById('day-filters');
   const tbody = document.getElementById('table-body');
 
   let allGuests = [];
   let days = {};
   let activeDayFilter = 'Todos';
+  let openRowMenuId = null;
 
   function statusBadge(status) {
     return status === 'Confirmado'
@@ -282,62 +340,95 @@
     const list = activeDayFilter === 'Todos' ? allGuests : allGuests.filter(g => g.dayInfo.short === activeDayFilter);
 
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" class="py-14 text-center text-stone text-sm">Nenhum convidado cadastrado ainda.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="py-14 text-center text-stone text-sm">Nenhum convidado cadastrado ainda.</td></tr>`;
       return;
     }
 
     tbody.innerHTML = list.map(g => {
-      const confirmedBy = g.confirmation ? `${g.confirmation.name}<br><span class="text-xs text-stone">${g.confirmation.email}</span>` : '—';
+      const confirmedBy = g.confirmation ? g.confirmation.name : '—';
       const companion = g.confirmation && g.confirmation.companion ? g.confirmation.companion.name : '—';
-      const link = inviteUrl(g.token);
+      const referral = g.confirmation && g.confirmation.referral ? g.confirmation.referral.name : '—';
+      const unit = g.contact && g.contact.unit ? g.contact.unit : '—';
+      const label = g.label || '—';
       return `
-        <tr class="hover:bg-black/[0.015] transition align-top">
-          <td class="py-3.5 px-5 whitespace-nowrap">${g.dayInfo.short}<br><span class="text-xs text-stone">${g.dayInfo.label}</span></td>
-          <td class="py-3.5 px-3 whitespace-nowrap">${g.phone}${g.label ? `<br><span class="text-xs text-stone">${g.label}</span>` : ''}${g.contact && g.contact.unit ? `<br><span class="text-[11px] text-gold font-medium">${g.contact.unit}</span>` : ''}</td>
-          <td class="py-3.5 px-3">${statusBadge(g.status)}</td>
-          <td class="py-3.5 px-3 max-w-[220px]">${confirmedBy}</td>
-          <td class="py-3.5 px-3">${companion}</td>
-          <td class="py-3.5 px-3">
-            <button data-link="${link}" class="copy-link-btn inline-flex items-center gap-1.5 text-xs text-forest hover:underline">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" /></svg>
-              Copiar link
+        <tr class="hover:bg-black/[0.015] transition">
+          <td class="py-3 px-5 whitespace-nowrap" title="${g.dayInfo.label}">${g.dayInfo.short}</td>
+          <td class="py-3 px-3 whitespace-nowrap max-w-[180px] truncate" title="${label}">${label}</td>
+          <td class="py-3 px-3 whitespace-nowrap">${g.phone}</td>
+          <td class="py-3 px-3 whitespace-nowrap text-xs text-gold font-medium">${unit}</td>
+          <td class="py-3 px-3 whitespace-nowrap">${statusBadge(g.status)}</td>
+          <td class="py-3 px-3 whitespace-nowrap max-w-[160px] truncate" title="${g.confirmation ? g.confirmation.email : ''}">${confirmedBy}</td>
+          <td class="py-3 px-3 whitespace-nowrap max-w-[160px] truncate" title="${companion}">${companion}</td>
+          <td class="py-3 px-3 whitespace-nowrap max-w-[160px] truncate" title="${referral}${g.confirmation && g.confirmation.referral ? ' · ' + g.confirmation.referral.phone : ''}">${referral}</td>
+          <td class="py-3 px-5 text-right relative">
+            <button data-menu-id="${g.id}" class="row-menu-btn w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-black/5 text-stone" aria-label="Ações">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 6a.75.75 0 110-1.5.75.75 0 010 1.5zm0 6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
             </button>
-          </td>
-          <td class="py-3.5 px-5 text-right">
-            <button data-id="${g.id}" class="delete-btn text-stone hover:text-rose-600 transition" aria-label="Excluir">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-            </button>
+            <div data-menu-for="${g.id}" class="row-menu hidden absolute right-5 top-full mt-1 w-44 bg-white rounded-xl border border-black/5 shadow-lg py-1.5 z-40 text-left">
+              <button type="button" data-action="copy" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Copiar link</button>
+              <button type="button" data-action="edit" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Editar</button>
+              <button type="button" data-action="changeday" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Mudar de data</button>
+              <div class="my-1 h-px bg-black/5"></div>
+              <button type="button" data-action="delete" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 text-left">Excluir</button>
+            </div>
           </td>
         </tr>
       `;
     }).join('');
 
-    tbody.querySelectorAll('.copy-link-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(btn.dataset.link);
-          const original = btn.innerHTML;
-          btn.innerHTML = 'Copiado!';
-          setTimeout(() => { btn.innerHTML = original; }, 1500);
-        } catch (err) {
-          prompt('Copie o link abaixo:', btn.dataset.link);
-        }
+    tbody.querySelectorAll('.row-menu-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.menuId;
+        closeAllRowMenus(id);
+        const menu = tbody.querySelector(`.row-menu[data-menu-for="${id}"]`);
+        const isHidden = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !isHidden);
+        openRowMenuId = isHidden ? id : null;
       });
     });
 
-    tbody.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('Excluir este convite? O link deixará de funcionar.')) return;
-        try {
-          const res = await fetch(`/api/admin/rsvp/guests/${btn.dataset.id}`, { method: 'DELETE', credentials: 'include' });
-          if (!res.ok) throw new Error();
-          await loadGuests();
-        } catch (err) {
-          alert('Não foi possível excluir. Tente novamente.');
+    tbody.querySelectorAll('.row-menu-item').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        const guest = allGuests.find(g => g.id === id);
+        closeAllRowMenus(null);
+        if (!guest) return;
+
+        if (btn.dataset.action === 'copy') {
+          const link = inviteUrl(guest.token);
+          try {
+            await navigator.clipboard.writeText(link);
+            alert('Link copiado!');
+          } catch (err) {
+            prompt('Copie o link abaixo:', link);
+          }
+        } else if (btn.dataset.action === 'edit') {
+          openGuestModal('edit', guest);
+        } else if (btn.dataset.action === 'changeday') {
+          openDayModal(guest);
+        } else if (btn.dataset.action === 'delete') {
+          if (!confirm('Excluir este convite? O link deixará de funcionar.')) return;
+          try {
+            const res = await fetch(`/api/admin/rsvp/guests/${id}`, { method: 'DELETE', credentials: 'include' });
+            if (!res.ok) throw new Error();
+            await loadGuests();
+          } catch (err) {
+            alert('Não foi possível excluir. Tente novamente.');
+          }
         }
       });
     });
   }
+
+  function closeAllRowMenus(exceptId) {
+    tbody.querySelectorAll('.row-menu').forEach(m => {
+      if (m.dataset.menuFor !== exceptId) m.classList.add('hidden');
+    });
+    if (exceptId === null) openRowMenuId = null;
+  }
+  document.addEventListener('click', () => closeAllRowMenus(null));
 
   async function loadGuests() {
     try {
@@ -347,49 +438,169 @@
       days = data.days || {};
       allGuests = (data.guests || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-      daySelect.innerHTML = Object.values(days).map(d => `<option value="${d.key}">${d.short} — ${d.label}</option>`).join('');
+      modalDaySelect.innerHTML = Object.values(days).map(d => `<option value="${d.key}">${d.short} — ${d.label}</option>`).join('');
       renderDayFilters();
       renderTable();
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="7" class="py-14 text-center text-rose-600 text-sm">Não foi possível carregar os convidados.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="py-14 text-center text-rose-600 text-sm">Não foi possível carregar os convidados.</td></tr>`;
     }
   }
 
-  addForm.addEventListener('submit', async (e) => {
+  // ---------- Modal: adicionar / editar convidado ----------
+  const guestModal = document.getElementById('guest-modal');
+  const guestModalTitle = document.getElementById('guest-modal-title');
+  const guestForm = document.getElementById('guest-form');
+  const guestModalError = document.getElementById('guest-modal-error');
+  const guestModalSubmit = document.getElementById('guest-modal-submit');
+  const guestModalSubmitLabel = document.getElementById('guest-modal-submit-label');
+  const modalDaySelect = document.getElementById('modal-day-select');
+  const modalBulkFields = document.getElementById('modal-bulk-fields');
+  const modalSingleFields = document.getElementById('modal-single-fields');
+  const phonesInput = document.getElementById('phones-input');
+  const modalPhone = document.getElementById('modal-phone');
+  const modalLabel = document.getElementById('modal-label');
+  const modalUnit = document.getElementById('modal-unit');
+  const modalEmail = document.getElementById('modal-email');
+
+  let guestModalMode = 'add'; // 'add' | 'edit'
+  let editingGuestId = null;
+
+  function openGuestModal(mode, guest) {
+    guestModalMode = mode;
+    guestModalError.classList.add('hidden');
+    guestForm.reset();
+
+    if (mode === 'add') {
+      guestModalTitle.textContent = 'Adicionar convidados';
+      guestModalSubmitLabel.textContent = 'Adicionar';
+      modalBulkFields.classList.remove('hidden');
+      modalSingleFields.classList.add('hidden');
+      editingGuestId = null;
+      if (Object.keys(days).length) modalDaySelect.value = activeDayFilter !== 'Todos'
+        ? Object.values(days).find(d => d.short === activeDayFilter)?.key || modalDaySelect.value
+        : modalDaySelect.value;
+    } else {
+      guestModalTitle.textContent = 'Editar convidado';
+      guestModalSubmitLabel.textContent = 'Salvar';
+      modalBulkFields.classList.add('hidden');
+      modalSingleFields.classList.remove('hidden');
+      editingGuestId = guest.id;
+      modalDaySelect.value = guest.day;
+      modalPhone.value = guest.phone;
+      modalLabel.value = guest.label || '';
+      modalUnit.value = guest.contact ? guest.contact.unit || '' : '';
+      modalEmail.value = guest.contact ? guest.contact.email || '' : '';
+    }
+
+    guestModal.classList.remove('hidden');
+  }
+
+  function closeGuestModal() {
+    guestModal.classList.add('hidden');
+  }
+
+  document.getElementById('open-add-modal-btn').addEventListener('click', () => openGuestModal('add'));
+  document.getElementById('guest-modal-close').addEventListener('click', closeGuestModal);
+  document.getElementById('guest-modal-cancel').addEventListener('click', closeGuestModal);
+  document.getElementById('guest-modal-backdrop').addEventListener('click', closeGuestModal);
+
+  guestForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    addError.classList.add('hidden');
-
-    const lines = phonesInput.value.split('\n').map(l => l.trim()).filter(Boolean);
-    if (lines.length === 0) return;
-
-    const entries = lines.map(line => {
-      const [phonePart, ...rest] = line.split(';');
-      return { phone: phonePart.trim(), label: rest.join(';').trim() };
-    });
-
-    addBtn.disabled = true;
-    addBtnLabel.textContent = 'Adicionando...';
+    guestModalError.classList.add('hidden');
+    guestModalSubmit.disabled = true;
 
     try {
-      const res = await fetch('/api/admin/rsvp/guests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ day: daySelect.value, entries }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Não foi possível adicionar os convidados.');
+      if (guestModalMode === 'add') {
+        guestModalSubmitLabel.textContent = 'Adicionando...';
+        const lines = phonesInput.value.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length === 0) throw new Error('Informe ao menos um telefone.');
+        const entries = lines.map(line => {
+          const [phonePart, ...rest] = line.split(';');
+          return { phone: phonePart.trim(), label: rest.join(';').trim() };
+        });
+        const res = await fetch('/api/admin/rsvp/guests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ day: modalDaySelect.value, entries }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Não foi possível adicionar os convidados.');
+      } else {
+        guestModalSubmitLabel.textContent = 'Salvando...';
+        const res = await fetch(`/api/admin/rsvp/guests/${editingGuestId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            day: modalDaySelect.value,
+            phone: modalPhone.value.trim(),
+            label: modalLabel.value.trim(),
+            contact: { unit: modalUnit.value.trim(), email: modalEmail.value.trim() },
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar as alterações.');
+      }
 
-      phonesInput.value = '';
+      closeGuestModal();
       await loadGuests();
     } catch (err) {
-      addError.textContent = err.message;
-      addError.classList.remove('hidden');
+      guestModalError.textContent = err.message;
+      guestModalError.classList.remove('hidden');
     } finally {
-      addBtn.disabled = false;
-      addBtnLabel.textContent = 'Adicionar';
+      guestModalSubmit.disabled = false;
+      guestModalSubmitLabel.textContent = guestModalMode === 'add' ? 'Adicionar' : 'Salvar';
     }
   });
+
+  // ---------- Modal: mudar de data ----------
+  const dayModal = document.getElementById('day-modal');
+  const dayModalGuestLabel = document.getElementById('day-modal-guest-label');
+  const dayModalOptions = document.getElementById('day-modal-options');
+  const dayModalError = document.getElementById('day-modal-error');
+  let dayModalGuestId = null;
+
+  function openDayModal(guest) {
+    dayModalGuestId = guest.id;
+    dayModalError.classList.add('hidden');
+    dayModalGuestLabel.textContent = `${guest.label || guest.phone} — atualmente em ${guest.dayInfo.short} (${guest.dayInfo.label})`;
+    dayModalOptions.innerHTML = Object.values(days).map(d => `
+      <button type="button" data-day="${d.key}" class="day-option-btn w-full text-left px-4 py-3 rounded-xl border text-sm transition ${d.key === guest.day ? 'border-forest bg-forest/5 text-forest font-medium' : 'border-black/10 hover:border-black/20'}">
+        ${d.short} — ${d.label}
+      </button>
+    `).join('');
+    dayModalOptions.querySelectorAll('.day-option-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (btn.dataset.day === guest.day) { closeDayModal(); return; }
+        btn.disabled = true;
+        try {
+          const res = await fetch(`/api/admin/rsvp/guests/${dayModalGuestId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ day: btn.dataset.day }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Não foi possível mudar a data.');
+          closeDayModal();
+          await loadGuests();
+        } catch (err) {
+          dayModalError.textContent = err.message;
+          dayModalError.classList.remove('hidden');
+          btn.disabled = false;
+        }
+      });
+    });
+    dayModal.classList.remove('hidden');
+  }
+
+  function closeDayModal() {
+    dayModal.classList.add('hidden');
+  }
+
+  document.getElementById('day-modal-close').addEventListener('click', closeDayModal);
+  document.getElementById('day-modal-backdrop').addEventListener('click', closeDayModal);
 
   __configReady.then(loadGuests);
 </script>

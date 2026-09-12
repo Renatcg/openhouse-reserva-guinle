@@ -253,7 +253,7 @@ app.post('/api/rsvp/:token/confirmar', (req, res) => {
   const guest = rsvp.findByToken(req.params.token);
   if (!guest) return res.status(404).json({ error: 'Convite não encontrado.' });
 
-  const { phone, name, email, companion } = req.body || {};
+  const { phone, name, email, companion, referral } = req.body || {};
 
   // O telefone é validado de novo no servidor — a checagem no navegador é só
   // conveniência de UX, quem garante de verdade é aqui.
@@ -265,6 +265,9 @@ app.post('/api/rsvp/:token/confirmar', (req, res) => {
   if (companion && companion.name && companion.name.trim() && (!companion.email || !companion.email.trim())) {
     return res.status(400).json({ error: 'Informe o e-mail do acompanhante.' });
   }
+  if (referral && referral.name && referral.name.trim() && (!referral.phone || !referral.phone.trim())) {
+    return res.status(400).json({ error: 'Informe o telefone da pessoa indicada.' });
+  }
 
   const updated = rsvp.confirm(req.params.token, {
     name: name.trim(),
@@ -274,6 +277,10 @@ app.post('/api/rsvp/:token/confirmar', (req, res) => {
       name: (companion.name || '').trim(),
       email: (companion.email || '').trim(),
       phone: (companion.phone || '').trim(),
+    } : null,
+    referral: referral ? {
+      name: (referral.name || '').trim(),
+      phone: (referral.phone || '').trim(),
     } : null,
   });
 
@@ -314,6 +321,25 @@ app.post('/api/admin/rsvp/guests', rsvpAuth.requireAuthApi, (req, res) => {
   res.status(201).json({ guests: created });
 });
 
+app.put('/api/admin/rsvp/guests/:id', rsvpAuth.requireAuthApi, (req, res) => {
+  const existing = rsvp.findById(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Convidado não encontrado.' });
+
+  const { day, phone, label, contact } = req.body || {};
+  if (day !== undefined && !rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
+  if (phone !== undefined && rsvp.normalizePhone(phone).length < 8) {
+    return res.status(400).json({ error: 'Telefone inválido (mínimo 8 dígitos).' });
+  }
+
+  let updated;
+  try {
+    updated = rsvp.update(req.params.id, { day, phone, label, contact });
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+  res.json({ guest: { ...updated, dayInfo: rsvp.DAYS[updated.day] } });
+});
+
 app.delete('/api/admin/rsvp/guests/:id', rsvpAuth.requireAuthApi, (req, res) => {
   const ok = rsvp.remove(req.params.id);
   if (!ok) return res.status(404).json({ error: 'Convidado não encontrado.' });
@@ -349,6 +375,7 @@ app.get('/api/webhook/rsvp', requireWebhookKey, (req, res) => {
     status: g.status,
     guest: g.confirmation ? { name: g.confirmation.name, email: g.confirmation.email, phone: g.confirmation.phone } : null,
     companion: g.confirmation && g.confirmation.companion ? g.confirmation.companion : null,
+    referral: g.confirmation && g.confirmation.referral ? g.confirmation.referral : null,
     confirmedAt: g.confirmation ? g.confirmation.confirmedAt : null,
   }));
 

@@ -80,6 +80,30 @@ function create({ day, phone, label, contact }) {
   return guest;
 }
 
+function update(id, patch) {
+  const guests = loadAll();
+  const idx = guests.findIndex(g => g.id === id);
+  if (idx === -1) return null;
+  if (patch.day !== undefined && !DAYS[patch.day]) throw new Error(`Dia inválido: ${patch.day}`);
+
+  const guest = guests[idx];
+  const updated = {
+    ...guest,
+    day: patch.day !== undefined ? patch.day : guest.day,
+    phone: patch.phone !== undefined ? normalizePhone(patch.phone) : guest.phone,
+    label: patch.label !== undefined ? (patch.label || '').trim() : guest.label,
+    contact: patch.contact !== undefined ? (patch.contact ? {
+      unit: patch.contact.unit || '',
+      email: patch.contact.email || '',
+      address: patch.contact.address || '',
+    } : null) : guest.contact,
+    updatedAt: new Date().toISOString(),
+  };
+  guests[idx] = updated;
+  saveAll(guests);
+  return updated;
+}
+
 function createMany(day, entries) {
   return entries.map(entry => create({
     day,
@@ -112,6 +136,9 @@ function confirm(token, data) {
       companion: data.companion && data.companion.name
         ? { name: data.companion.name, email: data.companion.email || '', phone: data.companion.phone || '' }
         : null,
+      referral: data.referral && data.referral.name
+        ? { name: data.referral.name, phone: data.referral.phone || '' }
+        : null,
       confirmedAt: now,
     },
     updatedAt: now,
@@ -136,6 +163,7 @@ module.exports = {
   findByToken,
   create,
   createMany,
+  update,
   verifyPhone,
   confirm,
   remove,

@@ -143,6 +143,25 @@
             </div>
           </div>
 
+          <div class="h-px bg-black/5 my-2"></div>
+
+          <div class="bg-gold/[0.08] border border-gold/20 rounded-xl p-4">
+            <p class="text-sm font-medium text-ink mb-1">Conhece alguém que ia adorar estar aqui?</p>
+            <p class="text-xs text-stone leading-relaxed mb-3">
+              Se tiver alguém em mente que gostaria de conhecer a Casa Modelo e, quem sabe, ser seu vizinho em um dos dias do evento, indique abaixo — nós cuidamos do convite.
+            </p>
+            <div class="space-y-3">
+              <div>
+                <label for="referral-name" class="block text-sm font-medium text-ink mb-1.5">Nome completo</label>
+                <input id="referral-name" type="text" placeholder="Ex.: Marina Souza" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+              </div>
+              <div>
+                <label for="referral-phone" class="block text-sm font-medium text-ink mb-1.5">Telefone</label>
+                <input id="referral-phone" type="tel" placeholder="(11) 9 9999-9999" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+              </div>
+            </div>
+          </div>
+
           <p id="form-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2"></p>
 
           <button type="submit" id="submit-btn" disabled class="w-full bg-forest text-white py-3.5 rounded-xl font-medium hover:brightness-110 transition flex items-center justify-center gap-2 disabled:opacity-50">
@@ -294,6 +313,18 @@
       companion = { name: companionName, email: companionEmail, phone: companionPhone };
     }
 
+    let referral = null;
+    const referralName = document.getElementById('referral-name').value.trim();
+    const referralPhone = document.getElementById('referral-phone').value.trim();
+    if (referralName) {
+      if (!referralPhone) {
+        formError.textContent = 'Informe o telefone da pessoa indicada, ou deixe os dois campos em branco.';
+        formError.classList.remove('hidden');
+        return;
+      }
+      referral = { name: referralName, phone: referralPhone };
+    }
+
     submitBtn.disabled = true;
     submitLabel.textContent = 'Confirmando...';
 
@@ -301,7 +332,7 @@
       const res = await fetch(`/api/rsvp/${encodeURIComponent(token)}/confirmar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: verifiedPhone, name, email, companion }),
+        body: JSON.stringify({ phone: verifiedPhone, name, email, companion, referral }),
       });
       const data = await res.json();
 
