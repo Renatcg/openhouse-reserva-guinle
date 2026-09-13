@@ -43,9 +43,13 @@
 <div class="min-h-screen flex">
 
   <!-- ===== SIDEBAR ===== -->
-  <aside class="hidden lg:flex flex-col w-[250px] shrink-0 bg-forest text-cream/90 relative">
+  <aside class="hidden lg:block shrink-0 w-[76px] relative">
+  <div class="sidebar-panel group absolute inset-y-0 left-0 z-40 w-[76px] hover:w-[250px] flex flex-col bg-forest text-cream/90 overflow-hidden shadow-2xl transition-[width] duration-200 ease-out">
     <div class="px-7 pt-9 pb-6">
-      <div class="inline-block bg-cream/95 rounded-xl px-3.5 py-2">
+      <div class="w-11 h-11 rounded-xl bg-cream/95 flex items-center justify-center shrink-0 group-hover:hidden">
+        <span class="font-serif text-forest text-lg font-semibold">RG</span>
+      </div>
+      <div class="hidden group-hover:inline-block bg-cream/95 rounded-xl px-3.5 py-2">
         <img src="/img/logo-reserva-guinle.png" alt="Reserva Guinle" class="h-10 w-auto" />
       </div>
     </div>
@@ -74,6 +78,7 @@
         Sair
       </a>
     </div>
+  </div>
   </aside>
 
   <!-- ===== MAIN ===== -->

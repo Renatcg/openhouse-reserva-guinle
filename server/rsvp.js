@@ -29,8 +29,11 @@ const DEFAULT_INVITES = () => ({
 function loadAll() {
   ensureFile();
   const guests = JSON.parse(fs.readFileSync(GUESTS_FILE, 'utf-8'));
-  // Convidados criados antes do rastreio de convites ganham o valor padrão.
-  return guests.map(g => (g.invites ? g : { ...g, invites: DEFAULT_INVITES() }));
+  // Convidados criados antes do rastreio de convites/representante ganham o valor padrão.
+  return guests.map(g => ({
+    ...(g.invites ? g : { ...g, invites: DEFAULT_INVITES() }),
+    representative: g.representative || '',
+  }));
 }
 
 function saveAll(guests) {
@@ -55,7 +58,7 @@ function generateToken() {
   return crypto.randomBytes(9).toString('base64url'); // ~12 chars, seguro pra URL
 }
 
-function create({ day, phone, label, contact }) {
+function create({ day, phone, label, contact, representative }) {
   if (!DAYS[day]) throw new Error(`Dia inválido: ${day}`);
   const guests = loadAll();
   const now = new Date().toISOString();
@@ -68,6 +71,10 @@ function create({ day, phone, label, contact }) {
     day,
     phone: normalizePhone(phone),
     label: (label || '').trim(),
+    // Nome de quem vai representar esse convidado no convite (ex: empresas,
+    // pra quem não faz sentido mandar "convite pessoal" no nome da razão
+    // social) — quando preenchido, substitui o nome nos disparos de convite.
+    representative: (representative || '').trim(),
     // Dados de referência já conhecidos (ex: vindos da planilha de compradores) —
     // só pra identificação no admin/webhook. O convidado ainda preenche os dados
     // dele mesmo no formulário; isso não é usado pra pré-preencher nem pula a
@@ -105,6 +112,7 @@ function update(id, patch) {
     day: patch.day !== undefined ? patch.day : guest.day,
     phone: patch.phone !== undefined ? normalizePhone(patch.phone) : guest.phone,
     label: patch.label !== undefined ? (patch.label || '').trim() : guest.label,
+    representative: patch.representative !== undefined ? (patch.representative || '').trim() : (guest.representative || ''),
     contact: patch.contact !== undefined ? (patch.contact ? {
       unit: patch.contact.unit || '',
       email: patch.contact.email || '',

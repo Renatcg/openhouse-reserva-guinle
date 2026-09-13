@@ -38,9 +38,13 @@
 <div class="min-h-screen flex">
 
   <!-- ===== SIDEBAR ===== -->
-  <aside class="hidden lg:flex flex-col w-[250px] shrink-0 bg-forest text-cream/90 relative">
+  <aside class="hidden lg:block shrink-0 w-[76px] relative">
+  <div class="sidebar-panel group absolute inset-y-0 left-0 z-40 w-[76px] hover:w-[250px] flex flex-col bg-forest text-cream/90 overflow-hidden shadow-2xl transition-[width] duration-200 ease-out">
     <div class="px-7 pt-9 pb-6">
-      <div class="inline-block bg-cream/95 rounded-xl px-3.5 py-2">
+      <div class="w-11 h-11 rounded-xl bg-cream/95 flex items-center justify-center shrink-0 group-hover:hidden">
+        <span class="font-serif text-forest text-lg font-semibold">RG</span>
+      </div>
+      <div class="hidden group-hover:inline-block bg-cream/95 rounded-xl px-3.5 py-2">
         <img src="/img/logo-reserva-guinle.png" alt="Reserva Guinle" class="h-10 w-auto" />
       </div>
     </div>
@@ -70,13 +74,14 @@
       </a>
     </div>
 
-    <div class="p-7 relative overflow-hidden mt-auto" style="min-height:230px;">
+    <div class="hidden group-hover:block p-7 relative overflow-hidden mt-auto" style="min-height:230px;">
       <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=600&auto=format&fit=crop" alt="" class="absolute inset-0 w-full h-full object-cover opacity-60" />
       <div class="absolute inset-0 bg-gradient-to-t from-forest via-forest/60 to-transparent"></div>
       <p class="relative tracked-sm text-[10px] text-white/90 leading-[1.9] font-medium">
         DETALHES<br>QUE TORNAM<br>A VIDA<br>EXTRAORDINÁRIA.
       </p>
     </div>
+  </div>
   </aside>
 
   <!-- ===== MAIN ===== -->
@@ -140,13 +145,14 @@
       <!-- Lista -->
       <div class="bg-white rounded-2xl border border-black/5 overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-sm min-w-[1180px]">
+          <table class="w-full text-sm min-w-[1300px]">
             <thead>
               <tr class="bg-black/[0.02] text-left text-stone text-xs tracked-sm border-b border-black/5">
                 <th class="py-3 px-5 font-medium">DIA</th>
                 <th class="py-3 px-3 font-medium">CONVIDADO</th>
                 <th class="py-3 px-3 font-medium">TELEFONE</th>
                 <th class="py-3 px-3 font-medium">UNIDADE</th>
+                <th class="py-3 px-3 font-medium">CIDADE/UF</th>
                 <th class="py-3 px-3 font-medium">STATUS</th>
                 <th class="py-3 px-3 font-medium">CONFIRMADO POR</th>
                 <th class="py-3 px-3 font-medium">ACOMPANHANTE</th>
@@ -155,7 +161,7 @@
               </tr>
             </thead>
             <tbody id="table-body" class="divide-y divide-black/5">
-              <tr><td colspan="9" class="py-14 text-center text-stone text-sm">Carregando…</td></tr>
+              <tr><td colspan="10" class="py-14 text-center text-stone text-sm">Carregando…</td></tr>
             </tbody>
           </table>
         </div>
@@ -203,12 +209,21 @@
             <input id="modal-label" type="text" placeholder="Nome do convidado" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20" />
           </div>
           <div>
+            <label for="modal-representative" class="block text-sm font-medium text-ink mb-1.5">Nome de representante <span class="text-stone font-normal">(opcional)</span></label>
+            <input id="modal-representative" type="text" placeholder="Ex.: nome de quem vai receber o convite pela empresa" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            <p class="text-xs text-stone mt-1.5">Quando preenchido, substitui o nome acima nos convites (WhatsApp e e-mail) — use pra empresas/pessoas jurídicas.</p>
+          </div>
+          <div>
             <label for="modal-unit" class="block text-sm font-medium text-ink mb-1.5">Unidade</label>
             <input id="modal-unit" type="text" placeholder="Ex.: RGLQDLF21" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20" />
           </div>
           <div>
             <label for="modal-email" class="block text-sm font-medium text-ink mb-1.5">E-mail</label>
             <input id="modal-email" type="email" placeholder="email@exemplo.com" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+          </div>
+          <div>
+            <label for="modal-address" class="block text-sm font-medium text-ink mb-1.5">Endereço</label>
+            <textarea id="modal-address" rows="2" placeholder="Rua, número, bairro, cidade, UF" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/50 focus:outline-none focus:ring-2 focus:ring-forest/20"></textarea>
           </div>
         </div>
 
@@ -305,6 +320,16 @@
   let activeDayFilter = 'Todos';
   let openRowMenuId = null;
 
+  // Endereço vem como texto livre (planilha de compradores), geralmente
+  // terminando em "..., Cidade, UF". Extrai só essa parte pra exibir na
+  // listagem sem ocupar muito espaço.
+  function cityUfFromAddress(address) {
+    if (!address) return '—';
+    const parts = address.split(',').map(p => p.trim()).filter(Boolean);
+    if (parts.length < 2) return address;
+    return parts.slice(-2).join(', ');
+  }
+
   function statusBadge(status) {
     return status === 'Confirmado'
       ? '<span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">Confirmado</span>'
@@ -345,7 +370,7 @@
     const list = activeDayFilter === 'Todos' ? allGuests : allGuests.filter(g => g.dayInfo.short === activeDayFilter);
 
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="9" class="py-14 text-center text-stone text-sm">Nenhum convidado cadastrado ainda.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" class="py-14 text-center text-stone text-sm">Nenhum convidado cadastrado ainda.</td></tr>`;
       return;
     }
 
@@ -355,17 +380,19 @@
       const referral = g.confirmation && g.confirmation.referral ? g.confirmation.referral.name : '—';
       const unit = g.contact && g.contact.unit ? g.contact.unit : '—';
       const label = g.label || '—';
+      const cityUf = cityUfFromAddress(g.contact && g.contact.address);
       return `
         <tr class="hover:bg-black/[0.015] transition">
-          <td class="py-3 px-5 whitespace-nowrap" title="${g.dayInfo.label}">${g.dayInfo.short}</td>
-          <td class="py-3 px-3 whitespace-nowrap max-w-[180px] truncate" title="${label}">${label}</td>
-          <td class="py-3 px-3 whitespace-nowrap">${g.phone}</td>
-          <td class="py-3 px-3 whitespace-nowrap text-xs text-gold font-medium">${unit}</td>
-          <td class="py-3 px-3 whitespace-nowrap">${statusBadge(g.status)}</td>
-          <td class="py-3 px-3 whitespace-nowrap max-w-[160px] truncate" title="${g.confirmation ? g.confirmation.email : ''}">${confirmedBy}</td>
-          <td class="py-3 px-3 whitespace-nowrap max-w-[160px] truncate" title="${companion}">${companion}</td>
-          <td class="py-3 px-3 whitespace-nowrap max-w-[160px] truncate" title="${referral}${g.confirmation && g.confirmation.referral ? ' · ' + g.confirmation.referral.phone : ''}">${referral}</td>
-          <td class="py-3 px-5 text-right relative">
+          <td class="py-2 px-5 whitespace-nowrap" title="${g.dayInfo.label}">${g.dayInfo.short}</td>
+          <td class="py-2 px-3 whitespace-nowrap max-w-[180px] truncate" title="${label}${g.representative ? ' · Representante: ' + g.representative : ''}">${label}${g.representative ? '<span class="block text-[11px] text-gold">Rep.: ' + g.representative + '</span>' : ''}</td>
+          <td class="py-2 px-3 whitespace-nowrap">${g.phone}</td>
+          <td class="py-2 px-3 whitespace-nowrap text-xs text-gold font-medium">${unit}</td>
+          <td class="py-2 px-3 whitespace-nowrap max-w-[140px] truncate" title="${g.contact && g.contact.address ? g.contact.address : ''}">${cityUf}</td>
+          <td class="py-2 px-3 whitespace-nowrap">${statusBadge(g.status)}</td>
+          <td class="py-2 px-3 whitespace-nowrap max-w-[160px] truncate" title="${g.confirmation ? g.confirmation.email : ''}">${confirmedBy}</td>
+          <td class="py-2 px-3 whitespace-nowrap max-w-[160px] truncate" title="${companion}">${companion}</td>
+          <td class="py-2 px-3 whitespace-nowrap max-w-[160px] truncate" title="${referral}${g.confirmation && g.confirmation.referral ? ' · ' + g.confirmation.referral.phone : ''}">${referral}</td>
+          <td class="py-2 px-5 text-right relative">
             <button data-menu-id="${g.id}" class="row-menu-btn w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-black/5 text-stone" aria-label="Ações">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 6a.75.75 0 110-1.5.75.75 0 010 1.5zm0 6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
             </button>
@@ -457,7 +484,7 @@
       renderDayFilters();
       renderTable();
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="9" class="py-14 text-center text-rose-600 text-sm">Não foi possível carregar os convidados.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" class="py-14 text-center text-rose-600 text-sm">Não foi possível carregar os convidados.</td></tr>`;
     }
   }
 
@@ -474,8 +501,10 @@
   const phonesInput = document.getElementById('phones-input');
   const modalPhone = document.getElementById('modal-phone');
   const modalLabel = document.getElementById('modal-label');
+  const modalRepresentative = document.getElementById('modal-representative');
   const modalUnit = document.getElementById('modal-unit');
   const modalEmail = document.getElementById('modal-email');
+  const modalAddress = document.getElementById('modal-address');
 
   let guestModalMode = 'add'; // 'add' | 'edit'
   let editingGuestId = null;
@@ -503,8 +532,10 @@
       modalDaySelect.value = guest.day;
       modalPhone.value = guest.phone;
       modalLabel.value = guest.label || '';
+      modalRepresentative.value = guest.representative || '';
       modalUnit.value = guest.contact ? guest.contact.unit || '' : '';
       modalEmail.value = guest.contact ? guest.contact.email || '' : '';
+      modalAddress.value = guest.contact ? guest.contact.address || '' : '';
     }
 
     guestModal.classList.remove('hidden');
@@ -551,7 +582,8 @@
             day: modalDaySelect.value,
             phone: modalPhone.value.trim(),
             label: modalLabel.value.trim(),
-            contact: { unit: modalUnit.value.trim(), email: modalEmail.value.trim() },
+            representative: modalRepresentative.value.trim(),
+            contact: { unit: modalUnit.value.trim(), email: modalEmail.value.trim(), address: modalAddress.value.trim() },
           }),
         });
         const data = await res.json();

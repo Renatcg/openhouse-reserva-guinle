@@ -258,6 +258,11 @@ app.get('/api/rsvp/:token', (req, res) => {
     status: guest.status,
     name: guest.confirmation ? guest.confirmation.name : null,
     companionName: guest.confirmation && guest.confirmation.companion ? guest.confirmation.companion.name : null,
+    // Nome/e-mail já conhecidos do convidado (representante, se houver, senão
+    // o nome cadastrado) — usados pra exibir na tela de confirmação sem
+    // permitir edição.
+    displayName: (guest.representative || guest.label || '').trim(),
+    displayEmail: (guest.contact && guest.contact.email) || '',
   });
 });
 
@@ -282,7 +287,6 @@ app.post('/api/rsvp/:token/confirmar', (req, res) => {
     return res.status(403).json({ error: 'Telefone não confere com o convite.' });
   }
   if (!name || !name.trim()) return res.status(400).json({ error: 'Nome completo é obrigatório.' });
-  if (!email || !email.trim()) return res.status(400).json({ error: 'E-mail é obrigatório.' });
   if (companion && companion.name && companion.name.trim() && (!companion.email || !companion.email.trim())) {
     return res.status(400).json({ error: 'Informe o e-mail do acompanhante.' });
   }
@@ -292,7 +296,7 @@ app.post('/api/rsvp/:token/confirmar', (req, res) => {
 
   const updated = rsvp.confirm(req.params.token, {
     name: name.trim(),
-    email: email.trim(),
+    email: (email || '').trim(),
     phone: phone.trim(),
     companion: companion ? {
       name: (companion.name || '').trim(),
@@ -364,7 +368,7 @@ app.put('/api/admin/rsvp/guests/:id', rsvpAuth.requireAuthApi, (req, res) => {
   const existing = rsvp.findById(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Convidado não encontrado.' });
 
-  const { day, phone, label, contact } = req.body || {};
+  const { day, phone, label, contact, representative } = req.body || {};
   if (day !== undefined && !rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
   if (phone !== undefined && rsvp.normalizePhone(phone).length < 8) {
     return res.status(400).json({ error: 'Telefone inválido (mínimo 8 dígitos).' });
@@ -372,7 +376,7 @@ app.put('/api/admin/rsvp/guests/:id', rsvpAuth.requireAuthApi, (req, res) => {
 
   let updated;
   try {
-    updated = rsvp.update(req.params.id, { day, phone, label, contact });
+    updated = rsvp.update(req.params.id, { day, phone, label, contact, representative });
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
@@ -474,7 +478,8 @@ app.post('/api/admin/rsvp/invites/:day/send-whatsapp', rsvpAuth.requireAuthApi, 
       continue;
     }
     const link = buildInviteLink(req, guest.token);
-    const firstName = (guest.label || '').trim().split(' ')[0] || 'convidado(a)';
+    const inviteName = (guest.representative || guest.label || '').trim();
+    const firstName = inviteName.split(' ')[0] || 'convidado(a)';
     try {
       await whatsapp.sendTemplateMessage({
         to: guest.phone,
@@ -527,7 +532,7 @@ app.post('/api/admin/rsvp/invites/:day/send-email', rsvpAuth.requireAuthApi, asy
       continue;
     }
     const link = buildInviteLink(req, guest.token);
-    const name = guest.label || (guest.confirmation && guest.confirmation.name) || '';
+    const name = guest.representative || guest.label || (guest.confirmation && guest.confirmation.name) || '';
     const dayInfo = rsvp.DAYS[day];
     let html = invites.fillEmailTokens(content.emailHtml, { name, link, dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel });
     if (content.imageEmail) {

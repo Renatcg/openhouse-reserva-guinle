@@ -107,13 +107,8 @@
           </div>
 
           <div>
-            <label for="name" class="block text-sm font-medium text-ink mb-1.5">Nome completo <span class="text-rose-500">*</span></label>
-            <input id="name" type="text" required placeholder="Ex.: Marcelo Silva" disabled class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20 disabled:bg-black/[0.03] disabled:text-stone/50" />
-          </div>
-
-          <div>
-            <label for="email" class="block text-sm font-medium text-ink mb-1.5">E-mail <span class="text-rose-500">*</span></label>
-            <input id="email" type="email" required placeholder="seu@email.com" disabled class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20 disabled:bg-black/[0.03] disabled:text-stone/50" />
+            <label class="block text-sm font-medium text-ink mb-1.5">Nome completo</label>
+            <div id="name-display" class="w-full bg-black/[0.03] border border-black/10 rounded-xl px-4 py-3 text-sm text-ink/80">—</div>
           </div>
 
           <div>
@@ -182,6 +177,20 @@
   }
 
   let verifiedPhone = null; // só o servidor confirma de verdade; isso aqui é só pra UX
+  let realName = '';
+  let realEmail = '';
+
+  // Mostra o primeiro nome completo e, dos demais, só a primeira letra +
+  // asteriscos — pra não expor o nome completo do convidado nessa tela.
+  function maskName(fullName) {
+    const parts = fullName.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return '—';
+    return parts.map((p, i) => {
+      if (i === 0) return p;
+      const rest = Math.max(p.length - 1, 1);
+      return p.charAt(0) + '*'.repeat(rest);
+    }).join(' ');
+  }
 
   async function init() {
     if (!token) { showState(stateInvalid); return; }
@@ -192,6 +201,10 @@
 
       document.getElementById('day-weekday').textContent = data.day.weekday;
       document.getElementById('day-date').textContent = data.day.dateLabel;
+
+      realName = data.displayName || '';
+      realEmail = data.displayEmail || '';
+      document.getElementById('name-display').textContent = realName ? maskName(realName) : '—';
 
       if (data.status === 'Confirmado') {
         document.getElementById('already-link').href = `ja-confirmado.html?t=${encodeURIComponent(token)}`;
@@ -211,8 +224,6 @@
   const gateError = document.getElementById('gate-error');
   const phoneGate = document.getElementById('phone-gate');
   const rsvpForm = document.getElementById('rsvp-form');
-  const nameEl = document.getElementById('name');
-  const emailEl = document.getElementById('email');
   const phoneEl = document.getElementById('phone');
   const companionNameEl = document.getElementById('companion-name');
   const companionEmailEl = document.getElementById('companion-email');
@@ -243,7 +254,7 @@
 
       verifiedPhone = phone;
       phoneEl.value = phone;
-      [nameEl, emailEl, companionNameEl, companionEmailEl, companionPhoneEl].forEach(el => el.disabled = false);
+      [companionNameEl, companionEmailEl, companionPhoneEl].forEach(el => el.disabled = false);
       submitBtn.disabled = false;
       phoneGate.classList.add('hidden');
       rsvpForm.classList.remove('hidden');
@@ -267,11 +278,11 @@
     e.preventDefault();
     formError.classList.add('hidden');
 
-    const name = nameEl.value.trim();
-    const email = emailEl.value.trim();
+    const name = realName;
+    const email = realEmail;
 
-    if (!name || !email) {
-      formError.textContent = 'Preencha nome completo e e-mail.';
+    if (!name) {
+      formError.textContent = 'Não conseguimos identificar seu nome neste convite. Fale com quem te enviou o link.';
       formError.classList.remove('hidden');
       return;
     }
