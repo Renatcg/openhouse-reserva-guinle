@@ -1,0 +1,11 @@
+[
+  {
+    "id": "9edcf887-5955-4ab0-81ab-6279fcfa4e3f",
+    "name": "Equipe RSVP",
+    "email": "rsvp",
+    "role": "Administrador RSVP",
+    "passwordHash": "$2a$10$LjIM.tOBo8z1ILN3P2oay.On1/fZ86XsPWcwgoshuZQ/RXiyVceiS",
+    "createdAt": "2026-09-14T13:44:52.883Z",
+    "updatedAt": "2026-09-14T13:44:52.883Z"
+  }
+]

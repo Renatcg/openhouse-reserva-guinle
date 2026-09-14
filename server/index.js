@@ -19,6 +19,7 @@ const {
 const products = require('./products');
 const categories = require('./categories');
 const rsvp = require('./rsvp');
+const rsvpUsers = require('./rsvpUsers');
 const invites = require('./invites');
 const whatsapp = require('./whatsapp');
 const emailClient = require('./email');
@@ -121,23 +122,20 @@ app.get('/api/me', requireAuthApi, (req, res) => {
 // ---------- Rotas de autenticação do RSVP (ambiente separado) ----------
 app.post('/api/rsvp/login', (req, res) => {
   const { email, password, remember } = req.body || {};
-  const admin = loadRsvpAdmin();
 
-  if (!admin) {
-    return res.status(500).json({ error: 'Nenhum usuário administrador do RSVP cadastrado. Rode "npm run seed:rsvp-admin".' });
-  }
+  // Usuários cadastrados em data/rsvp-users.json (tela Usuários do admin).
+  // Na primeira execução esse arquivo é criado automaticamente a partir do
+  // antigo data/rsvp-admin.json, então quem já tinha login continua acessando.
+  const user = rsvpUsers.verifyPassword(email, password);
 
-  const emailOk = (email || '').trim().toLowerCase() === admin.email.toLowerCase();
-  const passOk = password && bcrypt.compareSync(password, admin.passwordHash);
-
-  if (!emailOk || !passOk) {
+  if (!user) {
     return res.status(401).json({ error: 'E-mail ou senha inválidos.' });
   }
 
-  const token = rsvpAuth.signToken({ sub: admin.email, name: admin.name, role: admin.role }, !!remember);
+  const token = rsvpAuth.signToken({ sub: user.id, name: user.name, role: user.role, email: user.email }, !!remember);
   rsvpAuth.setSessionCookie(res, token, !!remember);
 
-  res.json({ ok: true, user: { name: admin.name, role: admin.role, email: admin.email } });
+  res.json({ ok: true, user: { name: user.name, role: user.role, email: user.email } });
 });
 
 app.post('/api/rsvp/logout', (req, res) => {
@@ -147,6 +145,54 @@ app.post('/api/rsvp/logout', (req, res) => {
 
 app.get('/api/rsvp/me', rsvpAuth.requireAuthApi, (req, res) => {
   res.json({ user: req.user });
+});
+
+// ---------- Usuários com acesso ao admin do RSVP (API) — exige sessão ----------
+
+function publicUser(u) {
+  return { id: u.id, name: u.name, email: u.email, role: u.role, createdAt: u.createdAt, updatedAt: u.updatedAt };
+}
+
+app.get('/api/admin/rsvp/users', rsvpAuth.requireAuthApi, (req, res) => {
+  res.json({ users: rsvpUsers.loadAll().map(publicUser) });
+});
+
+app.post('/api/admin/rsvp/users', rsvpAuth.requireAuthApi, (req, res) => {
+  const { name, email, role, password } = req.body || {};
+  try {
+    const user = rsvpUsers.create({ name, email, role, password });
+    res.status(201).json({ user: publicUser(user) });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.put('/api/admin/rsvp/users/:id', rsvpAuth.requireAuthApi, (req, res) => {
+  const existing = rsvpUsers.findById(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Usuário não encontrado.' });
+
+  const { name, email, role, password } = req.body || {};
+  try {
+    const updated = rsvpUsers.update(req.params.id, { name, email, role, password });
+    res.json({ user: publicUser(updated) });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.delete('/api/admin/rsvp/users/:id', rsvpAuth.requireAuthApi, (req, res) => {
+  const existing = rsvpUsers.findById(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Usuário não encontrado.' });
+
+  if (req.user.sub === existing.id) {
+    return res.status(400).json({ error: 'Você não pode excluir o próprio usuário enquanto estiver logado com ele.' });
+  }
+  if (rsvpUsers.loadAll().length <= 1) {
+    return res.status(400).json({ error: 'Precisa existir ao menos um usuário cadastrado.' });
+  }
+
+  rsvpUsers.remove(req.params.id);
+  res.json({ ok: true });
 });
 
 // ---------- Rotas de produtos (API) ----------
