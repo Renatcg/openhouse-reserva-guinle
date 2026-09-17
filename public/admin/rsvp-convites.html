@@ -139,7 +139,7 @@
               </label>
             </div>
             <div>
-              <p class="text-sm font-medium text-ink mb-1.5">Para o e-mail</p>
+              <p class="text-sm font-medium text-ink mb-1.5">Para o e-mail de convite</p>
               <div id="preview-email" class="aspect-[4/3] bg-black/[0.03] border border-dashed border-black/15 rounded-xl flex items-center justify-center text-xs text-stone overflow-hidden mb-2">Nenhuma imagem</div>
               <label class="inline-flex items-center gap-2 text-sm text-forest hover:underline cursor-pointer">
                 <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" data-channel="email" id="file-email" />
@@ -188,45 +188,84 @@
           </div>
         </div>
 
-        <!-- E-mail -->
+        <!-- E-mail de convite -->
         <div class="bg-white rounded-2xl border border-black/5 p-5 md:p-6">
-          <h3 class="font-serif text-2xl mb-4">E-mail</h3>
+          <h3 class="font-serif text-2xl mb-1">E-mail de convite</h3>
+          <p class="text-xs text-stone mb-4">Enviado quando você dispara os convites manualmente. Vem com a moldura da marca, a imagem do convite acima e o botão "Confirmar presença" — você só edita o assunto e o texto de introdução abaixo.</p>
           <label class="block text-sm font-medium text-ink mb-1.5">Assunto</label>
           <input id="email-subject" type="text" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-forest/20" />
 
-          <label class="block text-sm font-medium text-ink mb-1.5">Corpo do e-mail</label>
+          <label class="block text-sm font-medium text-ink mb-1.5">Texto de introdução</label>
           <div class="flex flex-wrap items-center gap-1 border border-black/10 rounded-t-xl bg-black/[0.02] px-2 py-1.5">
-            <button type="button" class="toolbar-btn text-ink font-bold" title="Negrito" data-cmd="bold">B</button>
-            <button type="button" class="toolbar-btn text-ink italic" title="Itálico" data-cmd="italic">I</button>
-            <button type="button" class="toolbar-btn text-ink underline" title="Sublinhado" data-cmd="underline">U</button>
+            <button type="button" class="toolbar-btn text-ink font-bold" title="Negrito" data-cmd="bold" data-editor="email-editor">B</button>
+            <button type="button" class="toolbar-btn text-ink italic" title="Itálico" data-cmd="italic" data-editor="email-editor">I</button>
+            <button type="button" class="toolbar-btn text-ink underline" title="Sublinhado" data-cmd="underline" data-editor="email-editor">U</button>
             <div class="w-px h-5 bg-black/10 mx-1"></div>
-            <select id="email-font-size" class="text-xs border border-black/10 rounded-lg px-1.5 py-1 bg-white" title="Tamanho">
-              <option value="2">Pequeno</option>
-              <option value="3" selected>Normal</option>
-              <option value="4">Médio</option>
-              <option value="5">Grande</option>
-              <option value="6">Muito grande</option>
-            </select>
-            <input type="color" id="email-color" value="#1f3327" class="w-8 h-8 rounded-lg border border-black/10 cursor-pointer" title="Cor do texto" />
-            <div class="w-px h-5 bg-black/10 mx-1"></div>
-            <button type="button" class="toolbar-btn text-stone" title="Alinhar à esquerda" data-cmd="justifyLeft">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h10.5m-10.5 5.25h16.5" /></svg>
-            </button>
-            <button type="button" class="toolbar-btn text-stone" title="Centralizar" data-cmd="justifyCenter">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M7 12h10m-10 5.25h10" /></svg>
-            </button>
-            <button type="button" class="toolbar-btn text-stone" title="Lista" data-cmd="insertUnorderedList">
+            <button type="button" class="toolbar-btn text-stone" title="Lista" data-cmd="insertUnorderedList" data-editor="email-editor">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm0 5.25h.007v.008H3.75V12zm0 5.25h.007v.008H3.75v-.008z" /></svg>
             </button>
-            <button type="button" class="toolbar-btn text-stone" title="Link" id="email-link-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>
-            </button>
             <div class="w-px h-5 bg-black/10 mx-1"></div>
-            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{nome}}" style="width:auto;">+Nome</button>
-            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{link}}" style="width:auto;">+Link</button>
-            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{dia}}" style="width:auto;">+Dia</button>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{nome}}" data-editor="email-editor" style="width:auto;">+Nome</button>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{dia}}" data-editor="email-editor" style="width:auto;">+Dia</button>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{data}}" data-editor="email-editor" style="width:auto;">+Data</button>
           </div>
           <div id="email-editor" contenteditable="true" class="w-full bg-white border border-t-0 border-black/10 rounded-b-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20"></div>
+        </div>
+
+        <!-- E-mail de confirmação -->
+        <div class="bg-white rounded-2xl border border-black/5 p-5 md:p-6">
+          <h3 class="font-serif text-2xl mb-1">E-mail de confirmação</h3>
+          <p class="text-xs text-stone mb-4">Enviado automaticamente pro convidado assim que ele confirma presença pelo link — não precisa disparar manualmente.</p>
+
+          <label class="block text-sm font-medium text-ink mb-1.5">Assunto</label>
+          <input id="confirmation-subject" type="text" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+
+          <label class="block text-sm font-medium text-ink mb-1.5">Texto de introdução</label>
+          <div class="flex flex-wrap items-center gap-1 border border-black/10 rounded-t-xl bg-black/[0.02] px-2 py-1.5">
+            <button type="button" class="toolbar-btn text-ink font-bold" title="Negrito" data-cmd="bold" data-editor="confirmation-intro-editor">B</button>
+            <button type="button" class="toolbar-btn text-ink italic" title="Itálico" data-cmd="italic" data-editor="confirmation-intro-editor">I</button>
+            <div class="w-px h-5 bg-black/10 mx-1"></div>
+            <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{nome}}" data-editor="confirmation-intro-editor" style="width:auto;">+Nome</button>
+          </div>
+          <div id="confirmation-intro-editor" contenteditable="true" class="w-full bg-white border border-t-0 border-black/10 rounded-b-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20 mb-4"></div>
+
+          <p class="text-sm font-medium text-ink mb-2">Programação exibida no e-mail</p>
+          <div class="grid sm:grid-cols-2 gap-4 mb-4">
+            <div class="border border-black/10 rounded-xl p-3">
+              <p class="text-xs text-stone mb-2">Primeiro item</p>
+              <input id="schedule-0-time" type="text" placeholder="Horário (ex.: 15h30)" class="w-full bg-white border border-black/10 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+              <input id="schedule-0-title" type="text" placeholder="Título (ex.: Tour pela obra)" class="w-full bg-white border border-black/10 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+              <input id="schedule-0-text" type="text" placeholder="Descrição" class="w-full bg-white border border-black/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+            <div class="border border-black/10 rounded-xl p-3">
+              <p class="text-xs text-stone mb-2">Segundo item</p>
+              <input id="schedule-1-time" type="text" placeholder="Horário (ex.: 17h00)" class="w-full bg-white border border-black/10 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+              <input id="schedule-1-title" type="text" placeholder="Título (ex.: Casa modelo)" class="w-full bg-white border border-black/10 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+              <input id="schedule-1-text" type="text" placeholder="Descrição" class="w-full bg-white border border-black/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            </div>
+          </div>
+
+          <label class="block text-sm font-medium text-ink mb-1.5">Imagem do banner (opcional)</label>
+          <div class="grid sm:grid-cols-2 gap-5 mb-4">
+            <div>
+              <div id="preview-confirmation" class="aspect-[16/9] bg-black/[0.03] border border-dashed border-black/15 rounded-xl flex items-center justify-center text-xs text-stone overflow-hidden mb-2">Nenhuma imagem</div>
+              <label class="inline-flex items-center gap-2 text-sm text-forest hover:underline cursor-pointer">
+                <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" data-channel="confirmation" id="file-confirmation" />
+                Escolher imagem
+              </label>
+            </div>
+            <div>
+              <label for="confirmation-quote" class="block text-sm font-medium text-ink mb-1.5">Frase de destaque (sobre/perto da imagem)</label>
+              <textarea id="confirmation-quote" rows="3" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20"></textarea>
+            </div>
+          </div>
+
+          <label class="block text-sm font-medium text-ink mb-1.5">Texto de fechamento</label>
+          <div class="flex flex-wrap items-center gap-1 border border-black/10 rounded-t-xl bg-black/[0.02] px-2 py-1.5">
+            <button type="button" class="toolbar-btn text-ink font-bold" title="Negrito" data-cmd="bold" data-editor="confirmation-closing-editor">B</button>
+            <button type="button" class="toolbar-btn text-ink italic" title="Itálico" data-cmd="italic" data-editor="confirmation-closing-editor">I</button>
+          </div>
+          <div id="confirmation-closing-editor" contenteditable="true" class="w-full bg-white border border-t-0 border-black/10 rounded-b-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20"></div>
         </div>
 
         <!-- Envio -->
@@ -335,8 +374,19 @@
   const waPreviewImage = document.getElementById('wa-preview-image');
   const emailSubject = document.getElementById('email-subject');
   const emailEditor = document.getElementById('email-editor');
+  const confirmationSubject = document.getElementById('confirmation-subject');
+  const confirmationIntroEditor = document.getElementById('confirmation-intro-editor');
+  const confirmationClosingEditor = document.getElementById('confirmation-closing-editor');
+  const confirmationQuote = document.getElementById('confirmation-quote');
+  const schedule0Time = document.getElementById('schedule-0-time');
+  const schedule0Title = document.getElementById('schedule-0-title');
+  const schedule0Text = document.getElementById('schedule-0-text');
+  const schedule1Time = document.getElementById('schedule-1-time');
+  const schedule1Title = document.getElementById('schedule-1-title');
+  const schedule1Text = document.getElementById('schedule-1-text');
   const previewWhatsapp = document.getElementById('preview-whatsapp');
   const previewEmail = document.getElementById('preview-email');
+  const previewConfirmation = document.getElementById('preview-confirmation');
   const sendSummary = document.getElementById('send-summary');
   const sendError = document.getElementById('send-error');
   const sendResults = document.getElementById('send-results');
@@ -385,8 +435,21 @@
     emailSubject.value = content.emailSubject || '';
     emailEditor.innerHTML = content.emailHtml || '';
 
+    confirmationSubject.value = content.confirmationEmailSubject || '';
+    confirmationIntroEditor.innerHTML = content.confirmationIntroHtml || '';
+    confirmationClosingEditor.innerHTML = content.confirmationClosingHtml || '';
+    confirmationQuote.value = content.confirmationQuote || '';
+    const schedule = Array.isArray(content.confirmationSchedule) ? content.confirmationSchedule : [];
+    schedule0Time.value = (schedule[0] && schedule[0].time) || '';
+    schedule0Title.value = (schedule[0] && schedule[0].title) || '';
+    schedule0Text.value = (schedule[0] && schedule[0].text) || '';
+    schedule1Time.value = (schedule[1] && schedule[1].time) || '';
+    schedule1Title.value = (schedule[1] && schedule[1].title) || '';
+    schedule1Text.value = (schedule[1] && schedule[1].text) || '';
+
     renderImagePreview(previewWhatsapp, content.imageWhatsapp);
     renderImagePreview(previewEmail, content.imageEmail);
+    renderImagePreview(previewConfirmation, content.imageConfirmation);
     updateWaPreview();
 
     const dayGuests = allGuests.filter(g => g.day === activeDay);
@@ -428,7 +491,9 @@
   waBody.addEventListener('input', updateWaPreview);
 
   // ---------- Upload de imagem ----------
-  ['whatsapp', 'email'].forEach(channel => {
+  const IMAGE_PREVIEW_EL = { whatsapp: () => previewWhatsapp, email: () => previewEmail, confirmation: () => previewConfirmation };
+  const IMAGE_FIELD_KEY = { whatsapp: 'imageWhatsapp', email: 'imageEmail', confirmation: 'imageConfirmation' };
+  ['whatsapp', 'email', 'confirmation'].forEach(channel => {
     document.getElementById(`file-${channel}`).addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -440,7 +505,7 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Não foi possível enviar a imagem.');
         allContent[activeDay] = data.content;
-        renderImagePreview(channel === 'whatsapp' ? previewWhatsapp : previewEmail, data.content[channel === 'whatsapp' ? 'imageWhatsapp' : 'imageEmail']);
+        renderImagePreview(IMAGE_PREVIEW_EL[channel](), data.content[IMAGE_FIELD_KEY[channel]]);
         updateWaPreview();
       } catch (err) {
         alert(err.message);
@@ -473,34 +538,46 @@
   });
 
   // ---------- Toolbar do e-mail (rich text) ----------
+  // Cada botão declara qual editor (data-editor) deve receber o comando — os
+  // três campos de e-mail (convite, introdução e fechamento da confirmação)
+  // compartilham a mesma barra de ferramentas.
+  function editorFor(btn) {
+    return document.getElementById(btn.dataset.editor || 'email-editor');
+  }
   document.querySelectorAll('[data-cmd]').forEach(btn => {
     btn.addEventListener('click', () => {
-      emailEditor.focus();
+      const editor = editorFor(btn);
+      editor.focus();
       document.execCommand(btn.dataset.cmd, false, null);
     });
   });
-  document.getElementById('email-font-size').addEventListener('change', (e) => {
-    emailEditor.focus();
-    document.execCommand('fontSize', false, e.target.value);
-  });
-  document.getElementById('email-color').addEventListener('input', (e) => {
-    emailEditor.focus();
-    document.execCommand('foreColor', false, e.target.value);
-  });
-  document.getElementById('email-link-btn').addEventListener('click', () => {
-    const url = prompt('URL do link:', 'https://');
-    if (!url) return;
-    emailEditor.focus();
-    document.execCommand('createLink', false, url);
-  });
   document.querySelectorAll('[data-email-token]').forEach(btn => {
     btn.addEventListener('click', () => {
-      emailEditor.focus();
+      const editor = editorFor(btn);
+      editor.focus();
       document.execCommand('insertText', false, btn.dataset.emailToken);
     });
   });
 
   // ---------- Salvar textos ----------
+  function buildContentPayload() {
+    return {
+      whatsappTemplateName: waTemplateName.value.trim(),
+      whatsappLanguage: waLanguage.value.trim(),
+      whatsappBodyText: waBody.value,
+      emailSubject: emailSubject.value,
+      emailHtml: emailEditor.innerHTML,
+      confirmationEmailSubject: confirmationSubject.value,
+      confirmationIntroHtml: confirmationIntroEditor.innerHTML,
+      confirmationClosingHtml: confirmationClosingEditor.innerHTML,
+      confirmationQuote: confirmationQuote.value,
+      confirmationSchedule: [
+        { time: schedule0Time.value.trim(), title: schedule0Title.value.trim(), text: schedule0Text.value.trim() },
+        { time: schedule1Time.value.trim(), title: schedule1Title.value.trim(), text: schedule1Text.value.trim() },
+      ],
+    };
+  }
+
   document.getElementById('save-content-btn').addEventListener('click', async () => {
     const btn = document.getElementById('save-content-btn');
     btn.disabled = true;
@@ -511,13 +588,7 @@
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          whatsappTemplateName: waTemplateName.value.trim(),
-          whatsappLanguage: waLanguage.value.trim(),
-          whatsappBodyText: waBody.value,
-          emailSubject: emailSubject.value,
-          emailHtml: emailEditor.innerHTML,
-        }),
+        body: JSON.stringify(buildContentPayload()),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Não foi possível salvar.');
@@ -567,13 +638,7 @@
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          whatsappTemplateName: waTemplateName.value.trim(),
-          whatsappLanguage: waLanguage.value.trim(),
-          whatsappBodyText: waBody.value,
-          emailSubject: emailSubject.value,
-          emailHtml: emailEditor.innerHTML,
-        }),
+        body: JSON.stringify(buildContentPayload()),
       });
 
       const res = await fetch(`/api/admin/rsvp/invites/${activeDay}/send-${channel}`, {

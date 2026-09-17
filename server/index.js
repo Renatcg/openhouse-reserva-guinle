@@ -361,6 +361,9 @@ app.post('/api/rsvp/:token/confirmar', (req, res) => {
     name: updated.confirmation.name,
     companionName: updated.confirmation.companion ? updated.confirmation.companion.name : null,
   });
+
+  // Best-effort — roda depois da resposta, não atrasa nem quebra a confirmação.
+  sendConfirmationEmail(req, updated);
 });
 
 // Indicação de amigo — preenchida na tela de sucesso, depois da confirmação.
@@ -463,6 +466,41 @@ function buildInviteLink(req, token) {
   return isRsvpHost(req) ? `${origin}/?t=${token}` : `${origin}/rsvp/index.html?t=${token}`;
 }
 
+// Local do evento, usado no bloco "LOCAL" do e-mail de confirmação.
+const EVENT_LOCATION_LINES = ['PÇ das Andorinhas, 10', 'RESERVA GUINLE', 'TERESÓPOLIS · RJ'];
+
+// Dispara o e-mail de confirmação automaticamente, logo após o convidado
+// confirmar presença. Best-effort: nunca derruba a resposta da confirmação
+// em si se o envio falhar (sem RESEND configurado, sem e-mail cadastrado etc.).
+async function sendConfirmationEmail(req, guest) {
+  try {
+    if (!emailClient.isConfigured()) return;
+    const toEmail = (guest.confirmation && guest.confirmation.email) || (guest.contact && guest.contact.email);
+    if (!toEmail) return;
+
+    const dayInfo = rsvp.DAYS[guest.day];
+    const content = invites.getDay(guest.day);
+    const name = guest.confirmation.name || '';
+    const tokens = { name, link: '', dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel, time: dayInfo.time };
+
+    const html = invites.renderConfirmationEmail({
+      introHtml: invites.fillEmailTokens(content.confirmationIntroHtml, tokens),
+      closingHtml: invites.fillEmailTokens(content.confirmationClosingHtml, tokens),
+      dateLabel: dayInfo.dateLabel,
+      weekday: dayInfo.weekday,
+      schedule: content.confirmationSchedule,
+      locationLines: EVENT_LOCATION_LINES,
+      quote: content.confirmationQuote,
+      imageUrl: content.imageConfirmation ? `${buildPublicOrigin(req)}${content.imageConfirmation}` : null,
+    });
+    const subject = invites.fillEmailTokens(content.confirmationEmailSubject, tokens);
+
+    await emailClient.sendEmail({ to: toEmail, subject, html });
+  } catch (err) {
+    console.error('Falha ao enviar e-mail de confirmação:', err.message);
+  }
+}
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -481,9 +519,10 @@ app.put('/api/admin/rsvp/invites/:day', rsvpAuth.requireAuthApi, (req, res) => {
   res.json({ content: updated });
 });
 
+const INVITE_IMAGE_CHANNELS = new Set(['whatsapp', 'email', 'confirmation']);
 app.post('/api/admin/rsvp/invites/:day/image', rsvpAuth.requireAuthApi, uploadInvite.single('image'), (req, res) => {
   if (!rsvp.DAYS[req.params.day]) return res.status(400).json({ error: 'Dia inválido.' });
-  const channel = req.body && req.body.channel === 'email' ? 'email' : 'whatsapp';
+  const channel = req.body && INVITE_IMAGE_CHANNELS.has(req.body.channel) ? req.body.channel : 'whatsapp';
   if (!req.file) return res.status(400).json({ error: 'Envie uma imagem.' });
   const relativePath = `/uploads/invites/${req.file.filename}`;
   const updated = invites.setImage(req.params.day, channel, relativePath);
@@ -580,12 +619,11 @@ app.post('/api/admin/rsvp/invites/:day/send-email', rsvpAuth.requireAuthApi, asy
     const link = buildInviteLink(req, guest.token);
     const name = guest.representative || guest.label || (guest.confirmation && guest.confirmation.name) || '';
     const dayInfo = rsvp.DAYS[day];
-    let html = invites.fillEmailTokens(content.emailHtml, { name, link, dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel });
-    if (content.imageEmail) {
-      const imgUrl = `${buildPublicOrigin(req)}${content.imageEmail}`;
-      html = `<img src="${imgUrl}" alt="" style="max-width:100%;display:block;margin-bottom:16px;" />` + html;
-    }
-    const subject = invites.fillEmailTokens(content.emailSubject, { name, link, dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel });
+    const tokens = { name, link, dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel, time: dayInfo.time };
+    const introHtml = invites.fillEmailTokens(content.emailHtml, tokens);
+    const imageUrl = content.imageEmail ? `${buildPublicOrigin(req)}${content.imageEmail}` : null;
+    const html = invites.renderInviteEmail({ introHtml, imageUrl, link });
+    const subject = invites.fillEmailTokens(content.emailSubject, tokens);
 
     try {
       await emailClient.sendEmail({ to: toEmail, subject, html });
