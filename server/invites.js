@@ -194,7 +194,7 @@ function renderInviteEmail({ introHtml, imageUrl, link }) {
     </div>
     <hr style="border:none;border-top:1px solid rgba(0,0,0,0.08);margin:28px 0 16px;" />
     <p style="font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#1f2a22;margin:0 0 4px;">Esperamos você!</p>
-    <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8a8578;margin:0;">Equipe Reserva Guinle</p>
+    <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#8a8578;margin:0;">Equipe Mauad</p>
   `;
   return emailShell(body);
 }
@@ -248,7 +248,7 @@ function renderConfirmationEmail({ introHtml, closingHtml, dateLabel, weekday, s
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#1f2a22;margin-bottom:22px;">${closingHtml || ''}</div>
 
     <hr style="border:none;border-top:1px solid rgba(0,0,0,0.08);margin:0 0 16px;" />
-    <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#1f2a22;margin:0;">Equipe Reserva Guinle</p>
+    <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#1f2a22;margin:0;">Equipe Mauad</p>
   `;
   return emailShell(body, { withHeader: true });
 }

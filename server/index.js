@@ -640,6 +640,41 @@ app.post('/api/admin/rsvp/invites/:day/send-test', rsvpAuth.requireAuthApi, asyn
   }
 });
 
+// Envia uma mensagem de WhatsApp de teste pro template configurado daquele dia,
+// pra um número avulso, sem tocar nos convidados nem no histórico de envio —
+// pra revisar o resultado antes de disparar pra todo mundo.
+app.post('/api/admin/rsvp/invites/:day/send-whatsapp-test', rsvpAuth.requireAuthApi, async (req, res) => {
+  const day = req.params.day;
+  if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
+  if (!whatsapp.isConfigured()) {
+    return res.status(400).json({ error: 'Configure WHATSAPP_API_TOKEN e WHATSAPP_PHONE_NUMBER_ID no servidor pra enviar WhatsApp.' });
+  }
+
+  const { phone } = req.body || {};
+  if (!phone || !phone.trim()) return res.status(400).json({ error: 'Informe um número pra receber o teste.' });
+
+  const content = invites.getDay(day);
+  if (!content.whatsappTemplateName) {
+    return res.status(400).json({ error: 'Informe o nome do template do WhatsApp (aprovado na Meta) antes de enviar.' });
+  }
+
+  const headerImageLink = content.imageWhatsapp ? `${buildPublicOrigin(req)}${content.imageWhatsapp}` : null;
+  const link = buildInviteLink(req, 'teste');
+
+  try {
+    await whatsapp.sendTemplateMessage({
+      to: rsvp.normalizePhone ? rsvp.normalizePhone(phone.trim()) : phone.trim(),
+      templateName: content.whatsappTemplateName,
+      languageCode: content.whatsappLanguage,
+      headerImageLink,
+      bodyParams: ['Convidado(a) de teste', link],
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Não foi possível enviar o WhatsApp de teste.' });
+  }
+});
+
 app.post('/api/admin/rsvp/invites/:day/send-email', rsvpAuth.requireAuthApi, async (req, res) => {
   const day = req.params.day;
   if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
@@ -690,6 +725,33 @@ app.post('/api/admin/rsvp/invites/:day/send-email', rsvpAuth.requireAuthApi, asy
     failed: results.filter(r => !r.ok).length,
     results,
   });
+});
+
+// ---------- Webhook de entrada do WhatsApp (Meta / Datafy) ----------
+// Endpoint que a Meta (ou a Datafy, se for ela quem gerencia o número) chama
+// pra (1) verificar a URL na hora de cadastrar o webhook e (2) entregar
+// eventos — status de entrega/leitura, respostas dos convidados etc.
+// Verificação: GET com hub.mode=subscribe&hub.verify_token=...&hub.challenge=...
+// — responde o challenge de volta só se o token bater com WHATSAPP_WEBHOOK_VERIFY_TOKEN.
+// Eventos: POST — por enquanto só loga no console (sem persistir nada ainda);
+// sempre responde 200 rápido, como o WhatsApp exige.
+
+app.get('/api/webhook/whatsapp', (req, res) => {
+  const expected = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN;
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  if (!expected) return res.status(500).send('WHATSAPP_WEBHOOK_VERIFY_TOKEN não configurada no servidor.');
+  if (mode === 'subscribe' && token === expected) {
+    return res.status(200).send(challenge);
+  }
+  return res.sendStatus(403);
+});
+
+app.post('/api/webhook/whatsapp', (req, res) => {
+  console.log('Webhook WhatsApp recebido:', JSON.stringify(req.body));
+  res.sendStatus(200);
 });
 
 // ---------- Webhook do RSVP (para o pipeline da Mauad consultar a lista) ----------
