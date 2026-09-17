@@ -393,6 +393,9 @@
               <button type="button" data-action="changeday" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Mudar de data</button>
               ${g.status === 'Confirmado' ? `<button type="button" data-action="cancelconfirm" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-amber-700 hover:bg-amber-50 text-left">Cancelar confirmação</button>` : ''}
               <div class="my-1 h-px bg-black/5"></div>
+              <button type="button" data-action="send-whatsapp" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Enviar convite (WhatsApp)</button>
+              <button type="button" data-action="send-email" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-black/[0.03] text-left">Enviar convite (e-mail)</button>
+              <div class="my-1 h-px bg-black/5"></div>
               <button type="button" data-action="delete" data-id="${g.id}" class="row-menu-item w-full flex items-center gap-2.5 px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 text-left">Excluir</button>
             </div>
           </td>
@@ -440,6 +443,31 @@
             await loadGuests();
           } catch (err) {
             alert('Não foi possível cancelar a confirmação. Tente novamente.');
+          }
+        } else if (btn.dataset.action === 'send-whatsapp' || btn.dataset.action === 'send-email') {
+          const channel = btn.dataset.action === 'send-whatsapp' ? 'whatsapp' : 'email';
+          const channelLabel = channel === 'whatsapp' ? 'WhatsApp' : 'e-mail';
+          const targetOk = channel === 'whatsapp' ? Boolean(guest.phone) : Boolean((guest.confirmation && guest.confirmation.email) || (guest.contact && guest.contact.email));
+          if (!targetOk) {
+            alert(channel === 'whatsapp' ? 'Esse convidado não tem telefone cadastrado.' : 'Esse convidado não tem e-mail cadastrado.');
+            return;
+          }
+          if (!confirm(`Enviar o convite por ${channelLabel} pra ${guest.representative || guest.label}?`)) return;
+          try {
+            const res = await fetch(`/api/admin/rsvp/invites/${guest.day}/send-${channel}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ guestIds: [guest.id], confirmConsent: true }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Falha no envio.');
+            const result = (data.results || [])[0];
+            if (result && !result.ok) throw new Error(result.error || 'Falha no envio.');
+            alert(`Convite enviado por ${channelLabel}.`);
+            await loadGuests();
+          } catch (err) {
+            alert(`Não foi possível enviar por ${channelLabel}: ${err.message || 'tente novamente.'}`);
           }
         } else if (btn.dataset.action === 'delete') {
           if (!confirm('Excluir este convite? O link deixará de funcionar.')) return;
