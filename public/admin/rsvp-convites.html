@@ -726,16 +726,17 @@
     btn.disabled = true;
     const original = btn.textContent;
     btn.textContent = 'Enviando...';
+    const sentForDay = activeDay; // trava o dia no momento do clique — a aba pode mudar antes da resposta chegar
 
     try {
-      await fetch(`/api/admin/rsvp/invites/${activeDay}`, {
+      await fetch(`/api/admin/rsvp/invites/${sentForDay}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(buildContentPayload()),
       });
 
-      const res = await fetch(`/api/admin/rsvp/invites/${activeDay}/send-test`, {
+      const res = await fetch(`/api/admin/rsvp/invites/${sentForDay}/send-test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -744,7 +745,7 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Não foi possível enviar o teste.');
 
-      msgEl.textContent = `Teste enviado pra ${email}.`;
+      msgEl.textContent = `Teste enviado pra ${email} (${days[sentForDay] ? days[sentForDay].short : sentForDay}).`;
       msgEl.className = 'text-xs mt-2 text-emerald-700';
       msgEl.classList.remove('hidden');
     } catch (err) {
@@ -780,16 +781,17 @@
     btn.disabled = true;
     const original = btn.textContent;
     btn.textContent = 'Enviando...';
+    const sentForDay = activeDay; // trava o dia no momento do clique — a aba pode mudar antes da resposta chegar
 
     try {
-      await fetch(`/api/admin/rsvp/invites/${activeDay}`, {
+      await fetch(`/api/admin/rsvp/invites/${sentForDay}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(buildContentPayload()),
       });
 
-      const res = await fetch(`/api/admin/rsvp/invites/${activeDay}/${routeSuffix}`, {
+      const res = await fetch(`/api/admin/rsvp/invites/${sentForDay}/${routeSuffix}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -798,7 +800,7 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Não foi possível enviar o teste.');
 
-      msgEl.textContent = `Teste enviado pra ${phone}.`;
+      msgEl.textContent = `Teste enviado pra ${phone} (${days[sentForDay] ? days[sentForDay].short : sentForDay}).`;
       msgEl.className = 'text-xs mt-2 text-emerald-700';
       msgEl.classList.remove('hidden');
     } catch (err) {

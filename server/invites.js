@@ -10,9 +10,11 @@ const path = require('path');
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const CONTENT_FILE = path.join(DATA_DIR, 'invite-content.json');
 
+// {{1}} = primeiro nome. O link NÃO entra no corpo — o template aprovado na
+// Meta usa um botão "Acessar site" com URL dinâmica própria (base já
+// cadastrada lá + token do convidado), então o corpo não carrega link.
 const DEFAULT_WHATSAPP_BODY =
-  'Olá {{1}}! Você está convidado(a) para o Open House da Casa Modelo Reserva Guinle. ' +
-  'Confirme sua presença: {{2}}';
+  'Olá {{1}}! Você está convidado(a) para o Open House da Casa Modelo Reserva Guinle.';
 
 const DEFAULT_EMAIL_SUBJECT = 'Você está convidado — Open House Reserva Guinle';
 const DEFAULT_EMAIL_HTML =
@@ -139,6 +141,23 @@ function fillWhatsappTokens(text, { name, link }) {
   return (text || '')
     .replace(/\{\{\s*1\s*\}\}/g, name || '')
     .replace(/\{\{\s*2\s*\}\}/g, link || '');
+}
+
+// Monta o array de bodyParams pro envio via template, olhando quantas
+// variáveis ({{1}}, {{2}}...) o texto de referência realmente usa — assim
+// o payload bate com o template do jeito que ele foi cadastrado na Meta
+// (hoje só {{1}}=nome; se um dia cadastrarem um template com {{2}}=link no
+// corpo de novo, isso volta a funcionar sem precisar mexer no código).
+function whatsappBodyParams(bodyText, { name, link }) {
+  const text = bodyText || '';
+  let maxIndex = 0;
+  const re = /\{\{\s*(\d+)\s*\}\}/g;
+  let m;
+  while ((m = re.exec(text))) {
+    maxIndex = Math.max(maxIndex, parseInt(m[1], 10));
+  }
+  const values = [name || '', link || ''];
+  return values.slice(0, maxIndex);
 }
 
 function escapeHtml(str) {
@@ -271,6 +290,7 @@ module.exports = {
   setImage,
   fillEmailTokens,
   fillWhatsappTokens,
+  whatsappBodyParams,
   escapeHtml,
   renderInviteEmail,
   renderConfirmationEmail,

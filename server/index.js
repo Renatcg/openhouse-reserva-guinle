@@ -572,7 +572,8 @@ app.post('/api/admin/rsvp/invites/:day/send-whatsapp', rsvpAuth.requireAuthApi, 
         templateName: content.whatsappTemplateName,
         languageCode: content.whatsappLanguage,
         headerImageLink,
-        bodyParams: [firstName, link],
+        bodyParams: invites.whatsappBodyParams(content.whatsappBodyText, { name: firstName, link }),
+        buttonUrlParam: guest.token,
       });
       rsvp.recordInviteResult(guest.id, 'whatsapp', { ok: true });
       results.push({ id: guest.id, ok: true });
@@ -666,7 +667,8 @@ app.post('/api/admin/rsvp/invites/:day/send-whatsapp-test', rsvpAuth.requireAuth
   }
 
   const headerImageLink = content.imageWhatsapp ? `${buildPublicOrigin(req)}${content.imageWhatsapp}` : null;
-  const link = buildInviteLink(req, 'teste');
+  const testToken = 'teste';
+  const link = buildInviteLink(req, testToken);
 
   try {
     await whatsapp.sendTemplateMessage({
@@ -674,7 +676,8 @@ app.post('/api/admin/rsvp/invites/:day/send-whatsapp-test', rsvpAuth.requireAuth
       templateName: content.whatsappTemplateName,
       languageCode: content.whatsappLanguage,
       headerImageLink,
-      bodyParams: ['Convidado(a) de teste', link],
+      bodyParams: invites.whatsappBodyParams(content.whatsappBodyText, { name: 'Convidado(a) de teste', link }),
+      buttonUrlParam: testToken,
     });
     res.json({ ok: true });
   } catch (err) {

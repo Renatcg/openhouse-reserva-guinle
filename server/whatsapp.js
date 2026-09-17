@@ -18,9 +18,14 @@ function isConfigured() {
 }
 
 // bodyParams: array de strings, na ordem das variáveis {{1}}, {{2}}... do
-// template aprovado. headerImageLink: URL pública da imagem (a Meta busca
-// ela nesse link no momento do envio — precisa ser acessível publicamente).
-async function sendTemplateMessage({ to, templateName, languageCode, headerImageLink, bodyParams }) {
+// CORPO do template aprovado (aqui, só o primeiro nome — o template atual
+// não tem link no corpo). headerImageLink: URL pública da imagem (a Meta
+// busca ela nesse link no momento do envio — precisa ser acessível
+// publicamente). buttonUrlParam: valor que completa a URL dinâmica do botão
+// (o template tem um botão "Acessar site" com URL base já cadastrada na
+// Meta, tipo "https://rsvp.qualifika.com.br/?t=", e só o pedaço variável —
+// o token do convidado — é mandado aqui; NÃO é o link inteiro).
+async function sendTemplateMessage({ to, templateName, languageCode, headerImageLink, bodyParams, buttonUrlParam }) {
   if (!isConfigured()) {
     throw new Error('WhatsApp não configurado. Defina WHATSAPP_API_TOKEN e WHATSAPP_PHONE_NUMBER_ID no .env.');
   }
@@ -34,6 +39,14 @@ async function sendTemplateMessage({ to, templateName, languageCode, headerImage
   }
   if (bodyParams && bodyParams.length) {
     components.push({ type: 'body', parameters: bodyParams.map(text => ({ type: 'text', text: String(text) })) });
+  }
+  if (buttonUrlParam) {
+    components.push({
+      type: 'button',
+      sub_type: 'url',
+      index: '0',
+      parameters: [{ type: 'text', text: String(buttonUrlParam) }],
+    });
   }
 
   const payload = {
