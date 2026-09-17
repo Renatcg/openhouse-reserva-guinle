@@ -1,3 +1,10 @@
 node_modules
 .env
 .DS_Store
+
+# Dados que mudam em produção pelo próprio site (convites, convidados,
+# catálogo, usuários do admin) — NÃO versionar. Se ficar no git, todo
+# deploy sobrescreve o que foi configurado/cadastrado ao vivo com o que
+# veio no commit. O servidor recria esses arquivos com valores padrão na
+# primeira vez que sobe, se eles não existirem.
+data/*.json
