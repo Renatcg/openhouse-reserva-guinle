@@ -175,13 +175,13 @@ function escapeHtml(str) {
 const BRAND_HEADER_ROW = `
       <tr>
         <td style="background:#c7cbb0;padding:22px 32px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="email-header-table">
             <tr>
-              <td style="font-family:Georgia,'Times New Roman',serif;font-size:15px;letter-spacing:3px;color:#1f3327;font-weight:bold;">RESERVA GUINLE</td>
-              <td align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:1.5px;color:#33402f;line-height:1.7;">NATUREZA<br/>ARQUITETURA<br/>BEM-ESTAR<br/>VIDA REAL</td>
+              <td class="email-header-left" width="60%" valign="top" style="font-family:Georgia,'Times New Roman',serif;font-size:15px;letter-spacing:3px;color:#1f3327;font-weight:bold;white-space:nowrap;">RESERVA GUINLE</td>
+              <td class="email-header-right" width="40%" valign="top" align="right" style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:1.5px;color:#33402f;line-height:1.7;">NATUREZA<br/>ARQUITETURA<br/>BEM-ESTAR<br/>VIDA REAL</td>
             </tr>
             <tr>
-              <td colspan="2" style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:2px;color:#3d4a37;padding-top:4px;">TERESÓPOLIS · RJ</td>
+              <td colspan="2" class="email-header-city" style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:2px;color:#3d4a37;padding-top:4px;">TERESÓPOLIS · RJ</td>
             </tr>
           </table>
         </td>
@@ -194,7 +194,19 @@ const BRAND_HEADER_ROW = `
 // aparece porque não há uma peça gráfica equivalente.
 function emailShell(bodyHtml, { withHeader = false } = {}) {
   return `<!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
+<html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  @media only screen and (max-width: 480px) {
+    .email-header-left, .email-header-right {
+      display: block !important;
+      width: 100% !important;
+      text-align: left !important;
+      white-space: normal !important;
+    }
+    .email-header-right { margin-top: 8px !important; }
+  }
+</style>
+</head>
 <body style="margin:0;padding:0;background:#eceee2;font-family:Georgia,'Times New Roman',serif;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eceee2;padding:24px 0;">
   <tr><td align="center">
