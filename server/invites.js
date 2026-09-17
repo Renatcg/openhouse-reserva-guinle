@@ -199,7 +199,7 @@ function emailShell(bodyHtml, { withHeader = false } = {}) {
 function renderInviteEmail({ introHtml, imageUrl, link }) {
   const body = `
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1f2a22;">${introHtml || ''}</div>
-    ${imageUrl ? `<div style="margin:24px 0;"><img src="${imageUrl}" alt="" style="width:100%;max-width:536px;display:block;border-radius:8px;" /></div>` : ''}
+    ${imageUrl ? `<div style="margin:24px 0;"><img src="${imageUrl}" alt="" width="536" border="0" style="width:100%;max-width:536px;height:auto;display:block;border-radius:8px;outline:none;text-decoration:none;" /></div>` : ''}
     <div style="text-align:center;margin-top:8px;">
       <a href="${link}" style="display:inline-block;background:#1f3327;color:#f6f3ec;font-family:Arial,Helvetica,sans-serif;font-size:14px;letter-spacing:1px;font-weight:bold;text-decoration:none;padding:16px 36px;border-radius:10px;">CONFIRMAR PRESENÇA</a>
     </div>
@@ -251,7 +251,7 @@ function renderConfirmationEmail({ title, introHtml, closingHtml, dateLabel, wee
 
     ${imageUrl ? `
     <div style="position:relative;margin-bottom:24px;">
-      <img src="${imageUrl}" alt="" style="width:100%;max-width:536px;display:block;border-radius:6px;" />
+      <img src="${imageUrl}" alt="" width="536" border="0" style="width:100%;max-width:536px;height:auto;display:block;border-radius:6px;outline:none;text-decoration:none;" />
     </div>
     <p style="font-family:Georgia,'Times New Roman',serif;font-size:20px;color:#1f2a22;line-height:1.35;margin:-14px 0 24px;">${escapeHtml(quote || '')}</p>
     ` : quote ? `<p style="font-family:Georgia,'Times New Roman',serif;font-size:20px;color:#1f2a22;line-height:1.35;margin:0 0 24px;">${escapeHtml(quote)}</p>` : ''}
