@@ -700,12 +700,18 @@ app.post('/api/admin/rsvp/invites/:day/send-whatsapp-test-model', rsvpAuth.requi
   const content = invites.getDay(day);
   const link = buildInviteLink(req, 'teste');
   const body = invites.fillWhatsappTokens(content.whatsappBodyText, { name: 'Convidado(a) de teste', link });
+  const to = rsvp.normalizePhone ? rsvp.normalizePhone(phone.trim()) : phone.trim();
+  const imageLink = content.imageWhatsapp ? `${buildPublicOrigin(req)}${content.imageWhatsapp}` : null;
 
   try {
-    await whatsapp.sendTextMessage({
-      to: rsvp.normalizePhone ? rsvp.normalizePhone(phone.trim()) : phone.trim(),
-      body,
-    });
+    // Manda a imagem antes do texto, como mensagem avulta — uma mensagem
+    // type:"text" não tem campo de imagem (isso só existe no header de um
+    // template aprovado), então separamos em duas mensagens pra pelo menos
+    // aproximar do resultado visual do disparo de verdade.
+    if (imageLink) {
+      await whatsapp.sendImageMessage({ to, link: imageLink });
+    }
+    await whatsapp.sendTextMessage({ to, body });
     res.json({ ok: true });
   } catch (err) {
     res.status(400).json({ error: err.message || 'Não foi possível enviar o teste de modelo. Lembre que o número precisa ter te escrito nas últimas 24h.' });

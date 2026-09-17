@@ -102,4 +102,40 @@ async function sendTextMessage({ to, body }) {
   return data;
 }
 
-module.exports = { isConfigured, sendTemplateMessage, sendTextMessage };
+// Mensagem de imagem avulsa (sem texto) — mesma regra da mensagem de texto:
+// só dentro da janela de 24h. Usada no teste de modelo pra mostrar a imagem
+// do convite antes do texto, já que uma mensagem type:"text" não tem campo
+// de imagem (isso só existe no header de um template aprovado).
+async function sendImageMessage({ to, link, caption }) {
+  if (!isConfigured()) {
+    throw new Error('WhatsApp não configurado. Defina WHATSAPP_API_TOKEN e WHATSAPP_PHONE_NUMBER_ID no .env.');
+  }
+  if (!link) {
+    throw new Error('Informe o link público da imagem.');
+  }
+
+  const payload = {
+    messaging_product: 'whatsapp',
+    to,
+    type: 'image',
+    image: caption ? { link, caption } : { link },
+  };
+
+  const res = await fetch(`${BASE_URL}/${PHONE_NUMBER_ID}/messages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${TOKEN}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = (data && data.error && data.error.message) || `Falha ao enviar (HTTP ${res.status}).`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+module.exports = { isConfigured, sendTemplateMessage, sendTextMessage, sendImageMessage };
