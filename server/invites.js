@@ -21,6 +21,7 @@ const DEFAULT_EMAIL_HTML =
   '<p>Preparamos um momento especial para que você conheça de perto a casa modelo e sinta a essência de um projeto que une arquitetura, natureza e bem-estar em perfeito equilíbrio.</p>' +
   '<p>Confira os detalhes no convite abaixo e confirme sua presença.</p>';
 
+const DEFAULT_CONFIRMATION_TITLE = 'Reserva confirmada';
 const DEFAULT_CONFIRMATION_SUBJECT = 'Reserva confirmada — Open House Reserva Guinle';
 const DEFAULT_CONFIRMATION_INTRO_HTML =
   '<p>Será um prazer receber você e seus acompanhantes no Open House do Reserva Guinle.</p>' +
@@ -44,6 +45,7 @@ function defaultDayContent() {
     whatsappBodyText: DEFAULT_WHATSAPP_BODY,
     emailSubject: DEFAULT_EMAIL_SUBJECT,
     emailHtml: DEFAULT_EMAIL_HTML,
+    confirmationTitle: DEFAULT_CONFIRMATION_TITLE,
     confirmationEmailSubject: DEFAULT_CONFIRMATION_SUBJECT,
     confirmationIntroHtml: DEFAULT_CONFIRMATION_INTRO_HTML,
     confirmationClosingHtml: DEFAULT_CONFIRMATION_CLOSING_HTML,
@@ -83,7 +85,7 @@ function getDay(day) {
 const UPDATABLE_FIELDS = [
   'whatsappTemplateName', 'whatsappLanguage', 'whatsappBodyText',
   'emailSubject', 'emailHtml',
-  'confirmationEmailSubject', 'confirmationIntroHtml', 'confirmationClosingHtml',
+  'confirmationTitle', 'confirmationEmailSubject', 'confirmationIntroHtml', 'confirmationClosingHtml',
   'confirmationQuote', 'confirmationSchedule',
 ];
 
@@ -128,6 +130,15 @@ function fillEmailTokens(html, { name, link, dayLabel, dateLabel, time }) {
     .replace(/\{\{\s*dia\s*\}\}/gi, escapeHtml(dayLabel || ''))
     .replace(/\{\{\s*data\s*\}\}/gi, escapeHtml(dateLabel || ''))
     .replace(/\{\{\s*hora\s*\}\}/gi, escapeHtml(time || ''));
+}
+
+// Substitui {{1}} (nome) e {{2}} (link) no texto de referência do WhatsApp
+// — usado só no teste de "modelo" (texto livre, janela de 24h), já que o
+// envio via template usa bodyParams posicionais, não substituição de texto.
+function fillWhatsappTokens(text, { name, link }) {
+  return (text || '')
+    .replace(/\{\{\s*1\s*\}\}/g, name || '')
+    .replace(/\{\{\s*2\s*\}\}/g, link || '');
 }
 
 function escapeHtml(str) {
@@ -201,7 +212,7 @@ function renderInviteEmail({ introHtml, imageUrl, link }) {
 
 // E-mail de confirmação: título + introdução editável + bloco de
 // data/programação/local + banner de imagem com frase de destaque + fechamento editável.
-function renderConfirmationEmail({ introHtml, closingHtml, dateLabel, weekday, schedule, locationLines, quote, imageUrl }) {
+function renderConfirmationEmail({ title, introHtml, closingHtml, dateLabel, weekday, schedule, locationLines, quote, imageUrl }) {
   const scheduleHtml = (schedule || []).map(item => `
     <div style="margin-bottom:14px;">
       <table role="presentation" cellpadding="0" cellspacing="0"><tr>
@@ -215,7 +226,7 @@ function renderConfirmationEmail({ introHtml, closingHtml, dateLabel, weekday, s
   `).join('');
 
   const body = `
-    <p style="font-family:Georgia,'Times New Roman',serif;font-size:34px;color:#1f3327;margin:0 0 6px;">Reserva confirmada</p>
+    <p style="font-family:Georgia,'Times New Roman',serif;font-size:34px;color:#1f3327;margin:0 0 6px;">${escapeHtml(title || DEFAULT_CONFIRMATION_TITLE)}</p>
     <div style="width:40px;height:2px;background:#c8a862;margin:0 0 18px;"></div>
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#1f2a22;margin-bottom:22px;">${introHtml || ''}</div>
 
@@ -259,6 +270,7 @@ module.exports = {
   updateDay,
   setImage,
   fillEmailTokens,
+  fillWhatsappTokens,
   escapeHtml,
   renderInviteEmail,
   renderConfirmationEmail,

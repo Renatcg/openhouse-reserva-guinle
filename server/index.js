@@ -484,6 +484,7 @@ async function sendConfirmationEmail(req, guest) {
     const tokens = { name, link: '', dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel, time: dayInfo.time };
 
     const html = invites.renderConfirmationEmail({
+      title: content.confirmationTitle,
       introHtml: invites.fillEmailTokens(content.confirmationIntroHtml, tokens),
       closingHtml: invites.fillEmailTokens(content.confirmationClosingHtml, tokens),
       dateLabel: dayInfo.dateLabel,
@@ -621,6 +622,7 @@ app.post('/api/admin/rsvp/invites/:day/send-test', rsvpAuth.requireAuthApi, asyn
       subject = `[TESTE] ${invites.fillEmailTokens(content.emailSubject, tokens)}`;
     } else {
       html = invites.renderConfirmationEmail({
+        title: content.confirmationTitle,
         introHtml: invites.fillEmailTokens(content.confirmationIntroHtml, tokens),
         closingHtml: invites.fillEmailTokens(content.confirmationClosingHtml, tokens),
         dateLabel: dayInfo.dateLabel,
@@ -640,9 +642,14 @@ app.post('/api/admin/rsvp/invites/:day/send-test', rsvpAuth.requireAuthApi, asyn
   }
 });
 
-// Envia uma mensagem de WhatsApp de teste pro template configurado daquele dia,
-// pra um número avulso, sem tocar nos convidados nem no histórico de envio —
-// pra revisar o resultado antes de disparar pra todo mundo.
+// ---------- Testes de WhatsApp (dois tipos, propósitos diferentes) ----------
+// Nenhum dos dois toca em convidados ou no histórico de envio — só mandam
+// pra um número avulso, pra revisar antes de disparar pra todo mundo.
+
+// 1) TESTE DE INTEGRAÇÃO: passa pelo fluxo real — template aprovado na Meta,
+// mesmo endpoint/payload do disparo em massa. Aponta erro de configuração
+// (token, phone number id, nome/idioma do template etc.) exatamente como
+// aconteceria numa campanha de verdade.
 app.post('/api/admin/rsvp/invites/:day/send-whatsapp-test', rsvpAuth.requireAuthApi, async (req, res) => {
   const day = req.params.day;
   if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
@@ -672,6 +679,36 @@ app.post('/api/admin/rsvp/invites/:day/send-whatsapp-test', rsvpAuth.requireAuth
     res.json({ ok: true });
   } catch (err) {
     res.status(400).json({ error: err.message || 'Não foi possível enviar o WhatsApp de teste.' });
+  }
+});
+
+// 2) TESTE DE MODELO: manda o texto de referência como mensagem de texto
+// livre (type: text), sem passar por template nenhum — não exige template
+// aprovado nem nome cadastrado. Só funciona dentro da janela de 24h (o
+// número de teste precisa ter mandado uma mensagem pro seu WhatsApp Business
+// antes); serve pra revisar a redação/formatação do texto rapidamente.
+app.post('/api/admin/rsvp/invites/:day/send-whatsapp-test-model', rsvpAuth.requireAuthApi, async (req, res) => {
+  const day = req.params.day;
+  if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
+  if (!whatsapp.isConfigured()) {
+    return res.status(400).json({ error: 'Configure WHATSAPP_API_TOKEN e WHATSAPP_PHONE_NUMBER_ID no servidor pra enviar WhatsApp.' });
+  }
+
+  const { phone } = req.body || {};
+  if (!phone || !phone.trim()) return res.status(400).json({ error: 'Informe um número pra receber o teste.' });
+
+  const content = invites.getDay(day);
+  const link = buildInviteLink(req, 'teste');
+  const body = invites.fillWhatsappTokens(content.whatsappBodyText, { name: 'Convidado(a) de teste', link });
+
+  try {
+    await whatsapp.sendTextMessage({
+      to: rsvp.normalizePhone ? rsvp.normalizePhone(phone.trim()) : phone.trim(),
+      body,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Não foi possível enviar o teste de modelo. Lembre que o número precisa ter te escrito nas últimas 24h.' });
   }
 });
 

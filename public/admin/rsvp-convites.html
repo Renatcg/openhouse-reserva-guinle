@@ -187,11 +187,22 @@
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-black/5">
-            <input id="test-phone-whatsapp" type="tel" placeholder="(21) 99999-9999" class="flex-1 min-w-[200px] bg-white border border-black/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20" />
-            <button type="button" id="send-test-whatsapp-btn" class="inline-flex items-center gap-2 border border-black/10 text-ink px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-black/[0.03] transition shrink-0">Enviar teste</button>
+          <div class="mt-4 pt-4 border-t border-black/5">
+            <input id="test-phone-whatsapp" type="tel" placeholder="(21) 99999-9999" class="w-full bg-white border border-black/10 rounded-xl px-4 py-2.5 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+
+            <div class="flex flex-wrap items-start gap-3">
+              <div class="flex-1 min-w-[220px]">
+                <button type="button" id="send-test-model-btn" class="w-full inline-flex items-center justify-center gap-2 border border-black/10 text-ink px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-black/[0.03] transition">Testar modelo (texto livre)</button>
+                <p class="text-[11px] text-stone mt-1.5">Manda o texto acima como mensagem livre, sem passar por template — só funciona se esse número te escreveu nas últimas 24h. Bom pra revisar a redação rápido.</p>
+                <p id="test-whatsapp-model-msg" class="hidden text-xs mt-2"></p>
+              </div>
+              <div class="flex-1 min-w-[220px]">
+                <button type="button" id="send-test-whatsapp-btn" class="w-full inline-flex items-center justify-center gap-2 border border-black/10 text-ink px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-black/[0.03] transition">Testar integração (template Meta)</button>
+                <p class="text-[11px] text-stone mt-1.5">Envia de verdade pelo template aprovado, igual ao disparo em massa — aponta erro de configuração, nome/idioma do template etc.</p>
+                <p id="test-whatsapp-msg" class="hidden text-xs mt-2"></p>
+              </div>
+            </div>
           </div>
-          <p id="test-whatsapp-msg" class="hidden text-xs mt-2"></p>
         </div>
 
         <!-- E-mail de convite -->
@@ -231,6 +242,9 @@
 
           <label class="block text-sm font-medium text-ink mb-1.5">Assunto</label>
           <input id="confirmation-subject" type="text" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+
+          <label class="block text-sm font-medium text-ink mb-1.5">Título (dentro do e-mail)</label>
+          <input id="confirmation-title" type="text" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-forest/20" />
 
           <label class="block text-sm font-medium text-ink mb-1.5">Texto de introdução</label>
           <div class="flex flex-wrap items-center gap-1 border border-black/10 rounded-t-xl bg-black/[0.02] px-2 py-1.5">
@@ -393,6 +407,7 @@
   const emailSubject = document.getElementById('email-subject');
   const emailEditor = document.getElementById('email-editor');
   const confirmationSubject = document.getElementById('confirmation-subject');
+  const confirmationTitle = document.getElementById('confirmation-title');
   const confirmationIntroEditor = document.getElementById('confirmation-intro-editor');
   const confirmationClosingEditor = document.getElementById('confirmation-closing-editor');
   const confirmationQuote = document.getElementById('confirmation-quote');
@@ -454,6 +469,7 @@
     emailEditor.innerHTML = content.emailHtml || '';
 
     confirmationSubject.value = content.confirmationEmailSubject || '';
+    confirmationTitle.value = content.confirmationTitle || 'Reserva confirmada';
     confirmationIntroEditor.innerHTML = content.confirmationIntroHtml || '';
     confirmationClosingEditor.innerHTML = content.confirmationClosingHtml || '';
     confirmationQuote.value = content.confirmationQuote || '';
@@ -586,6 +602,7 @@
       emailSubject: emailSubject.value,
       emailHtml: emailEditor.innerHTML,
       confirmationEmailSubject: confirmationSubject.value,
+      confirmationTitle: confirmationTitle.value,
       confirmationIntroHtml: confirmationIntroEditor.innerHTML,
       confirmationClosingHtml: confirmationClosingEditor.innerHTML,
       confirmationQuote: confirmationQuote.value,
@@ -742,13 +759,14 @@
   document.getElementById('send-test-invite-btn').addEventListener('click', () => sendTestEmail('invite'));
   document.getElementById('send-test-confirmation-btn').addEventListener('click', () => sendTestEmail('confirmation'));
 
-  // ---------- Enviar WhatsApp de teste ----------
+  // ---------- Enviar WhatsApp de teste (dois tipos) ----------
   // Mesma lógica do teste de e-mail: salva o conteúdo atual antes, pra
-  // garantir que o teste reflete o que está na tela.
-  async function sendTestWhatsapp() {
+  // garantir que o teste reflete o que está na tela. `routeSuffix` escolhe
+  // entre o teste de integração (template Meta) e o de modelo (texto livre).
+  async function sendTestWhatsapp(routeSuffix, btnId, msgId) {
     const phoneInput = document.getElementById('test-phone-whatsapp');
-    const msgEl = document.getElementById('test-whatsapp-msg');
-    const btn = document.getElementById('send-test-whatsapp-btn');
+    const msgEl = document.getElementById(msgId);
+    const btn = document.getElementById(btnId);
     const phone = phoneInput.value.trim();
 
     msgEl.classList.add('hidden');
@@ -771,7 +789,7 @@
         body: JSON.stringify(buildContentPayload()),
       });
 
-      const res = await fetch(`/api/admin/rsvp/invites/${activeDay}/send-whatsapp-test`, {
+      const res = await fetch(`/api/admin/rsvp/invites/${activeDay}/${routeSuffix}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -792,7 +810,10 @@
       btn.textContent = original;
     }
   }
-  document.getElementById('send-test-whatsapp-btn').addEventListener('click', sendTestWhatsapp);
+  document.getElementById('send-test-whatsapp-btn').addEventListener('click', () =>
+    sendTestWhatsapp('send-whatsapp-test', 'send-test-whatsapp-btn', 'test-whatsapp-msg'));
+  document.getElementById('send-test-model-btn').addEventListener('click', () =>
+    sendTestWhatsapp('send-whatsapp-test-model', 'send-test-model-btn', 'test-whatsapp-model-msg'));
 
   __configReady.then(loadAllData);
 </script>

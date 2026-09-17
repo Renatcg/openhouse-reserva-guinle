@@ -64,4 +64,42 @@ async function sendTemplateMessage({ to, templateName, languageCode, headerImage
   return data;
 }
 
-module.exports = { isConfigured, sendTemplateMessage };
+// Mensagem de texto livre — só é permitida pela Meta dentro da "janela de
+// 24h" de uma conversa já iniciada pelo destinatário (ex.: responder alguém
+// que acabou de escrever pro número). Serve aqui só pra teste manual do
+// TEXTO/modelo da mensagem, quando quem está testando manda um "oi" antes
+// pro número — nunca use isso pra iniciar contato com um convidado que
+// nunca escreveu, a Meta bloqueia (e pode penalizar a conta).
+async function sendTextMessage({ to, body }) {
+  if (!isConfigured()) {
+    throw new Error('WhatsApp não configurado. Defina WHATSAPP_API_TOKEN e WHATSAPP_PHONE_NUMBER_ID no .env.');
+  }
+  if (!body || !body.trim()) {
+    throw new Error('Informe o texto da mensagem.');
+  }
+
+  const payload = {
+    messaging_product: 'whatsapp',
+    to,
+    type: 'text',
+    text: { body },
+  };
+
+  const res = await fetch(`${BASE_URL}/${PHONE_NUMBER_ID}/messages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${TOKEN}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = (data && data.error && data.error.message) || `Falha ao enviar (HTTP ${res.status}).`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+module.exports = { isConfigured, sendTemplateMessage, sendTextMessage };
