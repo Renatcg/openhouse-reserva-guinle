@@ -207,8 +207,9 @@
       document.getElementById('name-display').textContent = realName ? maskName(realName) : '—';
 
       if (data.status === 'Confirmado') {
-        document.getElementById('already-link').href = `ja-confirmado.html?t=${encodeURIComponent(token)}`;
-        showState(stateAlready);
+        // Já confirmou antes — direto pra página de presença confirmada,
+        // sem tela intermediária pra clicar em nada.
+        window.location.replace(`ja-confirmado.html?t=${encodeURIComponent(token)}`);
         return;
       }
 

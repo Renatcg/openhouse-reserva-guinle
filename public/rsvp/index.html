@@ -145,15 +145,17 @@
       document.getElementById('day-date').textContent = data.day.dateLabel;
       document.getElementById('day-time').textContent = data.day.time || '';
 
+      if (data.status === 'Confirmado') {
+        // Já confirmou antes — direto pra página de presença confirmada,
+        // sem passar pela landing/CTA.
+        window.location.replace(`ja-confirmado.html?t=${encodeURIComponent(token)}`);
+        return;
+      }
+
       const ctaBtn = document.getElementById('cta-btn');
       const ctaLabel = document.getElementById('cta-label');
-      if (data.status === 'Confirmado') {
-        ctaBtn.href = `ja-confirmado.html?t=${encodeURIComponent(token)}`;
-        ctaLabel.textContent = 'Ver minha confirmação';
-      } else {
-        ctaBtn.href = `confirmar.html?t=${encodeURIComponent(token)}`;
-        ctaLabel.textContent = 'Confirmar minha presença';
-      }
+      ctaBtn.href = `confirmar.html?t=${encodeURIComponent(token)}`;
+      ctaLabel.textContent = 'Confirmar minha presença';
 
       showState(stateValid);
     } catch (err) {

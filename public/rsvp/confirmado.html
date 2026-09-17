@@ -221,6 +221,35 @@
   const referralFormFields = document.getElementById('referral-form-fields');
   const referralSuccess = document.getElementById('referral-success');
 
+  const REQUIRED_BORDER = 'border-rose-300 focus:ring-rose-200';
+  const DEFAULT_BORDER = 'border-black/10 focus:ring-forest/20';
+
+  // Assim que um dos dois campos é preenchido, o outro passa a ser
+  // obrigatório — a indicação inteira é opcional, mas não faz sentido
+  // salvar só nome sem telefone (ou vice-versa).
+  function updateReferralRequirement() {
+    const name = referralNameEl.value.trim();
+    const phone = referralPhoneEl.value.trim();
+    const anyFilled = Boolean(name || phone);
+
+    const nameMissing = anyFilled && !name;
+    const phoneMissing = anyFilled && !phone;
+
+    referralNameEl.classList.toggle('border-rose-300', nameMissing);
+    referralNameEl.classList.toggle('border-black/10', !nameMissing);
+    referralPhoneEl.classList.toggle('border-rose-300', phoneMissing);
+    referralPhoneEl.classList.toggle('border-black/10', !phoneMissing);
+
+    if (nameMissing || phoneMissing) {
+      referralError.textContent = 'Preencha nome e telefone da pessoa indicada.';
+      referralError.classList.remove('hidden');
+    } else {
+      referralError.classList.add('hidden');
+    }
+  }
+  referralNameEl.addEventListener('input', updateReferralRequirement);
+  referralPhoneEl.addEventListener('input', updateReferralRequirement);
+
   async function submitReferral() {
     referralError.classList.add('hidden');
     const name = referralNameEl.value.trim();
