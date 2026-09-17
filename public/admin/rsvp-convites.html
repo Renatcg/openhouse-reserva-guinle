@@ -191,7 +191,7 @@
         <!-- E-mail de convite -->
         <div class="bg-white rounded-2xl border border-black/5 p-5 md:p-6">
           <h3 class="font-serif text-2xl mb-1">E-mail de convite</h3>
-          <p class="text-xs text-stone mb-4">Enviado quando você dispara os convites manualmente. Vem com a moldura da marca, a imagem do convite acima e o botão "Confirmar presença" — você só edita o assunto e o texto de introdução abaixo.</p>
+          <p class="text-xs text-stone mb-4">Enviado quando você dispara os convites manualmente. É um e-mail simples (sem moldura própria) com o texto abaixo, seguido da imagem do convite e do botão "Confirmar presença" — a identidade visual vem da própria imagem que você sobe em "Imagem do convite".</p>
           <label class="block text-sm font-medium text-ink mb-1.5">Assunto</label>
           <input id="email-subject" type="text" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-forest/20" />
 
@@ -210,6 +210,12 @@
             <button type="button" class="toolbar-btn text-xs text-forest font-medium px-2" data-email-token="{{data}}" data-editor="email-editor" style="width:auto;">+Data</button>
           </div>
           <div id="email-editor" contenteditable="true" class="w-full bg-white border border-t-0 border-black/10 rounded-b-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20"></div>
+
+          <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-black/5">
+            <input id="test-email-invite" type="email" placeholder="seu@email.com" class="flex-1 min-w-[200px] bg-white border border-black/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            <button type="button" id="send-test-invite-btn" class="inline-flex items-center gap-2 border border-black/10 text-ink px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-black/[0.03] transition shrink-0">Enviar teste</button>
+          </div>
+          <p id="test-invite-msg" class="hidden text-xs mt-2"></p>
         </div>
 
         <!-- E-mail de confirmação -->
@@ -266,6 +272,12 @@
             <button type="button" class="toolbar-btn text-ink italic" title="Itálico" data-cmd="italic" data-editor="confirmation-closing-editor">I</button>
           </div>
           <div id="confirmation-closing-editor" contenteditable="true" class="w-full bg-white border border-t-0 border-black/10 rounded-b-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20"></div>
+
+          <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-black/5">
+            <input id="test-email-confirmation" type="email" placeholder="seu@email.com" class="flex-1 min-w-[200px] bg-white border border-black/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-forest/20" />
+            <button type="button" id="send-test-confirmation-btn" class="inline-flex items-center gap-2 border border-black/10 text-ink px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-black/[0.03] transition shrink-0">Enviar teste</button>
+          </div>
+          <p id="test-confirmation-msg" class="hidden text-xs mt-2"></p>
         </div>
 
         <!-- Envio -->
@@ -669,6 +681,60 @@
 
   document.getElementById('send-whatsapp-btn').addEventListener('click', () => sendInvite('whatsapp'));
   document.getElementById('send-email-btn').addEventListener('click', () => sendInvite('email'));
+
+  // ---------- Enviar e-mail de teste (convite ou confirmação) ----------
+  // Salva o conteúdo atual antes, pra garantir que o teste reflete o que
+  // está na tela — mesmo que ainda não tenha sido salvo "de vez".
+  async function sendTestEmail(type) {
+    const isInvite = type === 'invite';
+    const emailInput = document.getElementById(isInvite ? 'test-email-invite' : 'test-email-confirmation');
+    const msgEl = document.getElementById(isInvite ? 'test-invite-msg' : 'test-confirmation-msg');
+    const btn = document.getElementById(isInvite ? 'send-test-invite-btn' : 'send-test-confirmation-btn');
+    const email = emailInput.value.trim();
+
+    msgEl.classList.add('hidden');
+    if (!email) {
+      msgEl.textContent = 'Informe um e-mail pra receber o teste.';
+      msgEl.className = 'text-xs mt-2 text-rose-600';
+      msgEl.classList.remove('hidden');
+      return;
+    }
+
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'Enviando...';
+
+    try {
+      await fetch(`/api/admin/rsvp/invites/${activeDay}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(buildContentPayload()),
+      });
+
+      const res = await fetch(`/api/admin/rsvp/invites/${activeDay}/send-test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ type, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Não foi possível enviar o teste.');
+
+      msgEl.textContent = `Teste enviado pra ${email}.`;
+      msgEl.className = 'text-xs mt-2 text-emerald-700';
+      msgEl.classList.remove('hidden');
+    } catch (err) {
+      msgEl.textContent = err.message;
+      msgEl.className = 'text-xs mt-2 text-rose-600';
+      msgEl.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  }
+  document.getElementById('send-test-invite-btn').addEventListener('click', () => sendTestEmail('invite'));
+  document.getElementById('send-test-confirmation-btn').addEventListener('click', () => sendTestEmail('confirmation'));
 
   __configReady.then(loadAllData);
 </script>

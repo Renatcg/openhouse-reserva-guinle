@@ -592,6 +592,54 @@ app.post('/api/admin/rsvp/invites/:day/send-whatsapp', rsvpAuth.requireAuthApi, 
 
 // Dispara o convite por e-mail (Resend) pra todos os convidados pendentes
 // daquele dia (ou pros IDs informados).
+// Envia um e-mail de teste (convite ou confirmação) pra um endereço avulso,
+// sem tocar nos convidados nem no histórico de envio — pra revisar o
+// resultado antes de disparar pra todo mundo.
+app.post('/api/admin/rsvp/invites/:day/send-test', rsvpAuth.requireAuthApi, async (req, res) => {
+  const day = req.params.day;
+  if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });
+  if (!emailClient.isConfigured()) {
+    return res.status(400).json({ error: 'Configure RESEND_API_KEY e RESEND_FROM_EMAIL no servidor pra enviar e-mails.' });
+  }
+
+  const { type, email } = req.body || {};
+  if (!email || !email.trim()) return res.status(400).json({ error: 'Informe um e-mail pra receber o teste.' });
+  if (type !== 'invite' && type !== 'confirmation') return res.status(400).json({ error: 'Tipo de e-mail inválido.' });
+
+  const content = invites.getDay(day);
+  const dayInfo = rsvp.DAYS[day];
+  const tokens = { name: 'Convidado(a) de teste', link: buildInviteLink(req, 'teste'), dayLabel: dayInfo.label, dateLabel: dayInfo.dateLabel, time: dayInfo.time };
+
+  try {
+    let html, subject;
+    if (type === 'invite') {
+      html = invites.renderInviteEmail({
+        introHtml: invites.fillEmailTokens(content.emailHtml, tokens),
+        imageUrl: content.imageEmail ? `${buildPublicOrigin(req)}${content.imageEmail}` : null,
+        link: tokens.link,
+      });
+      subject = `[TESTE] ${invites.fillEmailTokens(content.emailSubject, tokens)}`;
+    } else {
+      html = invites.renderConfirmationEmail({
+        introHtml: invites.fillEmailTokens(content.confirmationIntroHtml, tokens),
+        closingHtml: invites.fillEmailTokens(content.confirmationClosingHtml, tokens),
+        dateLabel: dayInfo.dateLabel,
+        weekday: dayInfo.weekday,
+        schedule: content.confirmationSchedule,
+        locationLines: EVENT_LOCATION_LINES,
+        quote: content.confirmationQuote,
+        imageUrl: content.imageConfirmation ? `${buildPublicOrigin(req)}${content.imageConfirmation}` : null,
+      });
+      subject = `[TESTE] ${invites.fillEmailTokens(content.confirmationEmailSubject, tokens)}`;
+    }
+
+    await emailClient.sendEmail({ to: email.trim(), subject, html });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Não foi possível enviar o e-mail de teste.' });
+  }
+});
+
 app.post('/api/admin/rsvp/invites/:day/send-email', rsvpAuth.requireAuthApi, async (req, res) => {
   const day = req.params.day;
   if (!rsvp.DAYS[day]) return res.status(400).json({ error: 'Dia inválido.' });

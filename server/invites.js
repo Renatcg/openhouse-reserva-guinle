@@ -142,13 +142,7 @@ function escapeHtml(str) {
 // identidade visual do site: barra superior verde-musgo com a marca, fundo
 // creme, tipografia serifada nos títulos.
 
-function emailShell(bodyHtml) {
-  return `<!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
-<body style="margin:0;padding:0;background:#eceee2;font-family:Georgia,'Times New Roman',serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eceee2;padding:24px 0;">
-  <tr><td align="center">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;background:#f6f3ec;border-radius:12px;overflow:hidden;">
+const BRAND_HEADER_ROW = `
       <tr>
         <td style="background:#c7cbb0;padding:22px 32px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
@@ -161,7 +155,21 @@ function emailShell(bodyHtml) {
             </tr>
           </table>
         </td>
-      </tr>
+      </tr>`;
+
+// withHeader controla se a barra de marca verde-musgo aparece no topo do
+// e-mail. No convite ela NÃO aparece — a peça gráfica que já tem essa
+// identidade (o convite em si, enviado como imagem) faz esse papel; o
+// e-mail em volta dela fica simples, só texto. Na confirmação a barra
+// aparece porque não há uma peça gráfica equivalente.
+function emailShell(bodyHtml, { withHeader = false } = {}) {
+  return `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
+<body style="margin:0;padding:0;background:#eceee2;font-family:Georgia,'Times New Roman',serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eceee2;padding:24px 0;">
+  <tr><td align="center">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;background:#f6f3ec;border-radius:12px;overflow:hidden;">
+      ${withHeader ? BRAND_HEADER_ROW : ''}
       <tr>
         <td style="padding:32px;">
           ${bodyHtml}
@@ -173,8 +181,10 @@ function emailShell(bodyHtml) {
 </body></html>`;
 }
 
-// E-mail de convite: introdução editável pelo admin + imagem do convite +
-// botão de confirmação.
+// E-mail de convite: introdução editável pelo admin + imagem do convite (a
+// peça gráfica, com a marca já embutida nela) + botão de confirmação. Sem
+// barra de marca própria — só texto simples em volta da peça, como no
+// modelo de referência.
 function renderInviteEmail({ introHtml, imageUrl, link }) {
   const body = `
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1f2a22;">${introHtml || ''}</div>
@@ -240,7 +250,7 @@ function renderConfirmationEmail({ introHtml, closingHtml, dateLabel, weekday, s
     <hr style="border:none;border-top:1px solid rgba(0,0,0,0.08);margin:0 0 16px;" />
     <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#1f2a22;margin:0;">Equipe Reserva Guinle</p>
   `;
-  return emailShell(body);
+  return emailShell(body, { withHeader: true });
 }
 
 module.exports = {
