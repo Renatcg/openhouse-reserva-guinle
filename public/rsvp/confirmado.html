@@ -101,7 +101,7 @@
         <div id="referral-box" class="bg-white/90 border border-gold/30 shadow-sm rounded-xl p-5 md:p-6 self-start">
           <p class="text-sm font-medium text-ink mb-1">Conhece alguém que adoraria viver aqui?</p>
           <p class="text-xs text-ink/60 leading-relaxed mb-4">
-            Se tiver alguém em mente que gostaria de conhecer a Casa Modelo e, quem sabe, ser seu vizinho em um dos dias do evento, indique abaixo — nós cuidamos do convite.
+            Se tiver alguém em mente que gostaria de conhecer a Casa Modelo e, quem sabe, ser seu vizinho, indique abaixo — nós cuidamos do convite.
           </p>
           <div id="referral-form-fields" class="space-y-3">
             <div>
@@ -161,6 +161,19 @@
       if (data.status !== 'Confirmado') {
         // Ainda não confirmou por este link — manda de volta pro formulário.
         window.location.replace(`confirmar.html?t=${encodeURIComponent(token)}`);
+        return;
+      }
+
+      // Essa página (com o box de indicação) só aparece logo depois de
+      // confirmar, na mesma aba. Qualquer outra visita — revisita, link
+      // guardado, outro dispositivo — vai pra "já confirmado", sem o box.
+      let justConfirmed = false;
+      try {
+        justConfirmed = sessionStorage.getItem(`rsvp-fresh-${token}`) === '1';
+        sessionStorage.removeItem(`rsvp-fresh-${token}`);
+      } catch (err) {}
+      if (!justConfirmed) {
+        window.location.replace(`ja-confirmado.html?t=${encodeURIComponent(token)}`);
         return;
       }
 

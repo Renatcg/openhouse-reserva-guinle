@@ -23,6 +23,7 @@ const rsvpUsers = require('./rsvpUsers');
 const invites = require('./invites');
 const whatsapp = require('./whatsapp');
 const emailClient = require('./email');
+const crm = require('./crm');
 
 // Ambiente de autenticação do RSVP: usuário/senha e sessão totalmente
 // separados do admin do catálogo (cookie próprio "rsvp_admin_session").
@@ -380,6 +381,20 @@ app.post('/api/rsvp/:token/indicar', (req, res) => {
 
   const updated = rsvp.setReferral(req.params.token, { name: name.trim(), phone: phone.trim() });
   if (!updated) return res.status(404).json({ error: 'Convite não encontrado.' });
+
+  // Manda o lead pro CRM Qualifika — best-effort, nunca derruba a resposta
+  // da indicação em si (mesmo padrão do envio automático de e-mail de
+  // confirmação). Ver server/crm.js pro formato do payload.
+  try {
+    const payload = crm.buildLeadPayload({
+      guest: updated,
+      referral: { name: name.trim(), phone: phone.trim() },
+      dayInfo: rsvp.DAYS[updated.day],
+    });
+    crm.sendLead(payload); // não usa await de propósito — não bloqueia a resposta
+  } catch (err) {
+    console.error('Falha ao montar/enviar lead pro CRM:', err.message);
+  }
 
   res.json({ ok: true });
 });

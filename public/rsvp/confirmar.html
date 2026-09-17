@@ -319,6 +319,10 @@
         return;
       }
 
+      // Marca que essa confirmação acabou de acontecer nessa aba — a página de
+      // sucesso usa isso pra decidir se mostra o box de indicação (só na
+      // primeira vez) ou manda pra "já confirmado" (revisitas depois).
+      try { sessionStorage.setItem(`rsvp-fresh-${token}`, '1'); } catch (err) {}
       window.location.href = `confirmado.html?t=${encodeURIComponent(token)}`;
     } catch (err) {
       formError.textContent = 'Erro de conexão com o servidor.';
