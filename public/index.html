@@ -185,20 +185,10 @@
         </div>
       ` : '';
 
-      const arrows = hasMultiple ? `
-        <button data-id="${p.id}" data-dir="-1" class="carousel-nav absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 text-ink flex items-center justify-center hover:bg-white transition z-10" aria-label="Anterior">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-        </button>
-        <button data-id="${p.id}" data-dir="1" class="carousel-nav absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 text-ink flex items-center justify-center hover:bg-white transition z-10" aria-label="Próxima">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
-        </button>
-      ` : '';
-
       return `
         <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
-          <div class="relative aspect-square overflow-hidden bg-cream">
+          <div class="carousel relative aspect-square overflow-hidden bg-cream ${hasMultiple ? 'cursor-grab' : ''}" data-id="${p.id}" data-total="${images.length}">
             ${slides}
-            ${arrows}
             ${dots}
             <button data-id="${p.id}" class="toggle-icon absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition z-10 ${isSelected ? 'bg-forest text-white' : 'bg-white/90 text-ink hover:bg-white'}">
               ${isSelected
@@ -229,17 +219,33 @@
       });
     });
 
-    grid.querySelectorAll('.carousel-nav').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = el.dataset.id;
-        const product = products.find(p => p.id === id);
-        const total = (product && product.images && product.images.length) || 1;
-        const dir = parseInt(el.dataset.dir, 10);
-        const current = carouselIndex[id] || 0;
-        carouselIndex[id] = (current + dir + total) % total;
-        render();
-      });
+    grid.querySelectorAll('.carousel').forEach(el => {
+      const id = el.dataset.id;
+      const total = parseInt(el.dataset.total, 10) || 1;
+      if (total <= 1) return;
+
+      let startX = 0;
+      let dragging = false;
+      const THRESHOLD = 40;
+
+      const onStart = (x) => { dragging = true; startX = x; };
+      const onEnd = (x) => {
+        if (!dragging) return;
+        dragging = false;
+        const delta = x - startX;
+        if (Math.abs(delta) > THRESHOLD) {
+          const dir = delta < 0 ? 1 : -1;
+          const current = carouselIndex[id] || 0;
+          carouselIndex[id] = (current + dir + total) % total;
+          render();
+        }
+      };
+
+      el.addEventListener('mousedown', (e) => { e.preventDefault(); onStart(e.clientX); });
+      el.addEventListener('mouseup', (e) => onEnd(e.clientX));
+      el.addEventListener('mouseleave', () => { dragging = false; });
+      el.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
+      el.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientX));
     });
 
     grid.querySelectorAll('.carousel-dot').forEach(el => {
