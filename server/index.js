@@ -19,6 +19,7 @@ const {
 const products = require('./products');
 const categories = require('./categories');
 const quotes = require('./quotes');
+const adminUsers = require('./adminUsers');
 const rsvp = require('./rsvp');
 const rsvpUsers = require('./rsvpUsers');
 const invites = require('./invites');
@@ -80,11 +81,6 @@ const uploadInvite = multer({
 });
 
 // ---------- Helpers ----------
-function loadAdmin() {
-  if (!fs.existsSync(ADMIN_FILE)) return null;
-  return JSON.parse(fs.readFileSync(ADMIN_FILE, 'utf-8'));
-}
-
 function loadRsvpAdmin() {
   if (!fs.existsSync(RSVP_ADMIN_FILE)) return null;
   return JSON.parse(fs.readFileSync(RSVP_ADMIN_FILE, 'utf-8'));
@@ -93,16 +89,9 @@ function loadRsvpAdmin() {
 // ---------- Rotas de autenticação (API) ----------
 app.post('/api/login', (req, res) => {
   const { email, password, remember } = req.body || {};
-  const admin = loadAdmin();
+  const admin = adminUsers.verifyPassword(email, password);
 
   if (!admin) {
-    return res.status(500).json({ error: 'Nenhum usuário administrador cadastrado. Rode "npm run seed:admin".' });
-  }
-
-  const emailOk = (email || '').trim().toLowerCase() === admin.email.toLowerCase();
-  const passOk = password && bcrypt.compareSync(password, admin.passwordHash);
-
-  if (!emailOk || !passOk) {
     return res.status(401).json({ error: 'E-mail ou senha inválidos.' });
   }
 
@@ -281,8 +270,7 @@ app.get('/api/quotes', requireAuthApi, (req, res) => {
 app.get('/api/quotes/:id', (req, res) => {
   const quote = quotes.findById(req.params.id);
   if (!quote) return res.status(404).json({ error: 'Solicitação não encontrada.' });
-  const { name, items } = quoteWithProducts(quote);
-  res.json({ quote: { name, items } });
+  res.json({ quote: { name: quote.name, productIds: quote.productIds } });
 });
 
 app.post('/api/quotes', (req, res) => {

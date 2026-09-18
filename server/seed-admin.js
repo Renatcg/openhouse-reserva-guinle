@@ -1,37 +1,31 @@
-// Gera/atualiza data/admin.json com o usuário administrador padrão.
-// Rode com: npm run seed:admin
-// (ou node server/seed-admin.js)
+// Cria/atualiza usuários com acesso ao admin do catálogo em
+// data/admin-users.json (server/adminUsers.js). Rode com:
+//   node server/seed-admin.js
 //
-// Nunca guardamos a senha em texto puro — só o hash bcrypt.
+// Na primeira execução, se não existir data/admin-users.json mas existir o
+// antigo data/admin.json, o usuário único de lá é migrado automaticamente
+// pra lista (feito dentro de adminUsers.js). Aqui só garantimos que os
+// usuários abaixo existam, sem duplicar.
 
-const fs = require('fs');
-const path = require('path');
-const bcrypt = require('bcryptjs');
+const adminUsers = require('./adminUsers');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
-const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
-
-const DEFAULT_ADMIN = {
-  email: 'admin',
-  password: 'Admin@12345',
-};
+const USERS_TO_SEED = [
+  { email: 'admin', name: 'Renato', role: 'Administrador', password: 'Admin@12345' },
+  { email: 'riga', name: 'Larissa', role: 'Administrador', password: 'Riga@12345' },
+];
 
 function seed() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-  const passwordHash = bcrypt.hashSync(DEFAULT_ADMIN.password, 10);
-
-  const admin = {
-    email: DEFAULT_ADMIN.email,
-    name: 'Renato',
-    role: 'Administrador',
-    passwordHash,
-  };
-
-  fs.writeFileSync(ADMIN_FILE, JSON.stringify(admin, null, 2) + '\n');
-  console.log(`✔ Usuário admin criado/atualizado em ${ADMIN_FILE}`);
-  console.log(`  usuário: ${DEFAULT_ADMIN.email}`);
-  console.log(`  senha:   ${DEFAULT_ADMIN.password}  (troque depois de testar!)`);
+  for (const u of USERS_TO_SEED) {
+    const existing = adminUsers.findByEmail(u.email);
+    if (existing) {
+      console.log(`• Usuário "${u.email}" já existe — mantido como está.`);
+      continue;
+    }
+    adminUsers.create(u);
+    console.log(`✔ Usuário "${u.email}" (${u.name}) criado.`);
+    console.log(`  usuário: ${u.email}`);
+    console.log(`  senha:   ${u.password}  (troque depois de testar!)`);
+  }
 }
 
 seed();

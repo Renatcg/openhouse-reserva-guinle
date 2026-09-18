@@ -30,13 +30,14 @@
 <style>
   body { font-family: 'Inter', sans-serif; }
   .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .tracked { letter-spacing: 0.14em; }
   .tracked-sm { letter-spacing: 0.08em; }
 </style>
 </head>
 <body class="bg-cream text-ink antialiased">
 
   <!-- ===== HEADER ===== -->
-  <header class="max-w-4xl mx-auto flex items-center px-5 md:px-10 pt-4 md:pt-6 pb-2">
+  <header class="max-w-7xl mx-auto flex items-center px-5 md:px-10 pt-4 md:pt-6 pb-2">
     <img src="/img/logo-riga-50anos.png" alt="Riga · 50 anos" class="h-16 md:h-20 w-auto" />
   </header>
 
@@ -50,19 +51,33 @@
     <p class="text-stone text-sm md:text-base max-w-md mx-auto">Este link não é válido ou expirou.</p>
   </section>
 
-  <!-- ===== SELEÇÃO ===== -->
-  <main id="state-loaded" class="hidden max-w-4xl mx-auto px-5 md:px-10 pb-20">
-    <div class="w-10 h-[2px] bg-gold mb-5"></div>
-    <p class="tracked-sm text-[11px] text-gold font-semibold mb-2">SOLICITAÇÃO DE ORÇAMENTO</p>
-    <h2 class="font-serif text-4xl md:text-5xl leading-[1.08] mb-3">Seleção de <span id="quote-name">—</span></h2>
-    <p class="text-stone text-sm md:text-base mb-10">Itens escolhidos no catálogo da Casa Modelo Reserva Guinle.</p>
+  <!-- ===== CATÁLOGO COM SELEÇÃO ===== -->
+  <div id="state-loaded" class="hidden">
 
-    <div id="items-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
+    <!-- ===== INTRO ===== -->
+    <section class="max-w-7xl mx-auto px-5 md:px-10 pb-8 md:pb-10">
+      <div class="w-10 h-[2px] bg-gold mb-5"></div>
+      <p class="tracked-sm text-[11px] text-gold font-semibold mb-2">SOLICITAÇÃO DE ORÇAMENTO</p>
+      <h2 class="font-serif text-4xl md:text-6xl leading-[1.05] text-ink mb-3">Seleção de <span id="quote-name">—</span></h2>
+      <p class="text-stone text-base md:text-lg max-w-md leading-relaxed">Os itens marcados abaixo foram escolhidos no catálogo da Casa Modelo Reserva Guinle.</p>
+    </section>
 
-    <footer class="text-center pt-16">
+    <!-- ===== FILTERS ===== -->
+    <nav class="max-w-7xl mx-auto px-5 md:px-10 pb-6 md:pb-8">
+      <div class="flex gap-2 md:gap-3 overflow-x-auto no-scrollbar pb-1" id="filters">
+        <button data-filter="Todos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-forest text-white transition">Todos</button>
+      </div>
+    </nav>
+
+    <!-- ===== PRODUCT GRID ===== -->
+    <main class="max-w-7xl mx-auto px-5 md:px-10 pb-20">
+      <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"></div>
+    </main>
+
+    <footer class="text-center pb-8">
       <p class="tracked-sm text-[10px] md:text-xs text-stone/70">CATÁLOGO EXCLUSIVO DO OPEN HOUSE RESERVA GUINLE</p>
     </footer>
-  </main>
+  </div>
 
 <script>
   const params = new URLSearchParams(window.location.search);
@@ -72,36 +87,175 @@
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#eee7d8"/><path d="M40 140l35-45 25 30 30-40 30 55z" fill="#c9c0aa"/><circle cx="70" cy="70" r="14" fill="#c9c0aa"/></svg>`
   );
 
+  let products = [];
+  let categories = [];
+  let selected = new Set(); // itens escolhidos por quem pediu o orçamento — fixo, não editável aqui
+  let activeFilter = "Todos";
+  const carouselIndex = {};
+
   const stateLoading = document.getElementById('state-loading');
   const stateInvalid = document.getElementById('state-invalid');
   const stateLoaded = document.getElementById('state-loaded');
+  const grid = document.getElementById('grid');
+  const filtersEl = document.getElementById('filters');
 
   function showState(state) {
     [stateLoading, stateInvalid, stateLoaded].forEach(s => s.classList.add('hidden'));
     state.classList.remove('hidden');
   }
 
-  async function init() {
-    if (!quoteId) { showState(stateInvalid); return; }
-    try {
-      const res = await fetch(`/api/quotes/${encodeURIComponent(quoteId)}`);
-      if (!res.ok) { showState(stateInvalid); return; }
-      const { quote } = await res.json();
+  // ---------- Carrossel dos cards (arrastar/swipe) — igual ao catálogo ----------
+  const CAROUSEL_DRAG_THRESHOLD = 40;
+  let dragState = null;
 
-      document.getElementById('quote-name').textContent = quote.name.split(' ')[0];
+  function startDrag(el, id, total, x) {
+    const track = el.querySelector('.carousel-track');
+    if (!track) return;
+    track.style.transitionDuration = '0ms';
+    dragState = { el, track, id, total, current: carouselIndex[id] || 0, startX: x, deltaX: 0 };
+  }
 
-      const grid = document.getElementById('items-grid');
-      grid.innerHTML = quote.items.map(item => `
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm">
-          <div class="relative aspect-square overflow-hidden bg-cream">
-            <img src="${(item.images && item.images[0]) || PLACEHOLDER_IMG}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover" />
-          </div>
-          <div class="p-3 md:p-4">
-            <h3 class="font-serif text-lg md:text-xl text-ink leading-tight">${item.title}</h3>
-          </div>
-        </div>
+  function moveDrag(x) {
+    if (!dragState) return;
+    dragState.deltaX = x - dragState.startX;
+    let d = dragState.deltaX;
+    if ((dragState.current === 0 && d > 0) || (dragState.current === dragState.total - 1 && d < 0)) d *= 0.35;
+    dragState.track.style.transform = `translateX(calc(-${dragState.current * 100}% + ${d}px))`;
+  }
+
+  function endDrag() {
+    if (!dragState) return;
+    const { track, id, total, current, deltaX } = dragState;
+    track.style.transitionDuration = '420ms';
+    if (Math.abs(deltaX) > CAROUSEL_DRAG_THRESHOLD) {
+      const dir = deltaX < 0 ? 1 : -1;
+      carouselIndex[id] = (current + dir + total) % total;
+      render();
+    } else {
+      track.style.transform = `translateX(-${current * 100}%)`;
+    }
+    dragState = null;
+  }
+
+  window.addEventListener('mousemove', (e) => moveDrag(e.clientX));
+  window.addEventListener('mouseup', () => endDrag());
+
+  function renderFilters() {
+    const extra = categories.map(c => `
+      <button data-filter="${c.title.replace(/"/g, '&quot;')}" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">${c.title}</button>
+    `).join('');
+    filtersEl.innerHTML = `<button data-filter="Todos" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-forest text-white transition">Todos</button>${extra}`;
+
+    filtersEl.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.filter;
+        filtersEl.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.remove('bg-forest', 'text-white');
+          b.classList.add('bg-white', 'text-ink', 'border', 'border-black/10');
+        });
+        btn.classList.remove('bg-white', 'text-ink', 'border', 'border-black/10');
+        btn.classList.add('bg-forest', 'text-white');
+        render();
+      });
+    });
+  }
+
+  function render() {
+    const active = products.filter(p => p.status === 'Ativo');
+    const list = activeFilter === "Todos" ? active : active.filter(p => p.category === activeFilter);
+
+    if (list.length === 0) {
+      grid.innerHTML = `<p class="col-span-full text-center text-stone text-sm py-10">Nenhum produto nessa categoria.</p>`;
+      return;
+    }
+
+    grid.innerHTML = list.map(p => {
+      const isSelected = selected.has(p.id);
+      const images = (p.images && p.images.length) ? p.images : [PLACEHOLDER_IMG];
+      const hasMultiple = images.length > 1;
+      const activeIdx = carouselIndex[p.id] || 0;
+
+      const track = images.map((src) => `
+        <img src="${src}" alt="${p.title}" class="w-full h-full object-cover shrink-0" draggable="false" />
       `).join('');
 
+      const dots = hasMultiple ? `
+        <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
+          ${images.map((_, i) => `
+            <button data-id="${p.id}" data-idx="${i}" class="carousel-dot w-1.5 h-1.5 rounded-full transition ${i === activeIdx ? 'bg-white' : 'bg-white/50'}"></button>
+          `).join('')}
+        </div>
+      ` : '';
+
+      return `
+        <div class="bg-white rounded-2xl overflow-hidden shadow-sm transition flex flex-col ${isSelected ? 'ring-2 ring-forest' : ''}">
+          <div class="carousel relative aspect-square overflow-hidden bg-cream ${hasMultiple ? 'cursor-grab' : ''}" data-id="${p.id}" data-total="${images.length}">
+            <div class="carousel-track flex w-full h-full transition-transform duration-[420ms] ease-[cubic-bezier(.22,1,.36,1)]" style="transform: translateX(-${activeIdx * 100}%);">
+              ${track}
+            </div>
+            ${dots}
+            ${isSelected ? `
+              <div class="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center bg-forest text-white z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+              </div>
+            ` : ''}
+          </div>
+          <div class="p-4 md:p-5 flex flex-col gap-3 flex-1">
+            <div>
+              <h3 class="font-serif text-xl md:text-2xl text-ink leading-tight">${p.title}</h3>
+              <p class="text-xs md:text-sm text-stone mt-0.5 line-clamp-2">${p.description || ''}</p>
+            </div>
+            <div class="mt-auto w-full py-2.5 rounded-full text-sm font-medium text-center ${isSelected ? 'bg-forest text-white' : 'bg-cream text-stone/60 border border-black/5'}">
+              ${isSelected ? 'Selecionado' : 'Não selecionado'}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('.carousel').forEach(el => {
+      const id = el.dataset.id;
+      const total = parseInt(el.dataset.total, 10) || 1;
+      if (total <= 1) return;
+
+      el.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag(el, id, total, e.clientX); });
+      el.addEventListener('touchstart', (e) => startDrag(el, id, total, e.touches[0].clientX), { passive: true });
+      el.addEventListener('touchmove', (e) => moveDrag(e.touches[0].clientX), { passive: true });
+      el.addEventListener('touchend', () => endDrag());
+    });
+
+    grid.querySelectorAll('.carousel-dot').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = el.dataset.id;
+        carouselIndex[id] = parseInt(el.dataset.idx, 10);
+        render();
+      });
+    });
+  }
+
+  async function init() {
+    if (!quoteId) { showState(stateInvalid); return; }
+
+    try {
+      const quoteRes = await fetch(`/api/quotes/${encodeURIComponent(quoteId)}`);
+      if (!quoteRes.ok) { showState(stateInvalid); return; }
+      const { quote } = await quoteRes.json();
+
+      document.getElementById('quote-name').textContent = quote.name.split(' ')[0];
+      selected = new Set(quote.productIds || []);
+
+      const [productsRes, categoriesRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/categories'),
+      ]);
+      const productsData = await productsRes.json();
+      const categoriesData = await categoriesRes.json();
+      products = productsData.products || [];
+      categories = categoriesData.categories || [];
+
+      renderFilters();
+      render();
       showState(stateLoaded);
     } catch (err) {
       showState(stateInvalid);
