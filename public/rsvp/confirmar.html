@@ -31,6 +31,7 @@
   body { font-family: 'Inter', sans-serif; }
   .font-serif { font-family: 'Cormorant Garamond', serif; }
   .tracked-sm { letter-spacing: 0.08em; }
+  .riga-mark { filter: brightness(0) saturate(100%) invert(14%) sepia(17%) saturate(1247%) hue-rotate(93deg) brightness(94%) contrast(93%); opacity: 0.85; }
 </style>
 </head>
 <body class="bg-cream text-ink antialiased">
@@ -67,9 +68,9 @@
 
   <!-- ===== FORM SECTION ===== -->
   <section id="state-form" class="hidden max-w-7xl mx-auto px-5 md:px-10 pb-16">
-    <div class="grid lg:grid-cols-[1.15fr_0.85fr] gap-8 lg:gap-12 items-stretch">
+    <div class="grid lg:grid-cols-[1.15fr_0.85fr] lg:grid-rows-[1fr_auto] gap-8 lg:gap-x-12 lg:gap-y-0 items-stretch">
 
-      <div class="order-2 lg:order-1">
+      <div class="order-2 lg:order-none lg:col-start-1 lg:row-start-1">
         <div class="w-10 h-[2px] bg-gold mb-5"></div>
         <h2 class="font-serif text-4xl md:text-5xl leading-none mb-3">Confirme sua presença</h2>
         <p class="text-stone text-base mb-8 max-w-lg leading-relaxed">
@@ -150,7 +151,7 @@
         </div>
       </div>
 
-      <div class="relative rounded-2xl overflow-hidden min-h-[280px] order-1 lg:order-2">
+      <div class="relative rounded-2xl overflow-hidden min-h-[280px] order-1 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2">
         <img src="/img/dia-a-dia-01.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
         <div class="absolute bottom-6 left-6">
@@ -158,6 +159,13 @@
             ARQUITETURA<br>QUE INSPIRA<br>E BEM-ESTAR EM<br>PERFEITO EQUILÍBRIO.
           </p>
         </div>
+      </div>
+
+      <!-- ===== ASSINATURAS: MAUAD + RIGA (rodapé do bloco de texto; no mobile, fica no final) ===== -->
+      <div class="flex items-center gap-6 pt-8 mt-8 border-t border-black/10 order-3 lg:order-none lg:col-start-1 lg:row-start-2 lg:self-start">
+        <img src="/img/logo-mauad.png" alt="Mauad" class="h-[19px] md:h-[22px] w-auto" />
+        <div class="w-px h-9 bg-black/10"></div>
+        <img src="/img/logo-riga-50anos.png" alt="Riga · 50 anos · Design de Interiores" class="riga-mark h-10 md:h-12 w-auto" />
       </div>
     </div>
   </section>
