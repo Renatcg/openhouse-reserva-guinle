@@ -40,14 +40,6 @@
   <img src="https://mauad.net.br/wp-content/uploads/2023/11/GUIN_QUADRA-A_Casa-01.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" />
   <div class="absolute inset-0 bg-black/25"></div>
 
-  <!-- Top header -->
-  <div class="absolute top-8 md:top-10 left-1/2 -translate-x-1/2 text-center z-10">
-    <div class="inline-block bg-cream/95 rounded-2xl px-5 py-2.5 shadow-lg">
-      <img src="/img/logo-riga-50anos.png" alt="Riga · 50 anos" class="h-14 md:h-16 w-auto mx-auto" />
-    </div>
-    <div class="w-8 h-[2px] bg-gold mx-auto mt-3"></div>
-  </div>
-
   <!-- Side captions (desktop) -->
   <div class="hidden lg:block absolute top-1/3 left-10 z-10">
     <p class="tracked-sm text-xs text-white/90 leading-[1.9] font-medium">
@@ -62,9 +54,16 @@
     <div class="w-8 h-[2px] bg-gold mt-2 ml-auto"></div>
   </div>
 
-  <!-- Login card -->
-  <div class="relative z-10 w-full max-w-md mx-4">
-    <div class="bg-cream rounded-2xl shadow-2xl px-7 py-9 md:px-10 md:py-11">
+  <!-- Header + Login card (grouped so the logo never overlaps the card) -->
+  <div class="relative z-10 w-full max-w-md mx-4 flex flex-col items-center py-10">
+    <div class="text-center mb-6 md:mb-8 shrink-0">
+      <div class="inline-block bg-cream/95 rounded-2xl px-5 py-2.5 shadow-lg">
+        <img src="/img/logo-riga-50anos.png" alt="Riga · 50 anos" class="h-[67px] md:h-[77px] w-auto mx-auto" />
+      </div>
+      <div class="w-8 h-[2px] bg-gold mx-auto mt-3"></div>
+    </div>
+
+    <div class="bg-cream rounded-2xl shadow-2xl px-7 py-9 md:px-10 md:py-11 w-full">
       <p class="tracked-sm text-[11px] text-gold font-semibold text-center mb-3">ÁREA RESTRITA</p>
       <h2 class="font-serif text-3xl md:text-4xl text-center text-ink leading-tight mb-3">
         Acesse o painel<br>de produtos
@@ -111,7 +110,7 @@
 
       <div class="mt-8 text-center">
         <div class="w-8 h-[2px] bg-gold mx-auto mb-3"></div>
-        <img src="/img/logo-riga-50anos.png" alt="Riga · 50 anos" class="h-11 w-auto mx-auto" />
+        <img src="/img/logo-riga-50anos.png" alt="Riga · 50 anos" class="h-[53px] w-auto mx-auto" />
       </div>
     </div>
   </div>
