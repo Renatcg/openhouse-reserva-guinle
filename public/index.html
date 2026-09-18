@@ -117,6 +117,42 @@
     <p class="tracked-sm text-[10px] md:text-xs text-stone/70">CATÁLOGO EXCLUSIVO DO OPEN HOUSE RESERVA GUINLE</p>
   </footer>
 
+  <!-- ===== MODAL: DADOS PARA ORÇAMENTO ===== -->
+  <div id="quote-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div id="quote-modal-backdrop" class="absolute inset-0 bg-black/40"></div>
+    <div class="relative bg-cream rounded-2xl shadow-2xl w-full max-w-md px-6 py-7 md:px-8 md:py-9">
+      <button id="quote-modal-close" type="button" class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-stone hover:bg-black/5 transition" aria-label="Fechar">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+
+      <p class="tracked-sm text-[11px] text-gold font-semibold mb-2">SOLICITAR ORÇAMENTO</p>
+      <h3 class="font-serif text-2xl md:text-3xl leading-tight mb-2">Quase lá</h3>
+      <p class="text-stone text-sm mb-6 leading-relaxed">Deixe seus dados pra gente te enviar os valores pelo WhatsApp.</p>
+
+      <form id="quote-form" class="space-y-4" novalidate>
+        <div>
+          <label for="quote-name" class="block text-sm font-medium text-ink mb-1.5">Nome</label>
+          <input id="quote-name" name="name" type="text" required placeholder="Seu nome" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+        </div>
+        <div>
+          <label for="quote-email" class="block text-sm font-medium text-ink mb-1.5">E-mail</label>
+          <input id="quote-email" name="email" type="email" required placeholder="seu@email.com" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+        </div>
+        <div>
+          <label for="quote-phone" class="block text-sm font-medium text-ink mb-1.5">Telefone (WhatsApp)</label>
+          <input id="quote-phone" name="phone" type="tel" required placeholder="(11) 91234-5678" class="w-full bg-white border border-black/10 rounded-xl px-4 py-3 text-sm placeholder:text-stone/60 focus:outline-none focus:ring-2 focus:ring-forest/20" />
+        </div>
+
+        <p id="quote-form-error" class="hidden text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2"></p>
+
+        <button type="submit" id="quote-submit-btn" class="w-full bg-forest text-white py-3.5 rounded-xl font-medium hover:brightness-110 transition flex items-center justify-center gap-2">
+          <span id="quote-submit-label">Continuar no WhatsApp</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
 <script>
   // Número de WhatsApp que recebe os pedidos de orçamento (formato internacional, só dígitos).
   // TROQUE pelo número real antes de divulgar o link do catálogo.
@@ -285,19 +321,75 @@
     stickyBar.classList.toggle('hidden', n === 0);
   }
 
-  function requestQuote() {
-    const chosen = products.filter(p => selected.has(p.id));
-    if (chosen.length === 0) return;
+  // ---------- Modal de dados + envio da solicitação de orçamento ----------
+  const quoteModal = document.getElementById('quote-modal');
+  const quoteForm = document.getElementById('quote-form');
+  const quoteFormError = document.getElementById('quote-form-error');
+  const quoteSubmitBtn = document.getElementById('quote-submit-btn');
+  const quoteSubmitLabel = document.getElementById('quote-submit-label');
 
-    const lines = chosen.map(p => `• ${p.title}`).join('\n');
-    const message = `Olá! Vi no catálogo do Open House Reserva Guinle e gostaria de um orçamento para os seguintes itens:\n\n${lines}`;
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+  function openQuoteModal() {
+    if (selected.size === 0) return;
+    quoteFormError.classList.add('hidden');
+    quoteModal.classList.remove('hidden');
   }
 
-  document.getElementById('request-quote-btn').addEventListener('click', requestQuote);
+  function closeQuoteModal() {
+    quoteModal.classList.add('hidden');
+  }
+
+  document.getElementById('request-quote-btn').addEventListener('click', openQuoteModal);
+  document.getElementById('quote-modal-close').addEventListener('click', closeQuoteModal);
+  document.getElementById('quote-modal-backdrop').addEventListener('click', closeQuoteModal);
   document.getElementById('cart-btn').addEventListener('click', () => {
     stickyBar.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  });
+
+  quoteForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    quoteFormError.classList.add('hidden');
+
+    const name = document.getElementById('quote-name').value.trim();
+    const email = document.getElementById('quote-email').value.trim();
+    const phone = document.getElementById('quote-phone').value.trim();
+    const productIds = Array.from(selected);
+
+    if (productIds.length === 0) { closeQuoteModal(); return; }
+
+    quoteSubmitBtn.disabled = true;
+    quoteSubmitLabel.textContent = 'Enviando...';
+
+    try {
+      const res = await fetch('/api/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, productIds }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        quoteFormError.textContent = data.error || 'Não foi possível enviar. Tente novamente.';
+        quoteFormError.classList.remove('hidden');
+        quoteSubmitBtn.disabled = false;
+        quoteSubmitLabel.textContent = 'Continuar no WhatsApp';
+        return;
+      }
+
+      const publicUrl = `${window.location.origin}/orcamento.html?q=${data.quote.id}`;
+      const firstName = name.split(' ')[0];
+      const message = `Olá! Me chamo ${firstName} e gostaria de solicitar um orçamento para os itens que selecionei no catálogo do Open House Reserva Guinle:\n\n${publicUrl}`;
+      const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+      window.open(waUrl, '_blank');
+      closeQuoteModal();
+      quoteForm.reset();
+    } catch (err) {
+      quoteFormError.textContent = 'Erro de conexão com o servidor.';
+      quoteFormError.classList.remove('hidden');
+    } finally {
+      quoteSubmitBtn.disabled = false;
+      quoteSubmitLabel.textContent = 'Continuar no WhatsApp';
+    }
   });
 
   async function init() {

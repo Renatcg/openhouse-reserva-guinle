@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Orçamento · Open House Reserva Guinle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: '#f6f3ec',
+          ink: '#1f2a22',
+          forest: '#1f3327',
+          gold: '#c8a862',
+          stone: '#8a8578',
+        },
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .font-serif { font-family: 'Cormorant Garamond', serif; }
+  .tracked-sm { letter-spacing: 0.08em; }
+</style>
+</head>
+<body class="bg-cream text-ink antialiased">
+
+  <!-- ===== HEADER ===== -->
+  <header class="max-w-4xl mx-auto flex items-center px-5 md:px-10 pt-4 md:pt-6 pb-2">
+    <img src="/img/logo-riga-50anos.png" alt="Riga · 50 anos" class="h-16 md:h-20 w-auto" />
+  </header>
+
+  <!-- ===== ESTADO: CARREGANDO / INVÁLIDO ===== -->
+  <section id="state-loading" class="max-w-2xl mx-auto px-5 md:px-10 py-24 text-center">
+    <p class="text-stone text-sm">Carregando…</p>
+  </section>
+
+  <section id="state-invalid" class="hidden max-w-2xl mx-auto px-5 md:px-10 py-24 text-center">
+    <h2 class="font-serif text-3xl md:text-4xl mb-3">Orçamento não encontrado</h2>
+    <p class="text-stone text-sm md:text-base max-w-md mx-auto">Este link não é válido ou expirou.</p>
+  </section>
+
+  <!-- ===== SELEÇÃO ===== -->
+  <main id="state-loaded" class="hidden max-w-4xl mx-auto px-5 md:px-10 pb-20">
+    <div class="w-10 h-[2px] bg-gold mb-5"></div>
+    <p class="tracked-sm text-[11px] text-gold font-semibold mb-2">SOLICITAÇÃO DE ORÇAMENTO</p>
+    <h2 class="font-serif text-4xl md:text-5xl leading-[1.08] mb-3">Seleção de <span id="quote-name">—</span></h2>
+    <p class="text-stone text-sm md:text-base mb-10">Itens escolhidos no catálogo da Casa Modelo Reserva Guinle.</p>
+
+    <div id="items-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
+
+    <footer class="text-center pt-16">
+      <p class="tracked-sm text-[10px] md:text-xs text-stone/70">CATÁLOGO EXCLUSIVO DO OPEN HOUSE RESERVA GUINLE</p>
+    </footer>
+  </main>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const quoteId = params.get('q');
+
+  const PLACEHOLDER_IMG = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#eee7d8"/><path d="M40 140l35-45 25 30 30-40 30 55z" fill="#c9c0aa"/><circle cx="70" cy="70" r="14" fill="#c9c0aa"/></svg>`
+  );
+
+  const stateLoading = document.getElementById('state-loading');
+  const stateInvalid = document.getElementById('state-invalid');
+  const stateLoaded = document.getElementById('state-loaded');
+
+  function showState(state) {
+    [stateLoading, stateInvalid, stateLoaded].forEach(s => s.classList.add('hidden'));
+    state.classList.remove('hidden');
+  }
+
+  async function init() {
+    if (!quoteId) { showState(stateInvalid); return; }
+    try {
+      const res = await fetch(`/api/quotes/${encodeURIComponent(quoteId)}`);
+      if (!res.ok) { showState(stateInvalid); return; }
+      const { quote } = await res.json();
+
+      document.getElementById('quote-name').textContent = quote.name.split(' ')[0];
+
+      const grid = document.getElementById('items-grid');
+      grid.innerHTML = quote.items.map(item => `
+        <div class="bg-white rounded-2xl overflow-hidden shadow-sm">
+          <div class="relative aspect-square overflow-hidden bg-cream">
+            <img src="${(item.images && item.images[0]) || PLACEHOLDER_IMG}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover" />
+          </div>
+          <div class="p-3 md:p-4">
+            <h3 class="font-serif text-lg md:text-xl text-ink leading-tight">${item.title}</h3>
+          </div>
+        </div>
+      `).join('');
+
+      showState(stateLoaded);
+    } catch (err) {
+      showState(stateInvalid);
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

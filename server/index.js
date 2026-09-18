@@ -18,6 +18,7 @@ const {
 } = require('./auth');
 const products = require('./products');
 const categories = require('./categories');
+const quotes = require('./quotes');
 const rsvp = require('./rsvp');
 const rsvpUsers = require('./rsvpUsers');
 const invites = require('./invites');
@@ -256,6 +257,46 @@ app.delete('/api/products/:id', requireAuthApi, (req, res) => {
   const ok = products.remove(req.params.id);
   if (!ok) return res.status(404).json({ error: 'Produto não encontrado.' });
   res.json({ ok: true });
+});
+
+// ---------- Rotas de solicitações de orçamento (API) ----------
+// Criação é pública (formulário no catálogo). Leitura de uma solicitação
+// específica é pública também (é o link enviado pro WhatsApp, mostrando só
+// os itens escolhidos — sem e-mail/telefone). Listar todas exige admin.
+
+function quoteWithProducts(quote) {
+  const all = products.loadAll();
+  const items = quote.productIds
+    .map(id => all.find(p => p.id === id))
+    .filter(Boolean)
+    .map(p => ({ id: p.id, title: p.title, description: p.description, images: p.images }));
+  return { ...quote, items };
+}
+
+app.get('/api/quotes', requireAuthApi, (req, res) => {
+  const all = quotes.loadAll().map(quoteWithProducts);
+  res.json({ quotes: all });
+});
+
+app.get('/api/quotes/:id', (req, res) => {
+  const quote = quotes.findById(req.params.id);
+  if (!quote) return res.status(404).json({ error: 'Solicitação não encontrada.' });
+  const { name, items } = quoteWithProducts(quote);
+  res.json({ quote: { name, items } });
+});
+
+app.post('/api/quotes', (req, res) => {
+  const { name, email, phone, productIds } = req.body || {};
+
+  if (!name || !name.trim()) return res.status(400).json({ error: 'Nome é obrigatório.' });
+  if (!email || !email.trim()) return res.status(400).json({ error: 'E-mail é obrigatório.' });
+  if (!phone || !phone.trim()) return res.status(400).json({ error: 'Telefone é obrigatório.' });
+  if (!Array.isArray(productIds) || productIds.length === 0) {
+    return res.status(400).json({ error: 'Selecione pelo menos um item.' });
+  }
+
+  const quote = quotes.create({ name, email, phone, productIds });
+  res.status(201).json({ quote });
 });
 
 // ---------- Rotas de categorias (API) ----------
