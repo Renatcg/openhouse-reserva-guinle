@@ -130,6 +130,7 @@
   let categories = [];
   let selected = new Set();
   let activeFilter = "Todos";
+  const carouselIndex = {};
 
   const grid = document.getElementById('grid');
   const filtersEl = document.getElementById('filters');
@@ -168,12 +169,38 @@
 
     grid.innerHTML = list.map(p => {
       const isSelected = selected.has(p.id);
-      const img = (p.images && p.images[0]) || PLACEHOLDER_IMG;
+      const images = (p.images && p.images.length) ? p.images : [PLACEHOLDER_IMG];
+      const hasMultiple = images.length > 1;
+      const activeIdx = carouselIndex[p.id] || 0;
+
+      const slides = images.map((src, i) => `
+        <img src="${src}" alt="${p.title}" class="carousel-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${i === activeIdx ? 'opacity-100' : 'opacity-0 pointer-events-none'}" />
+      `).join('');
+
+      const dots = hasMultiple ? `
+        <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
+          ${images.map((_, i) => `
+            <button data-id="${p.id}" data-idx="${i}" class="carousel-dot w-1.5 h-1.5 rounded-full transition ${i === activeIdx ? 'bg-white' : 'bg-white/50'}"></button>
+          `).join('')}
+        </div>
+      ` : '';
+
+      const arrows = hasMultiple ? `
+        <button data-id="${p.id}" data-dir="-1" class="carousel-nav absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 text-ink flex items-center justify-center hover:bg-white transition z-10" aria-label="Anterior">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+        </button>
+        <button data-id="${p.id}" data-dir="1" class="carousel-nav absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 text-ink flex items-center justify-center hover:bg-white transition z-10" aria-label="Próxima">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+        </button>
+      ` : '';
+
       return `
         <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
-          <div class="relative aspect-square">
-            <img src="${img}" alt="${p.title}" class="w-full h-full object-cover" />
-            <button data-id="${p.id}" class="toggle-icon absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition ${isSelected ? 'bg-forest text-white' : 'bg-white/90 text-ink hover:bg-white'}">
+          <div class="relative aspect-square overflow-hidden bg-cream">
+            ${slides}
+            ${arrows}
+            ${dots}
+            <button data-id="${p.id}" class="toggle-icon absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition z-10 ${isSelected ? 'bg-forest text-white' : 'bg-white/90 text-ink hover:bg-white'}">
               ${isSelected
                 ? '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>'
                 : '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>'
@@ -199,6 +226,28 @@
         selected.has(id) ? selected.delete(id) : selected.add(id);
         render();
         updateCounters();
+      });
+    });
+
+    grid.querySelectorAll('.carousel-nav').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = el.dataset.id;
+        const product = products.find(p => p.id === id);
+        const total = (product && product.images && product.images.length) || 1;
+        const dir = parseInt(el.dataset.dir, 10);
+        const current = carouselIndex[id] || 0;
+        carouselIndex[id] = (current + dir + total) % total;
+        render();
+      });
+    });
+
+    grid.querySelectorAll('.carousel-dot').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = el.dataset.id;
+        carouselIndex[id] = parseInt(el.dataset.idx, 10);
+        render();
       });
     });
   }
