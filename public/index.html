@@ -138,6 +138,42 @@
   const stickyBar = document.getElementById('sticky-bar');
   const stickyCount = document.getElementById('sticky-count');
 
+  // ---------- Carrossel dos cards (arrastar/swipe) ----------
+  const CAROUSEL_DRAG_THRESHOLD = 40;
+  let dragState = null; // { el, track, id, total, current, startX, deltaX }
+
+  function startDrag(el, id, total, x) {
+    const track = el.querySelector('.carousel-track');
+    if (!track) return;
+    track.style.transitionDuration = '0ms';
+    dragState = { el, track, id, total, current: carouselIndex[id] || 0, startX: x, deltaX: 0 };
+  }
+
+  function moveDrag(x) {
+    if (!dragState) return;
+    dragState.deltaX = x - dragState.startX;
+    let d = dragState.deltaX;
+    if ((dragState.current === 0 && d > 0) || (dragState.current === dragState.total - 1 && d < 0)) d *= 0.35;
+    dragState.track.style.transform = `translateX(calc(-${dragState.current * 100}% + ${d}px))`;
+  }
+
+  function endDrag() {
+    if (!dragState) return;
+    const { track, id, total, current, deltaX } = dragState;
+    track.style.transitionDuration = '420ms';
+    if (Math.abs(deltaX) > CAROUSEL_DRAG_THRESHOLD) {
+      const dir = deltaX < 0 ? 1 : -1;
+      carouselIndex[id] = (current + dir + total) % total;
+      render();
+    } else {
+      track.style.transform = `translateX(-${current * 100}%)`;
+    }
+    dragState = null;
+  }
+
+  window.addEventListener('mousemove', (e) => moveDrag(e.clientX));
+  window.addEventListener('mouseup', () => endDrag());
+
   function renderFilters() {
     const extra = categories.map(c => `
       <button data-filter="${c.title.replace(/"/g, '&quot;')}" class="filter-btn shrink-0 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-ink border border-black/10 hover:border-black/20 transition">${c.title}</button>
@@ -173,8 +209,8 @@
       const hasMultiple = images.length > 1;
       const activeIdx = carouselIndex[p.id] || 0;
 
-      const slides = images.map((src, i) => `
-        <img src="${src}" alt="${p.title}" class="carousel-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${i === activeIdx ? 'opacity-100' : 'opacity-0 pointer-events-none'}" />
+      const track = images.map((src) => `
+        <img src="${src}" alt="${p.title}" class="w-full h-full object-cover shrink-0" draggable="false" />
       `).join('');
 
       const dots = hasMultiple ? `
@@ -188,7 +224,9 @@
       return `
         <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
           <div class="carousel relative aspect-square overflow-hidden bg-cream ${hasMultiple ? 'cursor-grab' : ''}" data-id="${p.id}" data-total="${images.length}">
-            ${slides}
+            <div class="carousel-track flex w-full h-full transition-transform duration-[420ms] ease-[cubic-bezier(.22,1,.36,1)]" style="transform: translateX(-${activeIdx * 100}%);">
+              ${track}
+            </div>
             ${dots}
             <button data-id="${p.id}" class="toggle-icon absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition z-10 ${isSelected ? 'bg-forest text-white' : 'bg-white/90 text-ink hover:bg-white'}">
               ${isSelected
@@ -224,28 +262,10 @@
       const total = parseInt(el.dataset.total, 10) || 1;
       if (total <= 1) return;
 
-      let startX = 0;
-      let dragging = false;
-      const THRESHOLD = 40;
-
-      const onStart = (x) => { dragging = true; startX = x; };
-      const onEnd = (x) => {
-        if (!dragging) return;
-        dragging = false;
-        const delta = x - startX;
-        if (Math.abs(delta) > THRESHOLD) {
-          const dir = delta < 0 ? 1 : -1;
-          const current = carouselIndex[id] || 0;
-          carouselIndex[id] = (current + dir + total) % total;
-          render();
-        }
-      };
-
-      el.addEventListener('mousedown', (e) => { e.preventDefault(); onStart(e.clientX); });
-      el.addEventListener('mouseup', (e) => onEnd(e.clientX));
-      el.addEventListener('mouseleave', () => { dragging = false; });
-      el.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
-      el.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientX));
+      el.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag(el, id, total, e.clientX); });
+      el.addEventListener('touchstart', (e) => startDrag(el, id, total, e.touches[0].clientX), { passive: true });
+      el.addEventListener('touchmove', (e) => moveDrag(e.touches[0].clientX), { passive: true });
+      el.addEventListener('touchend', () => endDrag());
     });
 
     grid.querySelectorAll('.carousel-dot').forEach(el => {
